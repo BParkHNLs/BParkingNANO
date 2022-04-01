@@ -146,6 +146,13 @@ float getPUWeight(TString filename, int var){
 }
 
 
+float getCtauWeight(float ctau0, float ctau1, float gen_hnl_ct){
+  // compute lifetime weight
+  float ctau_weight = (ctau0 / ctau1 * exp((1./ctau0 - 1./ctau1) * gen_hnl_ct));
+  return ctau_weight;
+}
+
+
 float getTriggerScaleFactor(TString filename_sf, float pt, float eta){
   // get trigger scale factor file
   //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/scaleFactor_results_cat_pt_eta_fit_A1.root";
