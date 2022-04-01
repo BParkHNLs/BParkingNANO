@@ -433,9 +433,6 @@ public :
    // some branches will be added only if sample is MC
    Bool_t isMC;
 
-   // in the case of signal samples, get the generated ctau from the filename
-   Double_t ctau_generated = -99.;
-
    // some option
    // this option is intentionally hardcoded
    Bool_t do_fillhistograms = false;
@@ -722,7 +719,6 @@ public :
    Float_t the_sig_weight_hlt_A1_6 = -99.;
    Float_t the_sig_weight_hlt_HLT_Mu9_IP6_A1_6 = -99.;
    Float_t the_sig_weight_hlt_A1_6_B1 = -99.;
-   Float_t the_sig_the_sig_weight_hlt_fullBPark_test = -99.;
    Float_t the_sig_weight_pu_qcd_A = -99.;
    Float_t the_sig_weight_pu_qcd_B = -99.;
    Float_t the_sig_weight_pu_qcd_C = -99.;
@@ -733,18 +729,6 @@ public :
    Float_t the_sig_weight_pu_sig_C = -99.;
    Float_t the_sig_weight_pu_sig_D = -99.;
    Float_t the_sig_weight_pu_sig_tot = -99.;
-
-   Float_t the_sig_weight_ctau_1000mm = -99.;
-   Float_t the_sig_weight_ctau_500mm = -99.;
-   Float_t the_sig_weight_ctau_100mm = -99.;
-   Float_t the_sig_weight_ctau_50mm = -99.;
-   Float_t the_sig_weight_ctau_10mm = -99.;
-   Float_t the_sig_weight_ctau_7mm = -99.;
-   Float_t the_sig_weight_ctau_5mm = -99.;
-   Float_t the_sig_weight_ctau_4mm = -99.;
-   Float_t the_sig_weight_ctau_3mm = -99.;
-   Float_t the_sig_weight_ctau_2mm = -99.;
-   Float_t the_sig_weight_ctau_1p5mm = -99.;
    
    // these two are from matching information
    Float_t the_gen_trgmu_mu_lxy = -99.;

@@ -155,17 +155,6 @@ class NanoLauncher(NanoTools):
   def writeDumperStarter(self, nfiles, outputdir, filelist, label):
     nanoname = 'bparknano' if self.tagnano == None else 'bparknano_{}'.format(self.tagnano) 
 
-    # in the case of the signal sample, retrieve the generated ctau
-    # this will be useful for the ctau reweighting in the dumper
-    if outputdir.find('ctau') != -1:
-      ctau = outputdir[outputdir.find('ctau')+4:outputdir.find('mm', outputdir.find('ctau')+4)]
-      ctau = float(ctau.replace('p', '.')) 
-    else:
-      ctau = -99.
-
-    # necesary for mc only
-    out_label = '_isMC' if ctau == -99. else '_isMC_{}'.format(ctau) 
-
     f = open(filelist)
     lines = f.readlines()
 
@@ -197,7 +186,7 @@ class NanoLauncher(NanoTools):
       '#include "TProof.h"\n',
       'void starter(){',
       '  TString outFileName = "flat_bparknano.root";',
-      '  {addMC}'.format(addMC = '' if (self.data or self.dotageprobe) else 'outFileName += "{}";'.format(out_label)),
+      '  {addMC}'.format(addMC = '' if (self.data or self.dotageprobe) else 'outFileName += "_isMC";'),
       '  {addevt}'.format(addevt = event_chain),
       '  {addrun}'.format(addrun = '' if (self.data or self.dotageprobe) else run_chain),
       '}',
@@ -234,7 +223,7 @@ class NanoLauncher(NanoTools):
           '#include "TProof.h"\n',
           'void starter(){',
           '  TString outFileName = "flat_bparknano.root";',
-          '  {addMC}'.format(addMC = '' if self.data else 'outFileName += "{}";'.format(out_label)),
+          '  {addMC}'.format(addMC = '' if self.data else 'outFileName += "_isMC";'),
           '  {addevt}'.format(addevt = event_chain),
           '  {addrun}'.format(addrun = '' if (self.data or self.dotageprobe) else run_chain),
           '}',

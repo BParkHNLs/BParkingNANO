@@ -63,13 +63,7 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   TString option = GetOption();
   TString outFileName = option;
 
-  if(outFileName.Contains("isMC_")){
-    isMC = true;
-    TString ctau = outFileName(outFileName.Index("isMC_")+5, outFileName.Length());
-    ctau_generated = ctau.Atof();
-    outFileName.Resize(outFileName.Length()-(5+ctau.Length()+1));
-  }
-  else if(outFileName.Contains("isMC")){
+  if(outFileName.Contains("isMC")){
     isMC = true;
     outFileName.Resize(outFileName.Length()-5);
   }
@@ -370,19 +364,6 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("pi_ismatched", &the_sig_pi_ismatched);
   signal_tree->Branch("mupi_mass_reco_gen_reldiff", &the_sig_mupi_mass_reco_gen_reldiff);
   signal_tree->Branch("lxy_reco_gen_reldiff", &the_sig_lxy_reco_gen_reldiff);
-
-  //signal_tree->Branch("weight_ctau_100mm", &the_sig_weight_ctau_100mm);
-  signal_tree->Branch("weight_ctau_1000mm", &the_sig_weight_ctau_1000mm);
-  signal_tree->Branch("weight_ctau_500mm", &the_sig_weight_ctau_500mm);
-  signal_tree->Branch("weight_ctau_100mm", &the_sig_weight_ctau_100mm);
-  signal_tree->Branch("weight_ctau_50mm", &the_sig_weight_ctau_50mm);
-  signal_tree->Branch("weight_ctau_10mm", &the_sig_weight_ctau_10mm);
-  signal_tree->Branch("weight_ctau_7mm", &the_sig_weight_ctau_7mm);
-  signal_tree->Branch("weight_ctau_5mm", &the_sig_weight_ctau_5mm);
-  signal_tree->Branch("weight_ctau_4mm", &the_sig_weight_ctau_4mm);
-  signal_tree->Branch("weight_ctau_3mm", &the_sig_weight_ctau_3mm);
-  signal_tree->Branch("weight_ctau_2mm", &the_sig_weight_ctau_2mm);
-  signal_tree->Branch("weight_ctau_1p5mm", &the_sig_weight_ctau_1p5mm);
 
   signal_tree->Branch("weight_hlt_A1", &the_sig_weight_hlt_A1);
   signal_tree->Branch("weight_hlt_A1_6", &the_sig_weight_hlt_A1_6);
@@ -752,7 +733,6 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       bool pi_matchedtomuon_loose = 0;
       bool pi_matchedtomuon_medium = 0;
       bool pi_matchedtomuon_tight = 0;
-      /*
       for(unsigned int iMuon(0); iMuon<*nMuon; ++iMuon){
         // do not consider muons in the signal final state
         if(iMuon == BToMuMuPi_trg_mu_idx[selectedCandIdx_sig] || iMuon == BToMuMuPi_sel_mu_idx[selectedCandIdx_sig]) continue;
@@ -771,10 +751,10 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
           pi_matchedtomuon_tight = 1;
         }
       }
-      */
       the_sig_pi_matchedtomuon_loose = pi_matchedtomuon_loose;
       the_sig_pi_matchedtomuon_medium = pi_matchedtomuon_medium;
       the_sig_pi_matchedtomuon_tight = pi_matchedtomuon_tight;
+
 
       the_sig_trgmu_mu_mass = BToMuMuPi_trgmu_mu_mass[selectedCandIdx_sig];
       the_sig_trgmu_mu_pt = BToMuMuPi_trgmu_mu_pt[selectedCandIdx_sig];
@@ -964,21 +944,6 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       the_sig_weight_pu_sig_C = isMC ? getPUWeight("pileup_weight_dataC_sigAug21.root", *Pileup_nTrueInt) : 1.;
       the_sig_weight_pu_sig_D = isMC ? getPUWeight("pileup_weight_dataD_sigAug21.root", *Pileup_nTrueInt) : 1.;
       the_sig_weight_pu_sig_tot = isMC ? getPUWeight("pileup_weight_datatot_sigAug21.root", *Pileup_nTrueInt) : 1.;
-
-      // lifetime weight
-      //the_sig_weight_ctau_100mm = isMC ? getCtauWeight(ctau_generated, 100., the_gen_hnl_ct) : 1.;
-
-      the_sig_weight_ctau_1000mm = isMC ? getCtauWeight(ctau_generated, 1000., the_gen_hnl_ct) : 1.;
-      the_sig_weight_ctau_500mm = isMC ? getCtauWeight(ctau_generated, 500., the_gen_hnl_ct) : 1.;
-      the_sig_weight_ctau_100mm = isMC ? getCtauWeight(ctau_generated, 100., the_gen_hnl_ct) : 1.;
-      the_sig_weight_ctau_50mm = isMC ? getCtauWeight(ctau_generated, 50., the_gen_hnl_ct) : 1.;
-      the_sig_weight_ctau_10mm = isMC ? getCtauWeight(ctau_generated, 10., the_gen_hnl_ct) : 1.;
-      the_sig_weight_ctau_7mm = isMC ? getCtauWeight(ctau_generated, 7., the_gen_hnl_ct) : 1.;
-      the_sig_weight_ctau_5mm = isMC ? getCtauWeight(ctau_generated, 5., the_gen_hnl_ct) : 1.;
-      the_sig_weight_ctau_4mm = isMC ? getCtauWeight(ctau_generated, 4., the_gen_hnl_ct) : 1.;
-      the_sig_weight_ctau_3mm = isMC ? getCtauWeight(ctau_generated, 3., the_gen_hnl_ct) : 1.;
-      the_sig_weight_ctau_2mm = isMC ? getCtauWeight(ctau_generated, 2., the_gen_hnl_ct) : 1.;
-      the_sig_weight_ctau_1p5mm = isMC ? getCtauWeight(ctau_generated, 1.5, the_gen_hnl_ct) : 1.;
       
       signal_tree->Fill();
     } // end sound index
