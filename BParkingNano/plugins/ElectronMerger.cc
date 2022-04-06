@@ -187,6 +187,7 @@ void ElectronMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup con
    ele.addUserFloat("chargeMode", ele.charge());
    ele.addUserInt("isPFoverlap", 0);
    ele.addUserFloat("dzTrg", dzTrg);
+   ele.addUserInt("isTriggeringBPark", 0); // added such that the BToMuLPiBuilder can run flavour agnostic
 
    // Attempt to match electrons to conversions in "gsfTracksOpenConversions" collection (NO MATCHES EXPECTED)
    ConversionInfo info;
@@ -290,6 +291,7 @@ void ElectronMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup con
    ele.addUserFloat("mvaId", mva_id);
    ele.addUserFloat("pfmvaId", 20.);
    ele.addUserFloat("dzTrg", dzTrg);
+   ele.addUserInt("isTriggeringBPark", 0); // added such that the BToMuLPiBuilder can run flavour agnostic
 
    // Attempt to match electrons to conversions in "gsfTracksOpenConversions" collection
    ConversionInfo info;
