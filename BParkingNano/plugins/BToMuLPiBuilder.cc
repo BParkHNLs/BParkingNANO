@@ -166,7 +166,7 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
     edm::Ptr<pat::ETHMuon> trg_mu_ptr(trg_muons, trg_mu_idx);
 
     // only select the trigger muons (are slimmedMuons by construction)
-    if(trg_mu_ptr->userInt("isTriggeringBPark") != 1) continue;
+    if(lepton_type_ == "electron" && trg_mu_ptr->userInt("isTriggeringBPark") != 1) continue;
 
     // selection on the trigger muon
     if( !trgmu_selection_(*trg_mu_ptr) ) continue;
@@ -212,6 +212,9 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
 //                                   << std::endl;
             continue;
         }
+
+        // in the muon channel, ask either muon to trigger
+        if(lepton_type_ == "muon" && trg_mu_ptr->userInt("isTriggeringBPark") != 1 && lep_ptr->userInt("isTriggeringBPark") != 1) continue;
 
         // selection on the lepton
         if( !lep_selection_(*lep_ptr) ) continue;
