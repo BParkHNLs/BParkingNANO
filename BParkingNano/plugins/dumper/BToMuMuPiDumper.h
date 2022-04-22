@@ -470,7 +470,7 @@ public :
    Float_t the_sig_hnl_phi = -99.;
    Float_t the_sig_hnl_mass = -99.;
    Int_t the_sig_hnl_charge = -99;
-   Int_t the_sig_hnl_ct = -99;
+   Float_t the_sig_hnl_ct = -99;
    Float_t the_sig_hnl_cos2d = -99.;
    //Float_t the_sig_hnl_iso03 = -99.;
    //Float_t the_sig_hnl_iso03_close = -99.;
