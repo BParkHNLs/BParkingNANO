@@ -901,7 +901,7 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
           the_gen_hnl_lxy  = get2Ddisp(GenPart_vx[gen_hnl_idx], GenPart_vx[gen_mu_idx],
               GenPart_vy[gen_hnl_idx], GenPart_vy[gen_mu_idx]);
 
-          the_gen_hnl_ct = the_gen_hnl_lxyz / hnl_betagamma;
+          the_gen_hnl_ct = the_gen_hnl_lxyz / hnl_betagamma * 10.; // factor 10 to convert cm to mm
           //std::cout << "HNL pt,eta,phi,m"<< GenPart_pt[gen_hnl_idx] << " " << GenPart_eta[gen_hnl_idx] << " " << GenPart_phi[gen_hnl_idx] << " " << GenPart_mass[gen_hnl_idx] << std::endl;
           //std::cout << "HNL beta,gamma=" <<  hnl_p4.Beta() << " " << hnl_p4.Gamma() << std::endl;
           //std::cout << "HNL Lxy,Lxyz  =" <<  the_gen_hnl_lxy << " " << the_gen_hnl_lxyz << std::endl;
