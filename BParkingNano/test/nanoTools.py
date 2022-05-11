@@ -69,6 +69,14 @@ class NanoTools(object):
         return False
 
 
+  def checkFlatFile(self, flatfile, cond=True, branch_check=False, branchname=''):
+    rootFile = ROOT.TNetXNGFile.Open(flatfile, 'r')
+    if not rootFile: return False
+    if cond and not rootFile.GetListOfKeys().Contains('signal_tree'): return False
+    else:
+      return True
+
+
   def checkFileExists(self, file_):
     import os.path
     from os import path
