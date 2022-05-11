@@ -165,10 +165,10 @@ class NanoLauncher(NanoTools):
       #file_step = iFile
       event_chain.append('  c->Add("{}/{}_nj{}.root");'.format(outputdir, nanoname, file_step))
     if self.dosignal:    event_chain.append('  c->Process("BToMuMuPiDumper.C+", outFileName);')
-    #if self.dosignal:    event_chain.append('  c->Process("NanoDumper.C+", outFileName);')
     if self.docontrol:   event_chain.append('  c->Process("BToKMuMuDumper.C+", outFileName);')
     if self.dohnl:       event_chain.append('  c->Process("HNLToMuPiDumper.C+", outFileName);')
     if self.dotageprobe: event_chain.append('  c->Process("TagAndProbeDumper.C+", outFileName);')
+    if self.mccentral:   event_chain.append('  c->Process("BackgroundSources.C+", outFileName);')
     event_chain = '\n'.join(event_chain)
 
     run_chain = []

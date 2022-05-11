@@ -43,6 +43,8 @@ fi
 if [ ${6} == 1 ] ; then
   cp ../plugins/dumper/BToMuMuPiDumper.C $workdir 
   cp ../plugins/dumper/BToMuMuPiDumper.h $workdir 
+  cp ../plugins/dumper/BackgroundSources.C $workdir 
+  cp ../plugins/dumper/BackgroundSources.h $workdir 
 fi
 if [ ${7} == 1 ] ; then
   cp ../plugins/dumper/BToKMuMuDumper.C $workdir 
