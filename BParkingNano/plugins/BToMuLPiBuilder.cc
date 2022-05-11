@@ -758,7 +758,7 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
           lxy_reldiff = fabs(lxy.value() - gen_hnl_lxy) / gen_hnl_lxy;
 
           // matching of the full mulpi candidate
-          if(trg_mu_isMatched==1 && sel_mu_isMatched==1 && pi_isMatched==1 && mupi_mass_reldiff<0.1 && lxy_reldiff<1 && triggerMuonMother_genIdx==hnlMother_genIdx && lep_ptr->charge()!=pi_ptr->charge()){
+          if(trg_mu_isMatched==1 && sel_mu_isMatched==1 && pi_isMatched==1 && mupi_mass_reldiff<0.1 && triggerMuonMother_genIdx==hnlMother_genIdx && lep_ptr->charge()!=pi_ptr->charge()){
             isMatched = 1;
           }
         }
