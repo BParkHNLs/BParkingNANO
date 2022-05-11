@@ -30,8 +30,9 @@ BToMuMuPi = cms.EDProducer(
     ),
     isoTracksSelection = cms.string('pt > 0.7 && abs(eta)<2.'),
     trgMuonSelection = cms.string(' && '.join([
-        'pt > 7.0',
-        'abs(eta) < 1.5',
+        #'pt > 0.',
+        'pt > 1.5',
+        'abs(eta) < 2',
       ])     
     ),
     leptonSelection = cms.string(' && '.join([
@@ -62,7 +63,7 @@ BToMuMuPi = cms.EDProducer(
         'userFloat("hnl_fitted_cos_theta_2D") > 0.99',
         'userFloat("hnl_ls_xy") > 20',
         'mass < 8',
-        'userFloat("hnl_fitted_mass") < 6.3',
+        'userFloat("hnl_fitted_mass") < 7.',
         ##'abs(userFloat("cos_theta_star_pion")) < 0.9',
         ])
     ), 
