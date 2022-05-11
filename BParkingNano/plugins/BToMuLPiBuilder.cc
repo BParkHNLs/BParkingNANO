@@ -651,7 +651,6 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
         // gen-matching
         int isMatched = 0;
         int trg_mu_isMatched(0), sel_mu_isMatched(0), pi_isMatched(0);
-        int sel_mu_isFake(0), pi_isFake(0);
         int trg_mu_genIdx(-1), sel_mu_genIdx(-1), pi_genIdx(-1);
         int genTriggerMuonMother_genPdgId(-1), genMuonMother_genPdgId(-1), genPionMother_genPdgId(-1);
         int triggerMuonMother_genIdx(-1), hnlMother_genIdx(-1);
@@ -729,10 +728,6 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
             if(fabs(sel_mu_genPdgId) == 13 && fabs(genMuonMother_genPdgId) == 9900015){
               sel_mu_isMatched = 1;
             }
-            else if(fabs(sel_mu_genPdgId) == 211 && fabs(genMuonMother_genPdgId) == 9900015){
-              sel_mu_isFake = 1;
-              sel_mu_isMatched = 1;
-            }
           }
 
           if(pi_genIdx != -1){
@@ -753,10 +748,6 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
             if(fabs(pi_genPdgId) == 211 && fabs(genPionMother_genPdgId) == 9900015){
               pi_isMatched = 1;
             }
-            else if(fabs(pi_genPdgId) == 13 && fabs(genPionMother_genPdgId) == 9900015){
-              pi_isFake = 1;
-              pi_isMatched = 1;
-            }
           }
 
           // computing displacement at gen level
@@ -765,9 +756,9 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
           // computing relative difference between gen and reco quantities
           mupi_mass_reldiff = fabs(mupi_mass_reco - mupi_mass_gen) / mupi_mass_gen;
           lxy_reldiff = fabs(lxy.value() - gen_hnl_lxy) / gen_hnl_lxy;
-        
+
           // matching of the full mulpi candidate
-          if(fabs(pi_genPdgId)!=fabs(sel_mu_genPdgId) && trg_mu_isMatched==1 && sel_mu_isMatched==1 && pi_isMatched==1 && mupi_mass_reldiff<0.1 && lxy_reldiff<1 && triggerMuonMother_genIdx==hnlMother_genIdx && lep_ptr->charge()!=pi_ptr->charge()){
+          if(trg_mu_isMatched==1 && sel_mu_isMatched==1 && pi_isMatched==1 && mupi_mass_reldiff<0.1 && lxy_reldiff<1 && triggerMuonMother_genIdx==hnlMother_genIdx && lep_ptr->charge()!=pi_ptr->charge()){
             isMatched = 1;
           }
         }
@@ -776,8 +767,6 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
         b_cand.addUserInt("trg_mu_isMatched", trg_mu_isMatched);
         b_cand.addUserInt("sel_mu_isMatched", sel_mu_isMatched);
         b_cand.addUserInt("pi_isMatched", pi_isMatched);
-        b_cand.addUserInt("sel_mu_isFake", sel_mu_isFake);
-        b_cand.addUserInt("pi_isFake", pi_isFake);
         b_cand.addUserInt("matching_trg_mu_genIdx", trg_mu_genIdx);
         b_cand.addUserInt("matching_sel_mu_genIdx", sel_mu_genIdx);
         b_cand.addUserInt("matching_pi_genIdx", pi_genIdx);

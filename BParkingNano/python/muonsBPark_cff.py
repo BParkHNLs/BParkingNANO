@@ -188,7 +188,7 @@ muonBParkTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
 muonsBParkMCMatchForTable = cms.EDProducer("MCMatcher",       # cut on deltaR, deltaPt/Pt; pick best by deltaR
     src         = muonBParkTable.src,                         # final reco collection
     matched     = cms.InputTag("finalGenParticlesBPark"),     # final mc-truth particle collection
-    mcPdgId     = cms.vint32(13, 211),                        # one or more PDG ID (13 = mu); absolute values (see below)
+    mcPdgId     = cms.vint32(13),                             # one or more PDG ID (13 = mu); absolute values (see below)
     checkCharge = cms.bool(False),                            # True = require RECO and MC objects to have the same charge
     mcStatus    = cms.vint32(1),                              # PYTHIA status code (1 = stable, 2 = shower, 3 = hard scattering)
     maxDeltaR   = cms.double(0.25),                           # Minimum deltaR for the match
