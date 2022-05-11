@@ -39,7 +39,7 @@ if not options.inputFiles:
     #options.inputFiles = ['/store/data/Run2018B/ParkingBPH4/MINIAOD/05May2019-v2/230000/F7E7EF39-476F-1C48-95F7-74CB5C7A542C.root'] if not options.isMC else \
     #options.inputFiles = ['/store/data/Run2018A/ParkingBPH1/MINIAOD/05May2019-v1/20000/72A32519-B235-654F-AB7A-3ABAFD0A0818.root'] if not options.isMC else \
     options.inputFiles = ['/store/data/Run2018A/ParkingBPH3/MINIAOD/05May2019-v1/100000/75A4F19E-33BA-334F-9975-B5C8D2EB2026.root'] if not options.isMC else \
-                         ['file:%s' %i for i in glob('/pnfs/psi.ch/cms/trivcat/store/user/mratti/BHNLsGen/V20_emu/mass3.0_ctau184.0/step4_nj5*.root')]
+                         ['file:%s' %i for i in glob('/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/V39/mass3.0_ctau100.0/step4_nj15.root')]
 
 annotation = '%s nevts:%d' % (outputFileNANO, options.maxEvents)
 
@@ -131,6 +131,7 @@ process = nanoAOD_customizeTagAndProbeJPsiToMuMu (process, isMC=options.isMC)
 process = nanoAOD_customizeTriggerBitsBPark      (process)
 
 # Path and EndPath definitions
+#process.nanoAOD_general_step = cms.Path(process.nanoSequence)
 process.nanoAOD_MuMuPi_step = cms.Path(process.nanoSequence + process.nanoBMuMuPiSequence + CountBToMuMuPi )
 process.nanoAOD_KMuMu_step  = cms.Path(process.nanoSequence + process.nanoBKMuMuSequence + CountBToKmumu ) 
 process.nanoAOD_HNLToMuPi_step = cms.Path(process.nanoSequence + process.nanoHNLToMuPiSequence + CountHNLToMuPi )
@@ -150,6 +151,7 @@ process.schedule = cms.Schedule(
 )
 if options.doSignal:
   process.schedule += cms.Schedule(
+      #process.nanoAOD_general_step,
       process.nanoAOD_MuMuPi_step,
   )
 if options.doControl:
@@ -173,6 +175,7 @@ from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
 process_string = cms.vstring()
+#process_string.append('nanoAOD_general_step')
 if options.doSignal: process_string.append('nanoAOD_MuMuPi_step')
 if options.doControl: process_string.append('nanoAOD_KMuMu_step')
 if options.doHNL: process_string.append('nanoAOD_HNLToMuPi_step')
