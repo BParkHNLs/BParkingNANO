@@ -30,6 +30,7 @@ BToMuMuPi = cms.EDProducer(
     ),
     isoTracksSelection = cms.string('pt > 0.7 && abs(eta)<2.'),
     trgMuonSelection = cms.string(' && '.join([
+        #'pt > 0.',
         'pt > 7.0',
         'abs(eta) < 1.5',
       ])     
@@ -318,6 +319,8 @@ BToMuMuPiTable = cms.EDProducer(
         trg_mu_isMatched            = Var("userInt('trg_mu_isMatched')"           , int, mcOnly=True),
         sel_mu_isMatched            = Var("userInt('sel_mu_isMatched')"           , int, mcOnly=True),
         pi_isMatched                = Var("userInt('pi_isMatched')"               , int, mcOnly=True),
+        sel_mu_isFake               = Var("userInt('sel_mu_isFake')"              , int, mcOnly=True),
+        pi_isFake                   = Var("userInt('pi_isFake')"                  , int, mcOnly=True),
         matching_sel_mu_genIdx      = Var("userInt('matching_sel_mu_genIdx')"     , int, mcOnly=True),
         matching_trg_mu_genIdx      = Var("userInt('matching_trg_mu_genIdx')"     , int, mcOnly=True),
         matching_pi_genIdx          = Var("userInt('matching_pi_genIdx')"         , int, mcOnly=True),

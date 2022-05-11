@@ -87,7 +87,7 @@ tracksBParkMCMatchForTable = cms.EDProducer("MCMatcher",   # cut on deltaR, delt
 #tracksBParkMCMatchForTable = cms.EDProducer("MCMatcherByPt",   # cut on deltaR, deltaPt/Pt; pick best by deltaR
     src         = trackBParkTable.src,                     # final reco collection
     matched     = cms.InputTag("finalGenParticlesBPark"),  # final mc-truth particle collection
-    mcPdgId     = cms.vint32(321,211),                     # one or more PDG ID (321 = charged kaon, 211 = charged pion); absolute values (see below)
+    mcPdgId     = cms.vint32(321,211,13),                  # one or more PDG ID (321 = charged kaon, 211 = charged pion); absolute values (see below)
     checkCharge = cms.bool(False),              # True = require RECO and MC objects to have the same charge
     mcStatus    = cms.vint32(1),                # PYTHIA status code (1 = stable, 2 = shower, 3 = hard scattering)
     maxDeltaR   = cms.double(0.15), #0.03       # Minimum deltaR for the match
