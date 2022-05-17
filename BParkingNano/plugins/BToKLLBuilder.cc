@@ -381,15 +381,24 @@ void BToKLLBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
           edm::Ptr<reco::GenParticle> genMuon2GMother_ptr(genParticles, genMuon2GMother_genIdx);
           int genMuon1GMother_genPdgId = genMuon1GMother_ptr->pdgId();
           int genMuon2GMother_genPdgId = genMuon2GMother_ptr->pdgId();
-          
+             
           // matching: muons fully matched, kaon not necessarily
           if(
              fabs(l1_genPdgId) == 13 && fabs(genMuon1Mother_genPdgId) == 443 && 
              fabs(l2_genPdgId) == 13 && fabs(genMuon2Mother_genPdgId) == 443 && 
-               (  
-                  (fabs(k_genPdgId) == 321 && fabs(genKaonMother_genPdgId) == 521) || 
-                  (fabs(genMuon1GMother_genPdgId) == fabs(genMuon2GMother_genPdgId) && fabs(genMuon2GMother_genPdgId)==521) 
+             (
+               (
+                 (  
+                    (fabs(k_genPdgId) == 321 && fabs(genKaonMother_genPdgId) == 521) || 
+                    (fabs(genMuon1GMother_genPdgId) == fabs(genMuon2GMother_genPdgId) && fabs(genMuon2GMother_genPdgId)==521) 
+                 )
+               ) || (
+                 (  
+                    (fabs(k_genPdgId) == 211 && fabs(genKaonMother_genPdgId) == 541) || 
+                    (fabs(genMuon1GMother_genPdgId) == fabs(genMuon2GMother_genPdgId) && fabs(genMuon2GMother_genPdgId)==541) 
+                 )
                )
+             )
             ){
               isMatched = 1;
               matched_b_pt = genKaonMother_ptr->pt();
