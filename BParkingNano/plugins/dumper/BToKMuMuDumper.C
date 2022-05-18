@@ -164,6 +164,9 @@ void BToKMuMuDumper::SlaveBegin(TTree * /*tree*/)
   control_tree->Branch("dimu_mass", &the_ctrl_dimu_mass);
   control_tree->Branch("dimu_sv_prob", &the_ctrl_dimu_sv_prob);
 
+  control_tree->Branch("maxdr", &the_ctrl_maxdr);
+  control_tree->Branch("mindr", &the_ctrl_mindr);
+
   control_tree->Branch("sv_x", &the_ctrl_sv_x);
   control_tree->Branch("sv_y", &the_ctrl_sv_y);
   control_tree->Branch("sv_z", &the_ctrl_sv_z);
@@ -378,6 +381,9 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
 
       the_ctrl_dimu_mass = BToKMuMu_mll_fullfit[selectedCandIdx_ctrl];
       the_ctrl_dimu_sv_prob = BToKMuMu_ll_sv_prob[selectedCandIdx_ctrl];
+
+      the_ctrl_maxdr = BToKMuMu_maxDR[selectedCandIdx_ctrl]; 
+      the_ctrl_mindr = BToKMuMu_minDR[selectedCandIdx_ctrl]; 
       
       the_ctrl_sv_x = BToKMuMu_vtx_x[selectedCandIdx_ctrl];
       the_ctrl_sv_y = BToKMuMu_vtx_x[selectedCandIdx_ctrl];
