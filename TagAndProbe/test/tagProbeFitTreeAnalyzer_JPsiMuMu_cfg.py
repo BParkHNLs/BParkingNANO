@@ -4,12 +4,10 @@ import os
 import sys
 
 
-options = VarParsing('python')
-options.register('infilename'    , 'flat_bparknano.root', VarParsing.multiplicity.singleton, VarParsing.varType.string, "infilename"                        )
-options.register('outLabel'    , 'test', VarParsing.multiplicity.singleton, VarParsing.varType.string, "outLabel"                        )
-options.register('outSuffix'    , 'chunk0_nj1', VarParsing.multiplicity.singleton, VarParsing.varType.string, "outSuffix"                        )
+options = VarParsing('analysis')
+options.register('outLabel' , 'test'      , VarParsing.multiplicity.singleton, VarParsing.varType.string, "outLabel" )
+options.register('outSuffix', 'chunk0_nj1', VarParsing.multiplicity.singleton, VarParsing.varType.string, "outSuffix")
 options.parseArguments()
-
 
 process = cms.Process("TagProbe")
 
@@ -21,40 +19,12 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
 
 process.TagProbeFitTreeAnalyzer = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
     # IO parameters:
-    # mc
     #InputFileNames = cms.vstring("/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/V15_control/mass999_ctau999/nanoFiles/merged/flat_bparknano_tag_and_probe_v1.root"),
-    #InputFileNames = cms.vstring("/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/V15_control/mass999_ctau999/nanoFiles/merged/flat_bparknano_tag_and_probe_v2_tag_fired_DST_DoubleMu1.root"),
-    #InputFileNames = cms.vstring("/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/mc_central/JPsiToMuMu_V0/JpsiToMuMu_JpsiPt8_TuneCP5_13TeV-pythia8_ext/merged/flat_bparknano_extmerged.root"),
-    #InputFileNames = cms.vstring("/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/mc_central/BToJPsiKstar_V0/BdToJpsiKstar_BMuonFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/merged/flat_bparknano_fired_DST_DoubleMu1.root"),
-    #InputFileNames = cms.vstring("/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/mc_central/BToJPsiKstar_V0/BdToJpsiKstar_BMuonFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/merged/flat_bparknano_fired_HLT_Mu9_IP6.root"),
-
-    # data
-    #InputFileNames = cms.vstring("/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH1_Run2018A/merged/flat_bparknano_tag_and_probe_v2_fired_HLT_Mu9_IP6.root",
-    #                             "/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH2_Run2018A/merged/flat_bparknano_tag_and_probe_v2_fired_HLT_Mu9_IP6.root",
-    #                             "/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH3_Run2018A/merged/flat_bparknano_tag_and_probe_v2_fired_HLT_Mu9_IP6.root",
-    #                             "/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH4_Run2018A/merged/flat_bparknano_tag_and_probe_v2_fired_HLT_Mu9_IP6.root",
-    #                             "/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH5_Run2018A/merged/flat_bparknano_tag_and_probe_v2_fired_HLT_Mu9_IP6.root",
-    #                             "/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH6_Run2018A/merged/flat_bparknano_tag_and_probe_v2_fired_HLT_Mu9_IP6.root",
-    #                             #"/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH1_Run2018B/merged/flat_bparknano_tag_and_probe_v2.root",
-    #                             ),
-
-    #InputFileNames = cms.vstring("/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH1_Run2018A/merged/flat_bparknano_tag_and_probe_v2_tag_fired_DST_DoubleMu1.root",
-    #                             "/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH2_Run2018A/merged/flat_bparknano_tag_and_probe_v2_tag_fired_DST_DoubleMu1.root",
-    #                             "/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH3_Run2018A/merged/flat_bparknano_tag_and_probe_v2_tag_fired_DST_DoubleMu1.root",
-    #                             "/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH4_Run2018A/merged/flat_bparknano_tag_and_probe_v2_tag_fired_DST_DoubleMu1.root",
-    #                             "/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH5_Run2018A/merged/flat_bparknano_tag_and_probe_v2_tag_fired_DST_DoubleMu1.root",
-    #                             "/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH6_Run2018A/merged/flat_bparknano_tag_and_probe_v2_tag_fired_DST_DoubleMu1.root",
-    #                             "/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/data/V06_tag_and_probe/ParkingBPH1_Run2018B/merged/flat_bparknano_tag_and_probe_v2.root",
-    #                             ),
-
-    InputFileNames = cms.vstring(options.infilename),
+    InputFileNames = cms.vstring(options.inputFiles),
 
     InputTreeName = cms.string("tree"),
     # output
-    #OutputFileName = cms.string("results_tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_HLT_Mu9_IP6_A1_6.root"),
-    #OutputFileName = cms.string("results_test_dataA1_merged.root"),
-
-    #OutputFileName = cms.string("./outfiles/{}/results_{}_{}.root".format(opt.outLabel, opt.outLabel, opt.outSuffix)),
+    #OutputFileName = cms.string("results.root"),
     OutputFileName = cms.string("results_{}_{}.root".format(options.outLabel, options.outSuffix)),
 
     #number of CPUs to use for fitting
@@ -130,25 +100,25 @@ process.TagProbeFitTreeAnalyzer = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
         #    ),
         #    BinToPDFmap = cms.vstring("gaussPlusLinear")
         #),
-        cat_pt_dxysig = cms.PSet(
-            EfficiencyCategoryAndState = cms.vstring("probe_fired_BParkingHLT","true"),
-            UnbinnedVariables = cms.vstring("mass"),
-            BinnedVariables = cms.PSet(
-                probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
-                probe_dxy_sig = cms.vdouble(0.0, 4.0, 6.0, 8.0, 10.0, 20.0, 500.0),
-            ),
-            BinToPDFmap = cms.vstring("gaussPlusLinear")
-        ),
-        cat_pt_eta_dxysig = cms.PSet(
-            EfficiencyCategoryAndState = cms.vstring("probe_fired_BParkingHLT","true"),
-            UnbinnedVariables = cms.vstring("mass"),
-            BinnedVariables = cms.PSet(
-                probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
-                probe_eta = cms.vdouble(0.0, 0.5, 1.0, 1.5, 2.0),
-                probe_dxy_sig = cms.vdouble(0.0, 4.0, 6.0, 8.0, 10.0, 20.0, 500.0),
-            ),
-            BinToPDFmap = cms.vstring("gaussPlusLinear")
-        ),
+        #cat_pt_dxysig = cms.PSet(
+        #    EfficiencyCategoryAndState = cms.vstring("probe_fired_BParkingHLT","true"),
+        #    UnbinnedVariables = cms.vstring("mass"),
+        #    BinnedVariables = cms.PSet(
+        #        probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
+        #        probe_dxy_sig = cms.vdouble(0.0, 4.0, 6.0, 8.0, 10.0, 20.0, 500.0),
+        #    ),
+        #    BinToPDFmap = cms.vstring("gaussPlusLinear")
+        #),
+        #cat_pt_eta_dxysig = cms.PSet(
+        #    EfficiencyCategoryAndState = cms.vstring("probe_fired_BParkingHLT","true"),
+        #    UnbinnedVariables = cms.vstring("mass"),
+        #    BinnedVariables = cms.PSet(
+        #        probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
+        #        probe_eta = cms.vdouble(0.0, 0.5, 1.0, 1.5, 2.0),
+        #        probe_dxy_sig = cms.vdouble(0.0, 4.0, 6.0, 8.0, 10.0, 20.0, 500.0),
+        #    ),
+        #    BinToPDFmap = cms.vstring("gaussPlusLinear")
+        #),
     )
 )
 
