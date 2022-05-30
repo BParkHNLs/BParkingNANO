@@ -34,7 +34,7 @@ class ScaleFactorComputer(object):
       Compute SF for each chunk of data separately
     '''
 
-    print ' --> will compute the SF per data chunk'
+    print '\n --> will compute the SF per data chunk\n'
 
     scale_factors_perchunk = []
     n_events_perchunk = []
@@ -50,9 +50,10 @@ class ScaleFactorComputer(object):
           out_label = self.out_label + '/' + out_suffix,
           )
 
-      #os.system(command_sf)
+      os.system(command_sf)
 
       scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_eta_fit.txt'.format(self.out_label, out_suffix))
+      #scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_dxysig_fit.txt'.format(self.out_label, out_suffix))
       n_events_perchunk.append(self.getNEvents(out_suffix))
 
     return scale_factors_perchunk, n_events_perchunk
@@ -63,6 +64,8 @@ class ScaleFactorComputer(object):
       The scale factors are defined as the weighted average of
       the scale factors in the different data chunks
     '''
+    print '\n --> will compute the average SF\n'
+
     # create file containing the averaged scale factors
     average_sf_file = open(filename, 'w+')
 
@@ -127,11 +130,9 @@ class ScaleFactorComputer(object):
 
   def process(self):
     # get data files
-    #data_files = [f for f in glob.glob('./outfiles/{}/results*root'.format(self.data_label))]
     data_files = [f for f in glob.glob('/work/anlyon/tag_and_probe/outfiles/{}/results*root'.format(self.data_label))]
 
     # get mc file
-    #mc_file = './outfiles/{lbl}/results_{lbl}_incl.root'.format(lbl=self.mc_label)
     mc_file = '/work/anlyon/tag_and_probe/outfiles/{lbl}/results_{lbl}_incl.root'.format(lbl=self.mc_label)
 
     # compute per chunk scale factors
@@ -142,18 +143,16 @@ class ScaleFactorComputer(object):
     self.computeAverageScaleFactors(scale_factors_perchunk, n_events_perchunk, filename)
 
     # create 2D histogram
-    root_file = ROOT.TFile.Open('./results/{}/scale_factors.root'.format(self.out_label), "RECREATE")
-    #canv = ROOT.TCanvas('canv', 'canv', 800, 700)
+    root_filename = './results/{}/scale_factors.root'.format(self.out_label)
+    root_file = ROOT.TFile.Open(root_filename, "RECREATE")
+    canv = ROOT.TCanvas('canv', 'canv', 800, 700)
     
     # open file with the scale factors
     sf_file = open(filename)
     lines = sf_file.readlines()
 
-    #pt_bins = []
-    #eta_bins = []
-
-    pt_bins = [ 6. ] #FIXME
-    eta_bins = [ 0. ]
+    pt_bins = [ 6. ] # set the lowest bin
+    eta_bins = [ 0. ] # set the lowest bin
 
     scale_factor = {}
 
@@ -168,7 +167,7 @@ class ScaleFactorComputer(object):
 
       sf, index = self.getItem(line, index+1)
       scale_factor['{}_{}_{}_{}'.format(float(ptmin), float(ptmax), float(etamin), float(etamax))] = sf
-      print '{}_{}_{}_{}'.format(float(ptmin), float(ptmax), float(etamin), float(etamax))
+      #print '{}_{}_{}_{}'.format(float(ptmin), float(ptmax), float(etamin), float(etamax))
 
     pt_bins = array('d', pt_bins)
     eta_bins = array('d', eta_bins)
@@ -183,30 +182,16 @@ class ScaleFactorComputer(object):
         sf = float(scale_factor['{}_{}_{}_{}'.format(pt_bin, pt_bins[ipt+1], eta_bin, eta_bins[ieta+1])])
         hist_scale_factor.SetBinContent(ipt+1, ieta+1, sf)
 
-    #hist_scale_factor->GetZaxis()->SetRangeUser(-1e-3, 1);
     hist_scale_factor.SetOption("colztexte")
     hist_scale_factor.SetTitle("")
     hist_scale_factor.Write()
     hist_scale_factor.Draw()
-    #gStyle->SetTitleFillColor(0);
     ROOT.gStyle.SetOptStat(0)
-    #gStyle->SetPaintTextFormat(".3f");
     
-    #c->SaveAs(name_forhist + ".pdf");
-    #c->SaveAs(name_forhist + ".png");
+    canv.SaveAs('scale_factors.png')
+    canv.SaveAs('scale_factors.pdf')
     root_file.Close()
-
-    #for line in lines:
-    #  ptmin, index = self.getItem(line, 0)
-    #  ptmax, index = self.getItem(line, index+1)
-    #  etamin, index = self.getItem(line, index+1)
-    #  etamax, index = self.getItem(line, index+1)
-    #  sf, index = self.getItem(line, index+1)
-
-
-
-    
-
+    print '--> {} created'.format(root_filename)
 
 
 
@@ -214,9 +199,17 @@ if __name__ == "__main__":
 
   ROOT.gROOT.SetBatch(True)
 
-  data_label = 'scale_factors_tag_fired_anyBParkHLT_data_v2'
-  mc_label = 'scale_factors_tag_fired_anyBParkHLT_mc_v2'
-  out_label = 'scale_factors_tag_fired_anyBParkHLT_v2'
+  #data_label = 'scale_factors_tag_fired_anyBParkHLT_data_v2'
+  #mc_label = 'scale_factors_tag_fired_anyBParkHLT_mc_v2'
+  #out_label = 'scale_factors_tag_fired_anyBParkHLT_v2'
+
+  #data_label = 'test_fullBPark_tag_fired_anyBParkHLT_max5e6'
+  #mc_label = 'test_mc_tag_fired_anyBParkHLT'
+  #out_label = 'test_fullBPark_tag_fired_anyBParkHLT_max5e6'
+
+  data_label = 'test_D1_tag_fired_HLT_Mu12_IP6_pteta_max3e6'
+  mc_label = 'test_mc_tag_fired_HLT_Mu12_IP6_pteta'
+  out_label = 'test_D1_tag_fired_HLT_Mu12_IP6_pteta_max3e6'
 
   ScaleFactorComputer(data_label=data_label, mc_label=mc_label, out_label=out_label).process()
 
