@@ -13,9 +13,9 @@
 // ------- Global Variables ------- //
 
 //TString dataFileName = "results_tag_and_probe_v2_tag_fired_DST_DoubleMu1_data_A1_extraptbin.root";
-TString dataFileName = "results_tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_HLT_Mu9_IP6_A1_6.root";
-TString mcFileName = "results_tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_HLT_Mu9_IP6_mc.root";
-string dirLabel = "tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_HLT_Mu9_IP6_A1_6";
+//TString dataFileName = "results_tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_HLT_Mu9_IP6_A1_6.root";
+//TString mcFileName = "results_tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_HLT_Mu9_IP6_mc.root";
+//string dirLabel = "tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_HLT_Mu9_IP6_A1_6";
 
 
 // -------------------------------- //
@@ -174,7 +174,10 @@ void process(string dir, string subdir, string outdir, string method, TFile* fDa
 }
 
 
-void  getScaleFactor(string dir="results"){
+void  getScaleFactor(TString dataFileName, TString mcFileName, string dirLabel, string dir="results"){
+
+  //TString dataFileName = dataFileName.c_str();
+  //TString mcFileName = mcFileName.c_str();
 
   string outdir = "./results/" + dirLabel + "/";
   system(Form("mkdir -p %s", outdir.c_str()));
@@ -184,6 +187,9 @@ void  getScaleFactor(string dir="results"){
 
   process(dir, "cat_pt_eta", outdir, "fit", fData, fMC, "probe_pt_probe_eta_PLOT", "", "2D"); 
   process(dir, "cat_pt_eta", outdir, "cnt", fData, fMC, "probe_pt_probe_eta_PLOT", "", "2D"); 
+
+  //process(dir, "cat_pt_dxysig", outdir, "fit", fData, fMC, "probe_pt_probe_dxy_sig_PLOT", "", "2D"); 
+  //process(dir, "cat_pt_dxysig", outdir, "cnt", fData, fMC, "probe_pt_probe_dxy_sig_PLOT", "", "2D"); 
 
   // make sure that the eta categories are correct
   /*
