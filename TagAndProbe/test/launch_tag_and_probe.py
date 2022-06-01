@@ -16,7 +16,8 @@ class TagAndProbeLauncher(object):
     self.user = 'anlyon'
     self.tree_name = 'tree'
     self.do_submit_batch = True
-    self.max_events = 3e6 # this corresponds to the number of events to process per job
+    self.do_resubmit = False
+    self.max_events = 4e6 # this corresponds to the number of events to process per job
 
     datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
     for dataset in self.ds:
@@ -150,8 +151,13 @@ class TagAndProbeLauncher(object):
       else:
         out_suffix = 'incl' 
 
+      if self.do_resubmit:
+        rootfile = ROOT.TNetXNGFile.Open('/work/anlyon/tag_and_probe/outfiles/{}/results_{}_{}.root'.format(self.out_label, self.out_label, out_suffix), 'READ')
+        if not rootfile.TestBit(ROOT.TFile.kRecovered): continue
+
       if self.do_submit_batch:
         submit_command = 'sbatch -p standard --account t3 --mem 3500 -o ./logs/{out}/log_{sufx}.txt -e ./logs/{out}/log_{sufx}.txt --job-name=tag_and_probe_{out}_{sufx} submitter.sh {infile} {out} {sufx}'.format(
+        #submit_command = 'sbatch -p short --time 01:00:00 --account t3 --mem 3500 -o ./logs/{out}/log_{sufx}.txt -e ./logs/{out}/log_{sufx}.txt --job-name=tag_and_probe_{out}_{sufx} submitter.sh {infile} {out} {sufx}'.format(
             infile = filelist,
             out = self.out_label,
             sufx = out_suffix,
@@ -174,20 +180,28 @@ class TagAndProbeLauncher(object):
 
 if __name__ == "__main__":
   
-  is_data = True
-  out_label = 'test_D1_tag_fired_HLT_Mu12_IP6_pteta_max3e6'
-  version_label = 'V10_30Dec21'
+  #is_data = True
+  #out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max4e6'
+  #version_label = 'V10_30Dec21'
   #datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
-  datasets = ['D1']
-  tagnano = '30Dec21'
-  tagflat = 'tag_fired_HLT_Mu12_IP6'
-
-  #is_data = False
-  #out_label = 'test_mc_tag_fired_HLT_Mu12_IP6_pteta'
-  #version_label = 'BToJPsiKstar_V10_30Dec21'
-  #datasets = []
+  ##datasets = ['D1']
   #tagnano = '30Dec21'
-  #tagflat = 'tag_fired_HLT_Mu12_IP6'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
+
+  #is_data = True
+  #out_label = 'test_D1_tag_fired_anyBParkHLT_ptetadxysig_max4e6'
+  #version_label = 'V10_30Dec21'
+  ##datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
+  #datasets = ['D1']
+  #tagnano = '30Dec21'
+  #tagflat = 'tag_fired_anyBParkHLT'
+
+  is_data = False
+  out_label = 'test_mc_tag_fired_anyBParkHLT_ptetadxysig'
+  version_label = 'BToJPsiKstar_V10_30Dec21'
+  datasets = []
+  tagnano = '30Dec21'
+  tagflat = 'tag_fired_anyBParkHLT'
 
   TagAndProbeLauncher(is_data=is_data, out_label=out_label, version_label=version_label, ds=datasets, tagnano=tagnano, tagflat=tagflat).process()
 
