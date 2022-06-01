@@ -17,6 +17,7 @@ class TagAndProbeLauncher(object):
     self.tree_name = 'tree'
     self.do_submit_batch = True
     self.do_resubmit = False
+    self.do_short = False
     self.max_events = 4e6 # this corresponds to the number of events to process per job
 
     datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
@@ -156,8 +157,8 @@ class TagAndProbeLauncher(object):
         if not rootfile.TestBit(ROOT.TFile.kRecovered): continue
 
       if self.do_submit_batch:
-        submit_command = 'sbatch -p standard --account t3 --mem 3500 -o ./logs/{out}/log_{sufx}.txt -e ./logs/{out}/log_{sufx}.txt --job-name=tag_and_probe_{out}_{sufx} submitter.sh {infile} {out} {sufx}'.format(
-        #submit_command = 'sbatch -p short --time 01:00:00 --account t3 --mem 3500 -o ./logs/{out}/log_{sufx}.txt -e ./logs/{out}/log_{sufx}.txt --job-name=tag_and_probe_{out}_{sufx} submitter.sh {infile} {out} {sufx}'.format(
+        submit_command = 'sbatch -p {queue} --account t3 --mem 3500 -o ./logs/{out}/log_{sufx}.txt -e ./logs/{out}/log_{sufx}.txt --job-name=tag_and_probe_{out}_{sufx} submitter.sh {infile} {out} {sufx}'.format(
+            queue = 'standard' if not self.do_short else 'short --time 01:00:00',
             infile = filelist,
             out = self.out_label,
             sufx = out_suffix,
