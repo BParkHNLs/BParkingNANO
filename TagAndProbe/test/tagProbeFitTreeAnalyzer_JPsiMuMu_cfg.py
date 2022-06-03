@@ -5,9 +5,11 @@ import sys
 
 
 options = VarParsing('analysis')
-options.register('outLabel' , 'test'      , VarParsing.multiplicity.singleton, VarParsing.varType.string, "outLabel" )
-options.register('outSuffix', 'chunk0_nj1', VarParsing.multiplicity.singleton, VarParsing.varType.string, "outSuffix")
+options.register('outLabel'      , 'test'      , VarParsing.multiplicity.singleton, VarParsing.varType.string, "outLabel"      )
+options.register('outSuffix'     , 'chunk0_nj1', VarParsing.multiplicity.singleton, VarParsing.varType.string, "outSuffix"     )
+options.register('categorisation', 'pt_eta'    , VarParsing.multiplicity.singleton, VarParsing.varType.string, "categorisation")
 options.parseArguments()
+
 
 process = cms.Process("TagProbe")
 
@@ -16,6 +18,23 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.source = cms.Source("EmptySource")
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )    
+
+if options.categorisation == 'pt_eta':
+  categorisation = cms.PSet(
+        probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
+        probe_eta = cms.vdouble(0.0, 0.5, 1.0, 1.5, 2.0),
+        )
+elif options.categorisation == 'pt_dxysig':
+  categorisation = cms.PSet(
+        probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
+        probe_dxy_sig = cms.vdouble(0.0, 4.0, 6.0, 8.0, 10.0, 20.0, 500.0),
+      )
+elif options.categorisation == 'pt_eta_dxysig':
+  categorisation = cms.PSet(
+        probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
+        probe_eta = cms.vdouble(0.0, 0.5, 1.0, 1.5, 2.0),
+        probe_dxy_sig = cms.vdouble(0.0, 3.0, 4.0, 6.0, 8.0, 10.0, 20.0, 500.0),
+        )
 
 process.TagProbeFitTreeAnalyzer = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
     # IO parameters:
@@ -76,49 +95,13 @@ process.TagProbeFitTreeAnalyzer = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
     Efficiencies = cms.PSet(
         # used for final scale factors
         ##the name of the parameter set becomes the name of the directory
-        cat_pt_eta = cms.PSet(
-            #specifies the efficiency of which category and state to measure 
+        cat_eff = cms.PSet(
             EfficiencyCategoryAndState = cms.vstring("probe_fired_BParkingHLT","true"),
-            #specifies what unbinned variables to include in the dataset, the mass is needed for the fit
             UnbinnedVariables = cms.vstring("mass"),
-            #specifies the binning of parameters
-            BinnedVariables = cms.PSet(
-                probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
-                probe_eta = cms.vdouble(0.0, 0.5, 1.0, 1.5, 2.0),
-            ),
-            #first string is the default followed by binRegExp - PDFname pairs
-            #BinToPDFmap = cms.vstring("gaussPlusLinear", "*pt_bin0*", "gaussPlusQuadratic")
+            BinnedVariables = categorisation,
             BinToPDFmap = cms.vstring("gaussPlusLinear")
+            #BinToPDFmap = cms.vstring("gaussPlusLinear", "*pt_bin0*", "gaussPlusQuadratic")
         ),
-        # for better looking 2D plot
-        #cat_pt_eta = cms.PSet(
-        #    EfficiencyCategoryAndState = cms.vstring("probe_fired_BParkingHLT","true"),
-        #    UnbinnedVariables = cms.vstring("mass"),
-        #    BinnedVariables = cms.PSet(
-        #        probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0),
-        #        probe_eta = cms.vdouble(0.0, 0.5, 1.0, 1.5, 2.0),
-        #    ),
-        #    BinToPDFmap = cms.vstring("gaussPlusLinear")
-        #),
-        #cat_pt_dxysig = cms.PSet(
-        #    EfficiencyCategoryAndState = cms.vstring("probe_fired_BParkingHLT","true"),
-        #    UnbinnedVariables = cms.vstring("mass"),
-        #    BinnedVariables = cms.PSet(
-        #        probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
-        #        probe_dxy_sig = cms.vdouble(0.0, 4.0, 6.0, 8.0, 10.0, 20.0, 500.0),
-        #    ),
-        #    BinToPDFmap = cms.vstring("gaussPlusLinear")
-        #),
-        #cat_pt_eta_dxysig = cms.PSet(
-        #    EfficiencyCategoryAndState = cms.vstring("probe_fired_BParkingHLT","true"),
-        #    UnbinnedVariables = cms.vstring("mass"),
-        #    BinnedVariables = cms.PSet(
-        #        probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
-        #        probe_eta = cms.vdouble(0.0, 0.5, 1.0, 1.5, 2.0),
-        #        probe_dxy_sig = cms.vdouble(0.0, 4.0, 6.0, 8.0, 10.0, 20.0, 500.0),
-        #    ),
-        #    BinToPDFmap = cms.vstring("gaussPlusLinear")
-        #),
     )
 )
 

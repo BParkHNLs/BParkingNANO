@@ -6,24 +6,29 @@ import ROOT
 
 
 class TagAndProbeLauncher(object):
-  def __init__(self, is_data, out_label='', version_label='', ds=None, tagnano=None, tagflat=None):
+  def __init__(self, is_data, out_label='', version_label='', ds=None, tagnano=None, tagflat=None, categorisation=None):
     self.is_data = is_data
     self.out_label = out_label
     self.version_label = version_label
     self.ds = ds
     self.tagnano = tagnano 
     self.tagflat = tagflat
+    self.categorisation = categorisation
     self.user = 'anlyon'
     self.tree_name = 'tree'
     self.do_submit_batch = True
     self.do_resubmit = False
     self.do_short = False
-    self.max_events = 4e6 # this corresponds to the number of events to process per job
+    self.max_events = 5e6 # this corresponds to the number of events to process per job
 
     datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
     for dataset in self.ds:
       if self.is_data and dataset not in datasets:
-        raise RuntimeError('Invalid dataset, Please choose among [{}]'.format(datasets))
+        raise RuntimeError('Invalid dataset, Please choose among {}'.format(datasets))
+
+    categories = ['pt_eta', 'pt_dxysig', 'pt_eta_dxysig']
+    if self.categorisation not in categories:
+      raise RuntimeError('Invalid categorisation. Please choose among {}'.format(categories))
       
     if not self.is_data:
       self.ds = ['incl']
@@ -154,20 +159,24 @@ class TagAndProbeLauncher(object):
 
       if self.do_resubmit:
         rootfile = ROOT.TNetXNGFile.Open('/work/anlyon/tag_and_probe/outfiles/{}/results_{}_{}.root'.format(self.out_label, self.out_label, out_suffix), 'READ')
-        if not rootfile.TestBit(ROOT.TFile.kRecovered): continue
+        if not rootfile.TestBit(ROOT.TFile.kRecovered): 
+          print '-> previous job was successful'
+          continue
 
       if self.do_submit_batch:
-        submit_command = 'sbatch -p {queue} --account t3 --mem 3500 -o ./logs/{out}/log_{sufx}.txt -e ./logs/{out}/log_{sufx}.txt --job-name=tag_and_probe_{out}_{sufx} submitter.sh {infile} {out} {sufx}'.format(
+        submit_command = 'sbatch -p {queue} --account t3 --mem 3500 -o ./logs/{out}/log_{sufx}.txt -e ./logs/{out}/log_{sufx}.txt --job-name=tag_and_probe_{out}_{sufx} submitter.sh {infile} {out} {sufx} {cat}'.format(
             queue = 'standard' if not self.do_short else 'short --time 01:00:00',
             infile = filelist,
             out = self.out_label,
             sufx = out_suffix,
+            cat = self.categorisation,
             )
       else:
-        submit_command = 'sh submitter.sh {infile} {out} {sufx}'.format(
+        submit_command = 'sh submitter.sh {infile} {out} {sufx} {cat}'.format(
             infile = filelist,
             out = self.out_label,
             sufx = out_suffix,
+            cat = self.categorisation,
             )
 
       print '\n' + submit_command
@@ -181,30 +190,24 @@ class TagAndProbeLauncher(object):
 
 if __name__ == "__main__":
   
-  #is_data = True
-  #out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max4e6'
-  #version_label = 'V10_30Dec21'
+  is_data = True
+  out_label = 'test_D1_tag_fired_anyBParkHLT_ptetadxysig_max5e6'
+  version_label = 'V10_30Dec21'
   #datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
-  ##datasets = ['D1']
-  #tagnano = '30Dec21'
-  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
-
-  #is_data = True
-  #out_label = 'test_D1_tag_fired_anyBParkHLT_ptetadxysig_max4e6'
-  #version_label = 'V10_30Dec21'
-  ##datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
-  #datasets = ['D1']
-  #tagnano = '30Dec21'
-  #tagflat = 'tag_fired_anyBParkHLT'
-
-  is_data = False
-  out_label = 'test_mc_tag_fired_anyBParkHLT_ptetadxysig'
-  version_label = 'BToJPsiKstar_V10_30Dec21'
-  datasets = []
+  datasets = ['D1']
+  categorisation = 'pt_eta_dxysig'
   tagnano = '30Dec21'
   tagflat = 'tag_fired_anyBParkHLT'
 
-  TagAndProbeLauncher(is_data=is_data, out_label=out_label, version_label=version_label, ds=datasets, tagnano=tagnano, tagflat=tagflat).process()
+  #is_data = False
+  #out_label = 'test_mc_tag_fired_anyBParkHLT_ptetadxysig'
+  #version_label = 'BToJPsiKstar_V10_30Dec21'
+  #datasets = []
+  #categorisation = 'pt_eta_dxysig'
+  #tagnano = '30Dec21'
+  #tagflat = 'tag_fired_anyBParkHLT'
+
+  TagAndProbeLauncher(is_data=is_data, out_label=out_label, version_label=version_label, ds=datasets, tagnano=tagnano, tagflat=tagflat, categorisation=categorisation).process()
 
 
 

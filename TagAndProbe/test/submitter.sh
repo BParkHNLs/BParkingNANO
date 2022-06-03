@@ -3,6 +3,7 @@
 # ${1} infilename
 # ${2} out_label
 # ${3} out_suffix
+# ${4} categorisation
 
 homedir=$PWD
 
@@ -16,7 +17,7 @@ cd $workdir
 
 echo "running script"
 DATE_START=`date +%s`
-cmsRun tagProbeFitTreeAnalyzer_JPsiMuMu_cfg.py inputFiles_load=file.txt outLabel=${2} outSuffix=${3} 
+cmsRun tagProbeFitTreeAnalyzer_JPsiMuMu_cfg.py inputFiles_load=file.txt outLabel=${2} outSuffix=${3} categorisation=${4} 
 DATE_END=`date +%s`
 
 echo "coyping the files"

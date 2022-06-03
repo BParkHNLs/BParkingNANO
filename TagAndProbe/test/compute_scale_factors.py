@@ -9,10 +9,16 @@ import ROOT
 
 
 class ScaleFactorComputer(object):
-  def __init__(self, data_label, mc_label, out_label):
+  def __init__(self, data_label, mc_label, out_label, categorisation):
     self.data_label = data_label
     self.mc_label = mc_label
     self.out_label = out_label
+    self.categorisation = categorisation
+    self.eta_categories = ['0p00_0p50', '0p50_1p00', '1p00_1p50', '1p50_2p00']
+
+    categories = ['pt_eta', 'pt_dxysig', 'pt_eta_dxysig']
+    if self.categorisation not in categories:
+      raise RuntimeError('Invalid categorisation. Please choose among {}'.format(categories))
 
 
   def getDataSuffix(self, data_file):
@@ -44,16 +50,24 @@ class ScaleFactorComputer(object):
       if not path.exists('./results/{}/{}'.format(self.out_label, out_suffix)):
         os.system('mkdir -p ./results/{}/{}'.format(self.out_label, out_suffix))
 
-      command_sf = 'sh submitter_sf.sh {data_file} {mc_file} {out_label}'.format(
+      command_sf = 'sh submitter_sf.sh {data_file} {mc_file} {out_label} {cat}'.format(
           data_file = data_file,
           mc_file = mc_file, 
           out_label = self.out_label + '/' + out_suffix,
+          cat = self.categorisation,
           )
 
       os.system(command_sf)
 
-      scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_eta_fit.txt'.format(self.out_label, out_suffix))
-      #scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_dxysig_fit.txt'.format(self.out_label, out_suffix))
+      if self.categorisation == 'pt_eta':
+        scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_eta_fit.txt'.format(self.out_label, out_suffix))
+      elif self.categorisation == 'pt_dxysig':
+        scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_dxysig_fit.txt'.format(self.out_label, out_suffix))
+      elif self.categorisation == 'pt_eta_dxysig':
+        for eta_category in self.eta_categories:
+          scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_eff_fit_eta_{}.txt'.format(self.out_label, out_suffix, eta_category))
+          #scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_eta_dxysig_fit_eta_{}.txt'.format(self.out_label, out_suffix, eta_category))
+
       n_events_perchunk.append(self.getNEvents(out_suffix))
 
     return scale_factors_perchunk, n_events_perchunk
@@ -74,7 +88,7 @@ class ScaleFactorComputer(object):
     for ifile, sf_file in enumerate(scale_factors_perchunk):
       n_events_tot += n_events_perchunk[ifile]
 
-    # compute the weighted scale factor per pt and eta bin
+    # compute the weighted scale factor per x and y bin
     content = []
     weighted_scale_factors = []
     for ifile, sf_file in enumerate(scale_factors_perchunk):
@@ -83,49 +97,102 @@ class ScaleFactorComputer(object):
       sf_file = open(sf_file)
       lines = sf_file.readlines()
 
-      pt_bins = []
-      eta_bins = []
+      x_bins = []
+      y_bins = []
 
       for line in lines:
         weighted_scale_factors_perchunk = {}
-        ptmin, index = self.getItem(line, 0)
-        ptmax, index = self.getItem(line, index+1)
-        pt_bin = '{}_{}'.format(ptmin, ptmax)
-        pt_bins.append(pt_bin)
+        xmin, index = self.getItem(line, 0)
+        xmax, index = self.getItem(line, index+1)
+        x_bin = '{}_{}'.format(xmin, xmax)
+        x_bins.append(x_bin)
 
-        etamin, index = self.getItem(line, index+1)
-        etamax, index = self.getItem(line, index+1)
-        eta_bin = '{}_{}'.format(etamin, etamax)
-        eta_bins.append(eta_bin)
+        ymin, index = self.getItem(line, index+1)
+        ymax, index = self.getItem(line, index+1)
+        y_bin = '{}_{}'.format(ymin, ymax)
+        y_bins.append(y_bin)
 
         sf, index = self.getItem(line, index+1)
         weighted_sf = float(sf) * float(n_events_perchunk[ifile])
-        weighted_scale_factors_perchunk['{}_{}'.format(pt_bin, eta_bin)] = weighted_sf
+        weighted_scale_factors_perchunk['{}_{}'.format(x_bin, y_bin)] = weighted_sf
         weighted_scale_factors.append(weighted_scale_factors_perchunk)
 
         err, index = self.getItem(line, index+1)
 
-    # compute the weighted average per pt and eta bin
-    for pt_bin, eta_bin in zip(pt_bins, eta_bins):
+    # compute the weighted average per x and y bin
+    for x_bin, y_bin in zip(x_bins, y_bins):
 
       sum_weighted_scale_factor = 0.
 
       for weighted_scale_factor in weighted_scale_factors:
-        if '{}_{}'.format(pt_bin, eta_bin) in weighted_scale_factor.keys():
-          sum_weighted_scale_factor += weighted_scale_factor['{}_{}'.format(pt_bin, eta_bin)]
+        if '{}_{}'.format(x_bin, y_bin) in weighted_scale_factor.keys():
+          sum_weighted_scale_factor += weighted_scale_factor['{}_{}'.format(x_bin, y_bin)]
 
       average_scale_factor = sum_weighted_scale_factor / float(n_events_tot)
-      pt_bin_min = pt_bin[:pt_bin.find('_')]
-      pt_bin_max = pt_bin[pt_bin.find('_')+1:]
-      eta_bin_min = eta_bin[:eta_bin.find('_')]
-      eta_bin_max = eta_bin[eta_bin.find('_')+1:]
-      content = '{} {} {} {} {}\n'.format(pt_bin_min, pt_bin_max, eta_bin_min, eta_bin_max, average_scale_factor) 
+      x_bin_min = x_bin[:x_bin.find('_')]
+      x_bin_max = x_bin[x_bin.find('_')+1:]
+      y_bin_min = y_bin[:y_bin.find('_')]
+      y_bin_max = y_bin[y_bin.find('_')+1:]
+      content = '{} {} {} {} {}\n'.format(x_bin_min, x_bin_max, y_bin_min, y_bin_max, average_scale_factor) 
       #print content
 
       average_sf_file.write(content)
 
     average_sf_file.close()
     print '--> {} created'.format(filename)
+
+
+  def createHistogram(self, sf_filename, name):
+    # create 2D histogram
+    root_file = ROOT.TFile.Open(name + '.root', "RECREATE")
+    canv = ROOT.TCanvas('canv', 'canv', 800, 700)
+    
+    # open file with the scale factors
+    sf_file = open(sf_filename)
+    lines = sf_file.readlines()
+
+    x_bins = [ 6. ] # set the lowest bin
+    y_bins = [ 0. ] # set the lowest bin
+
+    scale_factor = {}
+
+    for line in lines:
+      xmin, index = self.getItem(line, 0)
+      xmax, index = self.getItem(line, index+1)
+      if float(xmax) not in x_bins: x_bins.append(float(xmax))
+
+      ymin, index = self.getItem(line, index+1)
+      ymax, index = self.getItem(line, index+1)
+      if float(ymax) not in y_bins: y_bins.append(float(ymax))
+
+      sf, index = self.getItem(line, index+1)
+      scale_factor['{}_{}_{}_{}'.format(float(xmin), float(xmax), float(ymin), float(ymax))] = sf
+      #print '{}_{}_{}_{}'.format(float(xmin), float(xmax), float(ymin), float(ymax))
+
+    x_bins = array('d', x_bins)
+    y_bins = array('d', y_bins)
+
+    hist_scale_factor = ROOT.TH2D('hist_scale_factor', 'hist_scale_factor', len(x_bins)-1, x_bins, len(y_bins)-1, y_bins)
+
+    for ix, x_bin in enumerate(x_bins):
+      for iy, y_bin in enumerate(y_bins):
+        if ix == len(x_bins)-1: continue
+        if iy == len(y_bins)-1: continue
+        #print '{} {} {}'.format(x_bin, y_bin, scale_factor['{}_{}_{}_{}'.format(x_bin, x_bins[ix+1], y_bin, y_bins[iy+1])])
+        sf = float(scale_factor['{}_{}_{}_{}'.format(x_bin, x_bins[ix+1], y_bin, y_bins[iy+1])])
+        hist_scale_factor.SetBinContent(ix+1, iy+1, sf)
+
+    hist_scale_factor.SetOption("colztexte")
+    hist_scale_factor.SetTitle("")
+    hist_scale_factor.Write()
+    hist_scale_factor.Draw()
+    ROOT.gStyle.SetOptStat(0)
+    
+    canv.SaveAs(name + '.png')
+    canv.SaveAs(name + '.pdf')
+    root_file.Close()
+
+    print '--> {}.root created'.format(name)
 
 
   def process(self):
@@ -138,79 +205,42 @@ class ScaleFactorComputer(object):
     # compute per chunk scale factors
     scale_factors_perchunk, n_events_perchunk = self.computePerChunkSF(data_files, mc_file)
 
-    # compute the weighted average of the scale factors
-    filename = './results/{}/scale_factors.txt'.format(self.out_label)
-    self.computeAverageScaleFactors(scale_factors_perchunk, n_events_perchunk, filename)
+    if self.categorisation != 'pt_eta_dxysig':
+      # compute the weighted average of the scale factors
+      filename = './results/{}/scale_factors.txt'.format(self.out_label)
+      self.computeAverageScaleFactors(scale_factors_perchunk, n_events_perchunk, filename)
 
-    # create 2D histogram
-    root_filename = './results/{}/scale_factors.root'.format(self.out_label)
-    root_file = ROOT.TFile.Open(root_filename, "RECREATE")
-    canv = ROOT.TCanvas('canv', 'canv', 800, 700)
-    
-    # open file with the scale factors
-    sf_file = open(filename)
-    lines = sf_file.readlines()
+      # create 2D histogram
+      root_filename = './results/{}/scale_factors'.format(self.out_label)
+      self.createHistogram(filename, root_filename)
 
-    pt_bins = [ 6. ] # set the lowest bin
-    eta_bins = [ 0. ] # set the lowest bin
+    else:
+      for eta_category in self.eta_categories:
+        # compute the weighted average of the scale factors
+        scale_factors = []
+        for scale_factor in scale_factors_perchunk:
+          if eta_category in scale_factor:
+            scale_factors.append(scale_factor)
+        filename = './results/{}/scale_factors_eta{}.txt'.format(self.out_label, eta_category)
+        self.computeAverageScaleFactors(scale_factors, n_events_perchunk, filename)
 
-    scale_factor = {}
+        # create 2D histogram
+        root_filename = './results/{}/scale_factors_eta{}'.format(self.out_label, eta_category)
+        self.createHistogram(filename, root_filename)
 
-    for line in lines:
-      ptmin, index = self.getItem(line, 0)
-      ptmax, index = self.getItem(line, index+1)
-      if float(ptmax) not in pt_bins: pt_bins.append(float(ptmax))
-
-      etamin, index = self.getItem(line, index+1)
-      etamax, index = self.getItem(line, index+1)
-      if float(etamax) not in eta_bins: eta_bins.append(float(etamax))
-
-      sf, index = self.getItem(line, index+1)
-      scale_factor['{}_{}_{}_{}'.format(float(ptmin), float(ptmax), float(etamin), float(etamax))] = sf
-      #print '{}_{}_{}_{}'.format(float(ptmin), float(ptmax), float(etamin), float(etamax))
-
-    pt_bins = array('d', pt_bins)
-    eta_bins = array('d', eta_bins)
-
-    hist_scale_factor = ROOT.TH2D('hist_scale_factor', 'hist_scale_factor', len(pt_bins)-1, pt_bins, len(eta_bins)-1, eta_bins)
-
-    for ipt, pt_bin in enumerate(pt_bins):
-      for ieta, eta_bin in enumerate(eta_bins):
-        if ipt == len(pt_bins)-1: continue
-        if ieta == len(eta_bins)-1: continue
-        #print '{} {} {}'.format(pt_bin, eta_bin, scale_factor['{}_{}_{}_{}'.format(pt_bin, pt_bins[ipt+1], eta_bin, eta_bins[ieta+1])])
-        sf = float(scale_factor['{}_{}_{}_{}'.format(pt_bin, pt_bins[ipt+1], eta_bin, eta_bins[ieta+1])])
-        hist_scale_factor.SetBinContent(ipt+1, ieta+1, sf)
-
-    hist_scale_factor.SetOption("colztexte")
-    hist_scale_factor.SetTitle("")
-    hist_scale_factor.Write()
-    hist_scale_factor.Draw()
-    ROOT.gStyle.SetOptStat(0)
-    
-    canv.SaveAs('scale_factors.png')
-    canv.SaveAs('scale_factors.pdf')
-    root_file.Close()
-    print '--> {} created'.format(root_filename)
-
+    print '\nDone'
 
 
 if __name__ == "__main__":
 
   ROOT.gROOT.SetBatch(True)
 
-  #data_label = 'scale_factors_tag_fired_anyBParkHLT_data_v2'
-  #mc_label = 'scale_factors_tag_fired_anyBParkHLT_mc_v2'
-  #out_label = 'scale_factors_tag_fired_anyBParkHLT_v2'
+  data_label = 'test_fullBPark_tag_fired_anyBParkHLT_ptetadxysig_max5e6'
+  mc_label = 'test_mc_tag_fired_anyBParkHLT_ptetadxysig'
+  out_label = 'test_fullBPark_tag_fired_anyBParkHLT_ptetadxysig_max5e6'
 
-  #data_label = 'test_fullBPark_tag_fired_anyBParkHLT_max5e6'
-  #mc_label = 'test_mc_tag_fired_anyBParkHLT'
-  #out_label = 'test_fullBPark_tag_fired_anyBParkHLT_max5e6'
+  categorisation = 'pt_eta_dxysig'
 
-  data_label = 'test_D1_tag_fired_HLT_Mu12_IP6_pteta_max3e6'
-  mc_label = 'test_mc_tag_fired_HLT_Mu12_IP6_pteta'
-  out_label = 'test_D1_tag_fired_HLT_Mu12_IP6_pteta_max3e6'
-
-  ScaleFactorComputer(data_label=data_label, mc_label=mc_label, out_label=out_label).process()
+  ScaleFactorComputer(data_label=data_label, mc_label=mc_label, out_label=out_label, categorisation=categorisation).process()
 
 
