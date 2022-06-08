@@ -111,7 +111,7 @@ void BToKLLBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       k_ptr->pt(), 
       k_ptr->eta(),
       k_ptr->phi(),
-      K_MASS
+      PI_MASS
       );
 
     for(size_t ll_idx = 0; ll_idx < dileptons->size(); ++ll_idx) {
@@ -151,8 +151,8 @@ void BToKLLBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
     
       KinVtxFitter fitter(
         {leptons_ttracks->at(l1_idx), leptons_ttracks->at(l2_idx), kaons_ttracks->at(k_idx)},
-        {l1_ptr->mass(), l2_ptr->mass(), K_MASS},
-        {LEP_SIGMA, LEP_SIGMA, K_SIGMA} //some small sigma for the lepton mass
+        {l1_ptr->mass(), l2_ptr->mass(), PI_MASS},
+        {LEP_SIGMA, LEP_SIGMA, PI_SIGMA} //some small sigma for the lepton mass
         );
       if(!fitter.success()) continue;
 
