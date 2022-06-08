@@ -98,7 +98,7 @@ BToKmumu = cms.EDProducer(
         ),
     postVtxSelection = cms.string(
         'userInt("sv_OK") == 1 && userFloat("sv_prob") > 0.001 '
-        '&& userFloat("fitted_cos_theta_2D") >= 0'
+        '&& userFloat("fitted_cos_theta_2D") >= 0.9'
         '&& userFloat("fitted_mass") > 4.5 && userFloat("fitted_mass") < 9.'
     )
 )
