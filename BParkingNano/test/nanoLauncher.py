@@ -164,11 +164,11 @@ class NanoLauncher(NanoTools):
       file_step = NanoTools.getStep(self, lines[iFile-1]) if self.mcprivate else iFile
       #file_step = iFile
       event_chain.append('  c->Add("{}/{}_nj{}.root");'.format(outputdir, nanoname, file_step))
-    if self.dosignal:    event_chain.append('  c->Process("BToMuMuPiDumper.C+", outFileName);')
-    if self.docontrol:   event_chain.append('  c->Process("BToKMuMuDumper.C+", outFileName);')
-    if self.dohnl:       event_chain.append('  c->Process("HNLToMuPiDumper.C+", outFileName);')
-    if self.dotageprobe: event_chain.append('  c->Process("TagAndProbeDumper.C+", outFileName);')
-    if self.mccentral:   event_chain.append('  c->Process("BackgroundSources.C+", outFileName);')
+    if self.dosignal:                    event_chain.append('  c->Process("BToMuMuPiDumper.C+", outFileName);')
+    if self.docontrol:                   event_chain.append('  c->Process("BToKMuMuDumper.C+", outFileName);')
+    if self.dohnl:                       event_chain.append('  c->Process("HNLToMuPiDumper.C+", outFileName);')
+    if self.dotageprobe:                 event_chain.append('  c->Process("TagAndProbeDumper.C+", outFileName);')
+    if self.mccentral and self.dosignal: event_chain.append('  c->Process("BackgroundSources.C+", outFileName);')
     event_chain = '\n'.join(event_chain)
 
     run_chain = []
@@ -186,9 +186,9 @@ class NanoLauncher(NanoTools):
       '#include "TProof.h"\n',
       'void starter(){',
       '  TString outFileName = "flat_bparknano.root";',
-      '  {addMC}'.format(addMC = '' if (self.data or self.dotageprobe) else 'outFileName += "_isMC";'),
+      '  {addMC}'.format(addMC = '' if self.data else 'outFileName += "_isMC";'),
       '  {addevt}'.format(addevt = event_chain),
-      '  {addrun}'.format(addrun = '' if (self.data or self.dotageprobe) else run_chain),
+      '  {addrun}'.format(addrun = '' if self.data else run_chain),
       '}',
     ]
     content = '\n'.join(content)
