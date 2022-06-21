@@ -11,7 +11,7 @@ def getOptions():
   parser.add_argument('--pl'        , type=str, dest='pl'          , help='label of the sample file'                                             , default=None)
   parser.add_argument('--ds'        , type=str, dest='ds'          , help='[optional] name of dataset'                                           , default=None)
   parser.add_argument('--tag'       , type=str, dest='tag'         , help='[optional] tag name'                                                  , default=None)
-  parser.add_argument('--doflat'              , dest='doflat'      , help='check the ntuples'                              , action='store_true', default=False)
+  parser.add_argument('--doflat'              , dest='doflat'      , help='check the ntuples'                               , action='store_true', default=False)
   parser.add_argument('--dosignal'            , dest='dosignal'    , help='run the BToMuMuPi process'                       , action='store_true', default=False)
   parser.add_argument('--docontrol'           , dest='docontrol'   , help='run the BToKMuMu process'                        , action='store_true', default=False)
   parser.add_argument('--dohnl'               , dest='dohnl'       , help='run the HNLToMuMuPi process'                     , action='store_true', default=False)
@@ -49,7 +49,35 @@ def checkParser(opt):
 class NanoProdManager(NanoTools):
   def __init__(self, opt):
     self.prodlabel    = vars(opt)['pl']
-    self.dataset      = vars(opt)['ds']
+    self.ds           = vars(opt)['ds']
+    if self.ds != None:
+      datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
+      if self.ds not in datasets:
+        raise RuntimeError('Please choose a dataset among {}'.format(datasets))
+      if self.ds == 'A1': self.dataset = 'ParkingBPH1_Run2018A'
+      if self.ds == 'A2': self.dataset = 'ParkingBPH2_Run2018A'
+      if self.ds == 'A3': self.dataset = 'ParkingBPH3_Run2018A'
+      if self.ds == 'A4': self.dataset = 'ParkingBPH4_Run2018A'
+      if self.ds == 'A5': self.dataset = 'ParkingBPH5_Run2018A'
+      if self.ds == 'A6': self.dataset = 'ParkingBPH6_Run2018A'
+      if self.ds == 'B1': self.dataset = 'ParkingBPH1_Run2018B'
+      if self.ds == 'B2': self.dataset = 'ParkingBPH2_Run2018B'
+      if self.ds == 'B3': self.dataset = 'ParkingBPH3_Run2018B'
+      if self.ds == 'B4': self.dataset = 'ParkingBPH4_Run2018B'
+      if self.ds == 'B5': self.dataset = 'ParkingBPH5_Run2018B'
+      if self.ds == 'B6': self.dataset = 'ParkingBPH6_Run2018B'
+      if self.ds == 'C1': self.dataset = 'ParkingBPH1_Run2018C'
+      if self.ds == 'C2': self.dataset = 'ParkingBPH2_Run2018C'
+      if self.ds == 'C3': self.dataset = 'ParkingBPH3_Run2018C'
+      if self.ds == 'C4': self.dataset = 'ParkingBPH4_Run2018C'
+      if self.ds == 'C5': self.dataset = 'ParkingBPH5_Run2018C'
+      if self.ds == 'D1': self.dataset = 'ParkingBPH1_Run2018D'
+      if self.ds == 'D2': self.dataset = 'ParkingBPH2_Run2018D'
+      if self.ds == 'D3': self.dataset = 'ParkingBPH3_Run2018D'
+      if self.ds == 'D4': self.dataset = 'ParkingBPH4_Run2018D'
+      if self.ds == 'D5': self.dataset = 'ParkingBPH5_Run2018D'
+    else:
+      self.dataset = self.ds
     self.tag          = vars(opt)['tag']
     self.doflat       = vars(opt)["doflat"]
     self.dosignal     = vars(opt)["dosignal"]
