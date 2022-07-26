@@ -17,6 +17,7 @@ def getOptions():
   parser = ArgumentParser(description='Script to merge the nanoAOD files resulting from a multijob production', add_help=True)
   parser.add_argument('--pl'      , type=str, dest='pl'         , help='label of the nano sample production'                                    , default='V01_n9000000_njt300')
   parser.add_argument('--ds'      , type=str, dest='ds'         , help='[data-mccentral] name of the dataset'                                   , default=None)
+  parser.add_argument('--point'   , type=str, dest='point'      , help='[mcprivate-optional] mass/ctau point'                                   , default=None)
   parser.add_argument('--tagnano' , type=str, dest='tagnano'    , help='[optional] tag to be added on the outputfile name of the nano sample'   , default=None)
   parser.add_argument('--tagflat' , type=str, dest='tagflat'    , help='[optional] tag to be added on the outputfile name of the flat sample'   , default=None)
   parser.add_argument('--maxfiles', type=str, dest='maxfiles'   , help='[optional] only merge n=maxfiles first files'                           , default=None)
@@ -53,6 +54,7 @@ class NanoMerger(NanoTools):
   def __init__(self, opt):
     self.prodlabel   = vars(opt)['pl']
     self.ds          = vars(opt)['ds']
+    self.point       = vars(opt)['point']
     self.tagnano     = vars(opt)['tagnano']
     self.tagflat     = vars(opt)['tagflat']
     self.maxfiles    = vars(opt)['maxfiles']
@@ -105,6 +107,7 @@ class NanoMerger(NanoTools):
 
       if len(nanoFiles) == 0: 
         print 'no files of interest in this chunk'
+        continue
 
       if self.doskip and NanoTools.checkFileExists(self, outputname):
         print 'merged file already exists in this chunk'
@@ -254,7 +257,10 @@ class NanoMerger(NanoTools):
     if self.mcprivate:
       locationSE = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/'.format(user, self.prodlabel)
       
-      pointdirs = NanoTools.getPointDirs(self, locationSE)
+      if self.point == None:
+        pointdirs = NanoTools.getPointDirs(self, locationSE)
+      else:
+        pointdirs = [locationSE + '/' + self.point]
 
       for pointdir in pointdirs:
         if 'merged' in pointdir: continue
