@@ -16,7 +16,6 @@
 # ${12}: doTagAndProbe
 #--------------------
 
-
 workdir="/scratch/"${2}"/"${3}"/job_nj"${SLURM_JOB_ID}"_"${SLURM_ARRAY_TASK_ID}
 echo "creating workdir "$workdir
 mkdir -p $workdir
@@ -49,7 +48,7 @@ echo "inputfilename: "$inputFilename
 # index of the output file
 if [ ${5} == 1 ] ; then #isMC
   if [ ${6} == 0 ] ; then  #private MC
-    search='_nj'
+    search='step4_'
     start=$inputFilename
     end=${start##*$search}
     outIdx=$((${#start} - ${#end}))
