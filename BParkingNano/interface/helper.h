@@ -66,6 +66,19 @@ inline Measurement1D l_xy(const FITTER& fitter, const reco::BeamSpot &bs) {
   return {delta.perp(), sqrt(err.rerr(delta))};
 }
 
+// See https://github.com/cms-sw/cmssw/blob/29f5fc15b34591745c5cd3c2c6eb9793aa6f371b/DataFormats/TrackReco/src/TrackBase.cc#L148
+inline double dxyError(const reco::TrackBase &tk, const reco::TrackBase::Point &vtx, const math::Error<3>::type &vertexCov) {
+  // Gradient of TrackBase::dxy(const Point &myBeamSpot) with respect to track parameters. Using unrolled expressions to avoid calling for higher dimension matrices
+  // ( 0, 0, x_vert * cos(phi) + y_vert * sin(phi), 1, 0 )
+  // Gradient with respect to point parameters
+  // ( sin(phi), -cos(phi))
+  // Propagate covariance assuming cross-terms of the covariance between track and vertex parameters are 0
+  return std::sqrt((vtx.x() * tk.px() + vtx.y() * tk.py()) * (vtx.x() * tk.px() + vtx.y() * tk.py()) / (tk.pt() * tk.pt()) *
+                    tk.covariance()(reco::TrackBase::i_phi, reco::TrackBase::i_phi) +
+                2 * (vtx.x() * tk.px() + vtx.y() * tk.py()) / tk.pt() * tk.covariance()(reco::TrackBase::i_phi, reco::TrackBase::i_dxy) + tk.covariance()(reco::TrackBase::i_dxy, reco::TrackBase::i_dxy) +
+                tk.py() * tk.py() / (tk.pt() * tk.pt()) * vertexCov(0, 0) - 2 * tk.py() * tk.px() / (tk.pt() * tk.pt()) * vertexCov(0, 1) +
+                tk.px() * tk.px() / (tk.pt() * tk.pt()) * vertexCov(1, 1));
+}
 
 inline GlobalPoint FlightDistVector (const reco::BeamSpot & bm, GlobalPoint Bvtx)
 {
