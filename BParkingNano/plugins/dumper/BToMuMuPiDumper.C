@@ -369,6 +369,9 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("mupi_mass_reco_gen_reldiff", &the_sig_mupi_mass_reco_gen_reldiff);
   signal_tree->Branch("lxy_reco_gen_reldiff", &the_sig_lxy_reco_gen_reldiff);
 
+  signal_tree->Branch("weight_mu0_softid", &the_sig_weight_mu0_softid);
+  signal_tree->Branch("weight_mu_looseid", &the_sig_weight_mu_looseid);
+
   signal_tree->Branch("weight_hlt_A1", &the_sig_weight_hlt_A1);
   signal_tree->Branch("weight_hlt_A1_6", &the_sig_weight_hlt_A1_6);
   signal_tree->Branch("weight_hlt_HLT_Mu9_IP6_A1_6", &the_sig_weight_hlt_HLT_Mu9_IP6_A1_6);
@@ -1070,6 +1073,10 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       the_sig_weight_pu_sig_C = isMC ? getPUWeight("pileup_weight_dataC_sigAug21.root", *Pileup_nTrueInt) : 1.;
       the_sig_weight_pu_sig_D = isMC ? getPUWeight("pileup_weight_dataD_sigAug21.root", *Pileup_nTrueInt) : 1.;
       the_sig_weight_pu_sig_tot = isMC ? getPUWeight("pileup_weight_datatot_sigAug21.root", *Pileup_nTrueInt) : 1.;
+
+      // lepton scale factor
+      the_sig_weight_mu0_softid = isMC ? getLeptonScaleFactor("RunABCD_SF_MuonID_2018.root", "softid", the_sig_trgmu_pt, abs(the_sig_trgmu_eta)) : 1.;
+      the_sig_weight_mu_looseid = isMC ? getLeptonScaleFactor("RunABCD_SF_MuonID_2018.root", "looseid", the_sig_mu_pt, abs(the_sig_mu_eta)) : 1.;
       
       signal_tree->Fill();
     } // end sound index
