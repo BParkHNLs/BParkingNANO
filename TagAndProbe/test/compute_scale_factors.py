@@ -15,6 +15,7 @@ class ScaleFactorComputer(object):
     self.out_label = out_label
     self.categorisation = categorisation
     self.eta_categories = ['0p00_0p50', '0p50_1p00', '1p00_1p50', '1p50_2p00']
+    self.do_plots = False
 
     categories = ['pt_eta', 'pt_dxysig', 'pt_eta_dxysig']
     if self.categorisation not in categories:
@@ -50,17 +51,20 @@ class ScaleFactorComputer(object):
       if not path.exists('./results/{}/{}'.format(self.out_label, out_suffix)):
         os.system('mkdir -p ./results/{}/{}'.format(self.out_label, out_suffix))
 
-      command_sf = 'sh submitter_sf.sh {data_file} {mc_file} {out_label} {cat}'.format(
+      command_sf = 'sh submitter_sf.sh {data_file} {mc_file} {out_label} {cat} {doplt}'.format(
           data_file = data_file,
           mc_file = mc_file, 
           out_label = self.out_label + '/' + out_suffix,
           cat = self.categorisation,
+          doplt = self.do_plots,
           )
 
+      print command_sf
       os.system(command_sf)
 
       if self.categorisation == 'pt_eta':
-        scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_eta_fit.txt'.format(self.out_label, out_suffix))
+        #scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_eta_fit.txt'.format(self.out_label, out_suffix))
+        scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_eff_fit.txt'.format(self.out_label, out_suffix))
       elif self.categorisation == 'pt_dxysig':
         scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_dxysig_fit.txt'.format(self.out_label, out_suffix))
       elif self.categorisation == 'pt_eta_dxysig':
@@ -187,20 +191,57 @@ class ScaleFactorComputer(object):
     hist_scale_factor.Write()
     hist_scale_factor.Draw()
     ROOT.gStyle.SetOptStat(0)
+
+    hist_scale_factor.SetDirectory(0)
     
-    canv.SaveAs(name + '.png')
-    canv.SaveAs(name + '.pdf')
+    #canv.SaveAs(name + '.png')
+    #canv.SaveAs(name + '.pdf')
     root_file.Close()
 
+    return hist_scale_factor
+
     print '--> {}.root created'.format(name)
+
+
+  def createPlot(self, hist, name):
+    hist_scale_factor = ROOT.TH2D('hist_scale_factor', 'hist_scale_factor', hist.GetNbinsX(), 0, hist.GetNbinsX(), hist.GetNbinsY(), 0, hist.GetNbinsY()-1)
+
+    canv = ROOT.TCanvas('canv', 'canv', 1200, 1000)
+    canv.SetRightMargin(0.15)
+
+    nX = hist.GetNbinsX()
+    nY = hist.GetNbinsY()
+
+    for i in range(1, nX+1):
+      for j in range(1, nY+1):
+        x = hist.GetBinContent(i,j)
+        dx = hist.GetBinError(i,j)
+        hist_scale_factor.SetBinContent(i, j, x)
+        hist_scale_factor.SetBinError(i, j, dx)
+
+    hist_scale_factor.GetZaxis().SetTitle("Scale Factor")
+    hist_scale_factor.GetZaxis().SetRangeUser(-1e-3, 1)
+    hist_scale_factor.SetOption("colztexte");
+    hist_scale_factor.SetTitle("")
+    hist_scale_factor.Draw()
+    ROOT.gStyle.SetTitleFillColor(0)
+    ROOT.gStyle.SetOptStat(0)
+    ROOT.gStyle.SetPaintTextFormat(".3f")
+
+    canv.SaveAs(name + '.png')
+    canv.SaveAs(name + '.pdf')
 
 
   def process(self):
     # get data files
     data_files = [f for f in glob.glob('/work/anlyon/tag_and_probe/outfiles/{}/results*root'.format(self.data_label))]
+    if len(data_files) == 0:
+      raise RuntimeError('Did not found data files "/work/anlyon/tag_and_probe/outfiles/{}/results*root". Please check.'.format(self.data_label))
 
     # get mc file
     mc_file = '/work/anlyon/tag_and_probe/outfiles/{lbl}/results_{lbl}_incl.root'.format(lbl=self.mc_label)
+    if not path.exists(mc_file):
+      raise RuntimeError('Did not found mc file "/work/anlyon/tag_and_probe/outfiles/{}/results_{}_incl.root". Please check.'.format(self.mc_label))
 
     # compute per chunk scale factors
     scale_factors_perchunk, n_events_perchunk = self.computePerChunkSF(data_files, mc_file)
@@ -212,7 +253,10 @@ class ScaleFactorComputer(object):
 
       # create 2D histogram
       root_filename = './results/{}/scale_factors'.format(self.out_label)
-      self.createHistogram(filename, root_filename)
+      hist_scale_factor = self.createHistogram(filename, root_filename)
+
+      # create plot
+      self.createPlot(hist_scale_factor, root_filename)
 
     else:
       for eta_category in self.eta_categories:
@@ -226,7 +270,10 @@ class ScaleFactorComputer(object):
 
         # create 2D histogram
         root_filename = './results/{}/scale_factors_eta{}'.format(self.out_label, eta_category)
-        self.createHistogram(filename, root_filename)
+        hist_scale_factor = self.createHistogram(filename, root_filename)
+
+        # create plot
+        self.createPlot(hist_scale_factor, root_filename)
 
     print '\nDone'
 
@@ -235,9 +282,70 @@ if __name__ == "__main__":
 
   ROOT.gROOT.SetBatch(True)
 
-  data_label = 'test_fullBPark_tag_fired_anyBParkHLT_ptetadxysig_max5e6'
-  mc_label = 'test_mc_tag_fired_anyBParkHLT_ptetadxysig'
-  out_label = 'test_fullBPark_tag_fired_anyBParkHLT_ptetadxysig_max5e6'
+  #data_label = 'test_D1_tag_fired_anyBParkHLT_ptetadxysig_max5e6'
+  #mc_label = 'test_mc_tag_fired_anyBParkHLT_ptetadxysig'
+  #out_label = 'test_D1_tag_fired_anyBParkHLT_ptetadxysig_max5e6'
+
+  # old data + old mc
+  #data_label = 'test_fullA_V06_tag_fired_HLT_Mu9_IP6_pteta_max3e6'
+  #mc_label = 'test_mc_V06_tag_fired_HLT_Mu9_IP6_pteta'
+  #out_label = 'test_fullA_V06_tag_fired_HLT_Mu9_IP6_pteta_max3e6'
+
+  #data_label = 'test_fullA_tag_fired_anyBParkHLT_pteta_max3e6'
+  #mc_label = 'test_mc_tag_fired_anyBParkHLT_pteta'
+  #out_label = 'test_fullA_tag_fired_anyBParkHLT_pteta_max3e6'
+
+  #data_label = 'test_D1_tag_fired_DST_DoubleMu1_pteta_max3e6'
+  #mc_label = 'test_mc_tag_fired_DST_DoubleMu1_pteta'
+  #out_label = 'test_D1_tag_fired_DST_DoubleMu1_pteta_max3e6'
+
+  # new data + new mc -> do not get the same --> issue with data and/or mc sample?
+  #data_label = 'test_fullA_tag_fired_HLT_Mu9_IP6_pteta_max4e6'
+  #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_pteta'
+  #out_label = 'test_fullA_tag_fired_HLT_Mu9_IP6_pteta_max4e6'
+
+  # new data + old mc -> do not get the same
+  #data_label = 'test_fullA_tag_fired_HLT_Mu9_IP6_pteta_max4e6'
+  #mc_label = 'test_mc_V06_tag_fired_HLT_Mu9_IP6_pteta'
+  #out_label = 'test_fullA_mc_V06_tag_fired_HLT_Mu9_IP6_pteta_max4e6'
+
+  # old data + new mc -> get pretty much the same! does that mean that there is an issue with the data samples? nano or flat?
+  #data_label = 'test_fullA_V06_tag_fired_HLT_Mu9_IP6_pteta_max3e6'
+  #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_pteta'
+  #out_label = 'test_fullA_V06_mc_V10_tag_fired_HLT_Mu9_IP6_pteta_max3e6'
+
+  #data_label = 'test_fullA_tag_fired_HLT_Mu9_IP6_pteta_max4e6_v2'
+  #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_pteta'
+  #out_label = 'test_fullA_tag_fired_HLT_Mu9_IP6_pteta_max4e6_v2'
+
+
+  #data_label = 'test_D1_tag_fired_anyBParkHLT_pteta_max5e6_v2'
+  #mc_label = 'test_mc_tag_fired_anyBParkHLT_pteta_v2'
+  #out_label = 'test_D1_tag_fired_anyBParkHLT_pteta_max5e6_v2'
+
+  #data_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2'
+  #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_v2'
+  #out_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2'
+
+  #data_label = 'test_fullBPark_tag_fired_anyBParkHLT_pteta_max5e6_v2'
+  #mc_label = 'test_mc_tag_fired_anyBParkHLT_pteta_v2'
+  #out_label = 'test_fullBPark_tag_fired_anyBParkHLT_pteta_max5e6_v2'
+
+  #data_label = 'test_D1_tag_fired_anyBParkHLT_pteta_max3e6_v3'
+  #mc_label = 'test_mc_tag_fired_anyBParkHLT_pteta_v2'
+  #out_label = 'test_D1_tag_fired_anyBParkHLT_pteta_max3e6_v3'
+
+  #data_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2'
+  #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_v2'
+  #out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2'
+
+  #data_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
+  #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
+  #out_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
+
+  data_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
+  mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
+  out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
 
   categorisation = 'pt_eta_dxysig'
 

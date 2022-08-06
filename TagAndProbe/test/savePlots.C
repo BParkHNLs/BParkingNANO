@@ -10,15 +10,18 @@
 // ------- Global Variables ------- //
 
 //TString inputFileName = "results_tag_and_probe_v2_tag_fired_DST_DoubleMu1_data_A1_6_forplots.root";
-TString inputFileName = "results_tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_dataA1_B1_v1.root";
-string dirLabel = "tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_B1_v1";
-Bool_t isMC = false;
+//TString inputFileName = "/work/anlyon/tag_and_probe/outfiles/test_mc_tag_fired_anyBParkHLT_ptetadxysig/results_test_mc_tag_fired_anyBParkHLT_ptetadxysig_incl.root";
+//string dirLabel = "test_mc_tag_fired_anyBParkHLT_ptetadxysig";
+//Bool_t isMC = true;
 
 
 // -------------------------------- //
 
 
 void savePlots(
+         TString inputFileName,
+         string dirLabel,
+         string isMC,
 			   string dir="results", 
 			   bool isCutAndCount=false, 
 			   bool isMCTruth = false ) {
@@ -26,7 +29,7 @@ void savePlots(
   gStyle->SetPaintTextFormat(".1f");
 
   string outdir = "./results/" + dirLabel;
-  if(isMC){
+  if(isMC == "True"){
     outdir += "/mc/";
   }
   else{
