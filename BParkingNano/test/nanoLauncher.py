@@ -10,7 +10,7 @@ from nanoTools import NanoTools
 sys.path.append('../data/samples')
 from bparkingdata_samples import bpark_samples
 from qcdmuenriched_samples import qcd_samples
-from signal_samples_Aug21 import signal_samples
+from signal_samples_Jun22 import signal_samples
 
 
 def getOptions():
