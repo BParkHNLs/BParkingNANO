@@ -40,9 +40,9 @@ BToMuMuPi = cms.EDProducer(
         'pt > 1.5',
         'abs(eta) < 2.',
         'abs(userFloat("dz")) > 0.0015',
-        'abs(userFloat("dxy")) > 0.001',
+        'abs(userFloat("dxy_BS")) > 0.001',
         'abs(userFloat("dzS")) > 1.',
-        'abs(userFloat("dxyS")) > 1.5',
+        'abs(userFloat("dxyS_BS")) > 1.5',
       ])
     ),
     preVtxSelection = cms.string(' & '.join([
@@ -61,9 +61,9 @@ BToMuMuPi = cms.EDProducer(
         'userInt("hnl_vtx_OK") == 1',
         'userFloat("hnl_vtx_prob") > 0.001',
         'userFloat("hnl_fitted_cos_theta_2D") > 0.99',
-        'userFloat("hnl_ls_xy") > 20',
+        'userFloat("hnl_ls_xy") > 15',
         'mass < 8',
-        'userFloat("hnl_fitted_mass") < 7.',
+        ##'userFloat("hnl_fitted_mass") < 7.',
         ##'abs(userFloat("cos_theta_star_pion")) < 0.9',
         ])
     ), 
