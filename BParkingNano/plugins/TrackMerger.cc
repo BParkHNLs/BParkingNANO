@@ -257,6 +257,8 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
     pcand.setPdgId(trk.pdgId());
     pcand.addUserInt("isPacked", (iTrk < nTracks));
     pcand.addUserInt("isLostTrk", (iTrk < nTracks) ? 0 : 1);      
+    // IP computed wrt to PV ref, as in https://cmssdt.cern.ch/lxr/source/DataFormats/PatCandidates/interface/PackedCandidate.h?v=CMSSW_12_5_X_2022-08-01-2300&%21v=CMSSW_10_6_20
+    // checked that it is compatible (avg e-3 accuracy) to the IP evaluated at the first PV
     pcand.addUserFloat("dxy", trk.dxy());
     pcand.addUserFloat("dxyS", trk.dxy()/trk.dxyError());
     pcand.addUserFloat("dz", trk.dz()); 
