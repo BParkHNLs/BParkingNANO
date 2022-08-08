@@ -52,7 +52,12 @@ void NanoRunDumper::SlaveBegin(TTree * /*tree*/)
   TString option = GetOption();
   TString outFileName = option;
 
-  outFileName.Resize(outFileName.Length()-5);
+  if(outFileName.Contains("isSignalMC")){
+    outFileName.Resize(outFileName.Length()-11);
+  }
+  else{
+    outFileName.Resize(outFileName.Length()-5);
+  }
 
   // check if outputfile exists
   if(gSystem->AccessPathName(outFileName)){
