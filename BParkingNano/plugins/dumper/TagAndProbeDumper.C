@@ -209,6 +209,9 @@ Bool_t TagAndProbeDumper::Process(Long64_t entry)
 
   fReader.SetLocalEntry(entry);
 
+  // for data, we skip the event in case it doesn't pass the lumi mask
+  if(!isMC && lumiMask(*run, *luminosityBlock) == false) return false;
+
   // initial strategy
   //if(Muon_fired_DST_DoubleMu1_noVtx_CaloScouting_v2[JPsiToMuMu_lep1_idx[0]] != 1) return false;
   //if(Muon_prescale_DST_DoubleMu1_noVtx_CaloScouting_v2[JPsiToMuMu_lep1_idx[0]] != 1) return false;
@@ -220,130 +223,139 @@ Bool_t TagAndProbeDumper::Process(Long64_t entry)
   //if(Muon_prescale_DST_DoubleMu1_noVtx_CaloScouting_v2[JPsiToMuMu_lep1_idx[0]] == -1) return false;
   
   // requirement of the tag muon to fire any BParking HLT line
-  if(Muon_isTriggeringBPark[JPsiToMuMu_lep1_idx[0]] != 1) return false;
+  //if(Muon_isTriggeringBPark[JPsiToMuMu_lep1_idx[0]] != 1) return false;
+  //if(Muon_fired_HLT_Mu12_IP6[JPsiToMuMu_lep1_idx[0]] != 1) return false;
+  //if(Muon_fired_HLT_Mu9_IP6[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu12_IP6[JPsiToMuMu_lep1_idx[0]] != 1) return false;
+  //if(Muon_fired_HLT_Mu10p5_IP3p5[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu8_IP3[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu12_IP6[JPsiToMuMu_lep1_idx[0]] != 1) return false;
+  if(Muon_fired_HLT_Mu10p5_IP3p5[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu12_IP6[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu7_IP4[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu8_IP3[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu8_IP5[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu8_IP6[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu8p5_IP3p5[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu9_IP4[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu9_IP5[JPsiToMuMu_lep1_idx[0]] != 1 && Muon_fired_HLT_Mu9_IP6[JPsiToMuMu_lep1_idx[0]] != 1) return false;
+    
+  // number of candidates in the event
+  UInt_t nCand = *nJPsiToMuMu; 
 
-  // by default, take the first candidate (possible since <permille events have more than one candidate per event)
-  the_pt = JPsiToMuMu_pt[0];
-  the_eta = fabs(JPsiToMuMu_eta[0]);
-  the_phi = JPsiToMuMu_phi[0];
-  the_mass = JPsiToMuMu_mass[0];
-  the_deltar = JPsiToMuMu_deltaR[0];
-  the_lxy = JPsiToMuMu_lxy[0];
-  the_lxy_sig = JPsiToMuMu_lxy_sig[0];
-  the_ismatched = fabs(JPsiToMuMu_isMatched[0]);
+  if(nCand > 0){
+    // by default, take the first candidate (possible since <permille events have more than one candidate per event)
+    the_pt = JPsiToMuMu_pt[0];
+    the_eta = fabs(JPsiToMuMu_eta[0]);
+    the_phi = JPsiToMuMu_phi[0];
+    the_mass = JPsiToMuMu_mass[0];
+    the_deltar = JPsiToMuMu_deltaR[0];
+    the_lxy = JPsiToMuMu_lxy[0];
+    the_lxy_sig = JPsiToMuMu_lxy_sig[0];
+    the_ismatched = fabs(JPsiToMuMu_isMatched[0]);
 
-  the_tag_pt = JPsiToMuMu_lep1_pt[0];
-  the_tag_eta = fabs(JPsiToMuMu_lep1_eta[0]);
-  the_tag_phi = JPsiToMuMu_lep1_phi[0];
-  the_tag_dxy = fabs(Muon_dxy[JPsiToMuMu_lep1_idx[0]]);
-  the_tag_dz = fabs(Muon_dz[JPsiToMuMu_lep1_idx[0]]);
-  the_tag_dxy_sig = fabs(Muon_dxyS[JPsiToMuMu_lep1_idx[0]]);
-  the_tag_dz_sig = fabs(Muon_dzS[JPsiToMuMu_lep1_idx[0]]);
-  the_tag_fired_HLT_Mu7_IP4 = Muon_fired_HLT_Mu7_IP4[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu8_IP6 = Muon_fired_HLT_Mu8_IP6[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu8_IP5 = Muon_fired_HLT_Mu8_IP5[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu8_IP3 = Muon_fired_HLT_Mu8_IP3[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu8p5_IP3p5 = Muon_fired_HLT_Mu8p5_IP3p5[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu9_IP6 = Muon_fired_HLT_Mu9_IP6[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu9_IP5 = Muon_fired_HLT_Mu9_IP5[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu9_IP4 = Muon_fired_HLT_Mu9_IP4[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu10p5_IP3p5 = Muon_fired_HLT_Mu10p5_IP3p5[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu12_IP6 = Muon_fired_HLT_Mu12_IP6[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu8_v1 = Muon_fired_HLT_Mu8_v1[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu8_v12 = Muon_fired_HLT_Mu8_v12[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_Mu7p5_Track7_Jpsi_v11 = Muon_fired_HLT_Mu7p5_Track7_Jpsi_v11[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_L2Mu23NoVtx_2Cha_v1 = Muon_fired_HLT_L2Mu23NoVtx_2Cha_v1[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1 = Muon_fired_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_DST_DoubleMu1_noVtx_CaloScouting_v2 = Muon_fired_DST_DoubleMu1_noVtx_CaloScouting_v2[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_DST_DoubleMu3_noVtx_CaloScouting_v6 = Muon_fired_DST_DoubleMu3_noVtx_CaloScouting_v6[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3 = Muon_fired_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3[JPsiToMuMu_lep1_idx[0]];
-  the_tag_fired_HLT_BTagMu_AK4DiJet40_Mu5_v13 = Muon_fired_HLT_BTagMu_AK4DiJet40_Mu5_v13[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu7_IP4 = Muon_prescale_HLT_Mu7_IP4[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu8_IP6 = Muon_prescale_HLT_Mu8_IP6[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu8_IP5 = Muon_prescale_HLT_Mu8_IP5[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu8_IP3 = Muon_prescale_HLT_Mu8_IP3[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu8p5_IP3p5 = Muon_prescale_HLT_Mu8p5_IP3p5[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu9_IP6 = Muon_prescale_HLT_Mu9_IP6[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu9_IP5 = Muon_prescale_HLT_Mu9_IP5[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu9_IP4 = Muon_prescale_HLT_Mu9_IP4[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu10p5_IP3p5 = Muon_prescale_HLT_Mu10p5_IP3p5[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu12_IP6 = Muon_prescale_HLT_Mu12_IP6[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu8_v1 = Muon_prescale_HLT_Mu8_v1[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu8_v12 = Muon_prescale_HLT_Mu8_v12[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_Mu7p5_Track7_Jpsi_v11 = Muon_prescale_HLT_Mu7p5_Track7_Jpsi_v11[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_L2Mu23NoVtx_2Cha_v1 = Muon_prescale_HLT_L2Mu23NoVtx_2Cha_v1[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1 = Muon_prescale_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_DST_DoubleMu1_noVtx_CaloScouting_v2 = Muon_prescale_DST_DoubleMu1_noVtx_CaloScouting_v2[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_DST_DoubleMu3_noVtx_CaloScouting_v6 = Muon_prescale_DST_DoubleMu3_noVtx_CaloScouting_v6[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3 = Muon_prescale_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3[JPsiToMuMu_lep1_idx[0]];
-  the_tag_prescale_HLT_BTagMu_AK4DiJet40_Mu5_v13 = Muon_prescale_HLT_BTagMu_AK4DiJet40_Mu5_v13[JPsiToMuMu_lep1_idx[0]];
+    the_tag_pt = JPsiToMuMu_lep1_pt[0];
+    the_tag_eta = fabs(JPsiToMuMu_lep1_eta[0]);
+    the_tag_phi = JPsiToMuMu_lep1_phi[0];
+    the_tag_dxy = fabs(Muon_dxy[JPsiToMuMu_lep1_idx[0]]);
+    the_tag_dz = fabs(Muon_dz[JPsiToMuMu_lep1_idx[0]]);
+    the_tag_dxy_sig = fabs(Muon_dxyS[JPsiToMuMu_lep1_idx[0]]);
+    the_tag_dz_sig = fabs(Muon_dzS[JPsiToMuMu_lep1_idx[0]]);
+    the_tag_fired_HLT_Mu7_IP4 = Muon_fired_HLT_Mu7_IP4[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu8_IP6 = Muon_fired_HLT_Mu8_IP6[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu8_IP5 = Muon_fired_HLT_Mu8_IP5[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu8_IP3 = Muon_fired_HLT_Mu8_IP3[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu8p5_IP3p5 = Muon_fired_HLT_Mu8p5_IP3p5[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu9_IP6 = Muon_fired_HLT_Mu9_IP6[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu9_IP5 = Muon_fired_HLT_Mu9_IP5[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu9_IP4 = Muon_fired_HLT_Mu9_IP4[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu10p5_IP3p5 = Muon_fired_HLT_Mu10p5_IP3p5[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu12_IP6 = Muon_fired_HLT_Mu12_IP6[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu8_v1 = Muon_fired_HLT_Mu8_v1[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu8_v12 = Muon_fired_HLT_Mu8_v12[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_Mu7p5_Track7_Jpsi_v11 = Muon_fired_HLT_Mu7p5_Track7_Jpsi_v11[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_L2Mu23NoVtx_2Cha_v1 = Muon_fired_HLT_L2Mu23NoVtx_2Cha_v1[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1 = Muon_fired_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_DST_DoubleMu1_noVtx_CaloScouting_v2 = Muon_fired_DST_DoubleMu1_noVtx_CaloScouting_v2[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_DST_DoubleMu3_noVtx_CaloScouting_v6 = Muon_fired_DST_DoubleMu3_noVtx_CaloScouting_v6[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3 = Muon_fired_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3[JPsiToMuMu_lep1_idx[0]];
+    the_tag_fired_HLT_BTagMu_AK4DiJet40_Mu5_v13 = Muon_fired_HLT_BTagMu_AK4DiJet40_Mu5_v13[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu7_IP4 = Muon_prescale_HLT_Mu7_IP4[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu8_IP6 = Muon_prescale_HLT_Mu8_IP6[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu8_IP5 = Muon_prescale_HLT_Mu8_IP5[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu8_IP3 = Muon_prescale_HLT_Mu8_IP3[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu8p5_IP3p5 = Muon_prescale_HLT_Mu8p5_IP3p5[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu9_IP6 = Muon_prescale_HLT_Mu9_IP6[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu9_IP5 = Muon_prescale_HLT_Mu9_IP5[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu9_IP4 = Muon_prescale_HLT_Mu9_IP4[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu10p5_IP3p5 = Muon_prescale_HLT_Mu10p5_IP3p5[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu12_IP6 = Muon_prescale_HLT_Mu12_IP6[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu8_v1 = Muon_prescale_HLT_Mu8_v1[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu8_v12 = Muon_prescale_HLT_Mu8_v12[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_Mu7p5_Track7_Jpsi_v11 = Muon_prescale_HLT_Mu7p5_Track7_Jpsi_v11[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_L2Mu23NoVtx_2Cha_v1 = Muon_prescale_HLT_L2Mu23NoVtx_2Cha_v1[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1 = Muon_prescale_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_DST_DoubleMu1_noVtx_CaloScouting_v2 = Muon_prescale_DST_DoubleMu1_noVtx_CaloScouting_v2[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_DST_DoubleMu3_noVtx_CaloScouting_v6 = Muon_prescale_DST_DoubleMu3_noVtx_CaloScouting_v6[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3 = Muon_prescale_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3[JPsiToMuMu_lep1_idx[0]];
+    the_tag_prescale_HLT_BTagMu_AK4DiJet40_Mu5_v13 = Muon_prescale_HLT_BTagMu_AK4DiJet40_Mu5_v13[JPsiToMuMu_lep1_idx[0]];
 
-  the_probe_pt = JPsiToMuMu_lep2_pt[0];
-  the_probe_eta = fabs(JPsiToMuMu_lep2_eta[0]);
-  the_probe_phi = JPsiToMuMu_lep2_phi[0];
-  the_probe_dxy = fabs(Muon_dxy[JPsiToMuMu_lep2_idx[0]]);
-  the_probe_dz = fabs(Muon_dz[JPsiToMuMu_lep2_idx[0]]);
-  the_probe_dxy_sig = fabs(Muon_dxyS[JPsiToMuMu_lep2_idx[0]]);
-  the_probe_dz_sig = fabs(Muon_dzS[JPsiToMuMu_lep2_idx[0]]);
-  the_probe_istight = Muon_tightId[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu7_IP4 = Muon_fired_HLT_Mu7_IP4[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu8_IP6 = Muon_fired_HLT_Mu8_IP6[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu8_IP5 = Muon_fired_HLT_Mu8_IP5[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu8_IP3 = Muon_fired_HLT_Mu8_IP3[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu8p5_IP3p5 = Muon_fired_HLT_Mu8p5_IP3p5[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu9_IP6 = Muon_fired_HLT_Mu9_IP6[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu9_IP5 = Muon_fired_HLT_Mu9_IP5[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu9_IP4 = Muon_fired_HLT_Mu9_IP4[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu10p5_IP3p5 = Muon_fired_HLT_Mu10p5_IP3p5[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu12_IP6 = Muon_fired_HLT_Mu12_IP6[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu8_v1 = Muon_fired_HLT_Mu8_v1[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu8_v12 = Muon_fired_HLT_Mu8_v12[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_Mu7p5_Track7_Jpsi_v11 = Muon_fired_HLT_Mu7p5_Track7_Jpsi_v11[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_L2Mu23NoVtx_2Cha_v1 = Muon_fired_HLT_L2Mu23NoVtx_2Cha_v1[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1 = Muon_fired_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_DST_DoubleMu1_noVtx_CaloScouting_v2 = Muon_fired_DST_DoubleMu1_noVtx_CaloScouting_v2[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_DST_DoubleMu3_noVtx_CaloScouting_v6 = Muon_fired_DST_DoubleMu3_noVtx_CaloScouting_v6[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3 = Muon_fired_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3[JPsiToMuMu_lep2_idx[0]];
-  the_probe_fired_HLT_BTagMu_AK4DiJet40_Mu5_v13 = Muon_fired_HLT_BTagMu_AK4DiJet40_Mu5_v13[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu7_IP4 = Muon_prescale_HLT_Mu7_IP4[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu8_IP6 = Muon_prescale_HLT_Mu8_IP6[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu8_IP5 = Muon_prescale_HLT_Mu8_IP5[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu8_IP3 = Muon_prescale_HLT_Mu8_IP3[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu8p5_IP3p5 = Muon_prescale_HLT_Mu8p5_IP3p5[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu9_IP6 = Muon_prescale_HLT_Mu9_IP6[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu9_IP5 = Muon_prescale_HLT_Mu9_IP5[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu9_IP4 = Muon_prescale_HLT_Mu9_IP4[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu10p5_IP3p5 = Muon_prescale_HLT_Mu10p5_IP3p5[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu12_IP6 = Muon_prescale_HLT_Mu12_IP6[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu8_v1 = Muon_prescale_HLT_Mu8_v1[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu8_v12 = Muon_prescale_HLT_Mu8_v12[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_Mu7p5_Track7_Jpsi_v11 = Muon_prescale_HLT_Mu7p5_Track7_Jpsi_v11[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_L2Mu23NoVtx_2Cha_v1 = Muon_prescale_HLT_L2Mu23NoVtx_2Cha_v1[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1 = Muon_prescale_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_DST_DoubleMu1_noVtx_CaloScouting_v2 = Muon_prescale_DST_DoubleMu1_noVtx_CaloScouting_v2[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_DST_DoubleMu3_noVtx_CaloScouting_v6 = Muon_prescale_DST_DoubleMu3_noVtx_CaloScouting_v6[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3 = Muon_prescale_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3[JPsiToMuMu_lep2_idx[0]];
-  the_probe_prescale_HLT_BTagMu_AK4DiJet40_Mu5_v13 = Muon_prescale_HLT_BTagMu_AK4DiJet40_Mu5_v13[JPsiToMuMu_lep2_idx[0]];
+    the_probe_pt = JPsiToMuMu_lep2_pt[0];
+    the_probe_eta = fabs(JPsiToMuMu_lep2_eta[0]);
+    the_probe_phi = JPsiToMuMu_lep2_phi[0];
+    the_probe_dxy = fabs(Muon_dxy[JPsiToMuMu_lep2_idx[0]]);
+    the_probe_dz = fabs(Muon_dz[JPsiToMuMu_lep2_idx[0]]);
+    the_probe_dxy_sig = fabs(Muon_dxyS[JPsiToMuMu_lep2_idx[0]]);
+    the_probe_dz_sig = fabs(Muon_dzS[JPsiToMuMu_lep2_idx[0]]);
+    the_probe_istight = Muon_tightId[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu7_IP4 = Muon_fired_HLT_Mu7_IP4[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu8_IP6 = Muon_fired_HLT_Mu8_IP6[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu8_IP5 = Muon_fired_HLT_Mu8_IP5[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu8_IP3 = Muon_fired_HLT_Mu8_IP3[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu8p5_IP3p5 = Muon_fired_HLT_Mu8p5_IP3p5[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu9_IP6 = Muon_fired_HLT_Mu9_IP6[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu9_IP5 = Muon_fired_HLT_Mu9_IP5[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu9_IP4 = Muon_fired_HLT_Mu9_IP4[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu10p5_IP3p5 = Muon_fired_HLT_Mu10p5_IP3p5[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu12_IP6 = Muon_fired_HLT_Mu12_IP6[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu8_v1 = Muon_fired_HLT_Mu8_v1[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu8_v12 = Muon_fired_HLT_Mu8_v12[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_Mu7p5_Track7_Jpsi_v11 = Muon_fired_HLT_Mu7p5_Track7_Jpsi_v11[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_L2Mu23NoVtx_2Cha_v1 = Muon_fired_HLT_L2Mu23NoVtx_2Cha_v1[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1 = Muon_fired_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_DST_DoubleMu1_noVtx_CaloScouting_v2 = Muon_fired_DST_DoubleMu1_noVtx_CaloScouting_v2[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_DST_DoubleMu3_noVtx_CaloScouting_v6 = Muon_fired_DST_DoubleMu3_noVtx_CaloScouting_v6[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3 = Muon_fired_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3[JPsiToMuMu_lep2_idx[0]];
+    the_probe_fired_HLT_BTagMu_AK4DiJet40_Mu5_v13 = Muon_fired_HLT_BTagMu_AK4DiJet40_Mu5_v13[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu7_IP4 = Muon_prescale_HLT_Mu7_IP4[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu8_IP6 = Muon_prescale_HLT_Mu8_IP6[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu8_IP5 = Muon_prescale_HLT_Mu8_IP5[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu8_IP3 = Muon_prescale_HLT_Mu8_IP3[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu8p5_IP3p5 = Muon_prescale_HLT_Mu8p5_IP3p5[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu9_IP6 = Muon_prescale_HLT_Mu9_IP6[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu9_IP5 = Muon_prescale_HLT_Mu9_IP5[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu9_IP4 = Muon_prescale_HLT_Mu9_IP4[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu10p5_IP3p5 = Muon_prescale_HLT_Mu10p5_IP3p5[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu12_IP6 = Muon_prescale_HLT_Mu12_IP6[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu8_v1 = Muon_prescale_HLT_Mu8_v1[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu8_v12 = Muon_prescale_HLT_Mu8_v12[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_Mu7p5_Track7_Jpsi_v11 = Muon_prescale_HLT_Mu7p5_Track7_Jpsi_v11[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_L2Mu23NoVtx_2Cha_v1 = Muon_prescale_HLT_L2Mu23NoVtx_2Cha_v1[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1 = Muon_prescale_HLT_L2Mu23NoVtx_2Cha_CosmicSeed_v1[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_DST_DoubleMu1_noVtx_CaloScouting_v2 = Muon_prescale_DST_DoubleMu1_noVtx_CaloScouting_v2[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_DST_DoubleMu3_noVtx_CaloScouting_v6 = Muon_prescale_DST_DoubleMu3_noVtx_CaloScouting_v6[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3 = Muon_prescale_DST_DoubleMu3_noVtx_Mass10_PFScouting_v3[JPsiToMuMu_lep2_idx[0]];
+    the_probe_prescale_HLT_BTagMu_AK4DiJet40_Mu5_v13 = Muon_prescale_HLT_BTagMu_AK4DiJet40_Mu5_v13[JPsiToMuMu_lep2_idx[0]];
 
-  if(the_probe_fired_HLT_Mu7_IP4==1 || the_probe_fired_HLT_Mu8_IP6==1 || the_probe_fired_HLT_Mu8_IP5==1 || the_probe_fired_HLT_Mu8_IP3==1 || the_probe_fired_HLT_Mu8p5_IP3p5==1 || the_probe_fired_HLT_Mu9_IP6==1 || the_probe_fired_HLT_Mu9_IP5==1 || the_probe_fired_HLT_Mu9_IP4 ==1 || the_probe_fired_HLT_Mu10p5_IP3p5==1 || the_probe_fired_HLT_Mu12_IP6==1){
-    the_probe_fired_BParkingHLT = 1;
+    if(the_probe_fired_HLT_Mu7_IP4==1 || the_probe_fired_HLT_Mu8_IP6==1 || the_probe_fired_HLT_Mu8_IP5==1 || the_probe_fired_HLT_Mu8_IP3==1 || the_probe_fired_HLT_Mu8p5_IP3p5==1 || the_probe_fired_HLT_Mu9_IP6==1 || the_probe_fired_HLT_Mu9_IP5==1 || the_probe_fired_HLT_Mu9_IP4 ==1 || the_probe_fired_HLT_Mu10p5_IP3p5==1 || the_probe_fired_HLT_Mu12_IP6==1){
+      the_probe_fired_BParkingHLT = 1;
+    }
+    else{
+      the_probe_fired_BParkingHLT = 0;
+    }
+
+    the_pv_npvs = *PV_npvs;
+
+    // weights
+    the_weight_hlt_A1 = isMC ? getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v1/scaleFactor_results_cat_pt_eta_fit.root", the_tag_pt, fabs(the_tag_eta)) : 1.;
+    the_weight_hlt_A1_6 = isMC ? getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_6_v1/scaleFactor_results_cat_pt_eta_fit.root", the_tag_pt, fabs(the_tag_eta)) : 1.;
+    the_weight_pu_A = isMC ? getPUWeight("pileup_weight_dataA_mcAutumn18.root", *Pileup_nTrueInt) : 1.;
+    the_weight_pu_B = isMC ? getPUWeight("pileup_weight_dataB_mcAutumn18.root", *Pileup_nTrueInt) : 1.;
+    the_weight_pu_C = isMC ? getPUWeight("pileup_weight_dataC_mcAutumn18.root", *Pileup_nTrueInt) : 1.;
+    the_weight_pu_D = isMC ? getPUWeight("pileup_weight_dataD_mcAutumn18.root", *Pileup_nTrueInt) : 1.;
+    the_weight_pu_tot = isMC ? getPUWeight("pileup_weight_datatot_mcAutumn18.root", *Pileup_nTrueInt) : 1.;
+
+    tree->Fill();
   }
-  else{
-    the_probe_fired_BParkingHLT = 0;
-  }
-
-  the_pv_npvs = *PV_npvs;
-
-  // weights
-  the_weight_hlt_A1 = isMC ? getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v1/scaleFactor_results_cat_pt_eta_fit.root", the_tag_pt, fabs(the_tag_eta)) : 1.;
-  the_weight_hlt_A1_6 = isMC ? getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_6_v1/scaleFactor_results_cat_pt_eta_fit.root", the_tag_pt, fabs(the_tag_eta)) : 1.;
-  the_weight_pu_A = isMC ? getPUWeight("pileup_weight_dataA_mcAutumn18.root", *Pileup_nTrueInt) : 1.;
-  the_weight_pu_B = isMC ? getPUWeight("pileup_weight_dataB_mcAutumn18.root", *Pileup_nTrueInt) : 1.;
-  the_weight_pu_C = isMC ? getPUWeight("pileup_weight_dataC_mcAutumn18.root", *Pileup_nTrueInt) : 1.;
-  the_weight_pu_D = isMC ? getPUWeight("pileup_weight_dataD_mcAutumn18.root", *Pileup_nTrueInt) : 1.;
-  the_weight_pu_tot = isMC ? getPUWeight("pileup_weight_datatot_mcAutumn18.root", *Pileup_nTrueInt) : 1.;
-
-  tree->Fill();
 
   return kTRUE;
 }
