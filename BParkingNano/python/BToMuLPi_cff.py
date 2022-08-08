@@ -60,7 +60,7 @@ BToMuMuPi = cms.EDProducer(
 
         'userInt("hnl_vtx_OK") == 1',
         'userFloat("hnl_vtx_prob") > 0.001',
-        'userFloat("hnl_fitted_cos_theta_2D") > 0.99',
+        'userFloat("hnl_fitted_cos_theta_2D") > 0.995',
         'userFloat("hnl_ls_xy") > 15',
         'mass < 8',
         ##'userFloat("hnl_fitted_mass") < 7.',
