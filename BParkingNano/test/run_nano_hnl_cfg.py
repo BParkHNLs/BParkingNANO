@@ -20,6 +20,8 @@ options.register('skip'                    ,  0              , VarParsing.multip
 options.register('inputFile'               , None            , VarParsing.multiplicity.singleton, VarParsing.varType.string, "inputFile name"                         )
 options.register('outFile'                 , 'bparknano.root', VarParsing.multiplicity.singleton, VarParsing.varType.string, "outputFile name"                        )
 
+options.setDefault('maxEvents', -1)
+
 options.parseArguments()
 
 
