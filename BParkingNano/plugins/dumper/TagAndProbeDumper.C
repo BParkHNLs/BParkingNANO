@@ -86,8 +86,10 @@ void TagAndProbeDumper::SlaveBegin(TTree * /*tree*/)
   tree->Branch("tag_eta", &the_tag_eta);
   tree->Branch("tag_phi", &the_tag_phi);
   tree->Branch("tag_dxy", &the_tag_dxy);
+  tree->Branch("tag_dxy_bs", &the_tag_dxy_bs);
   tree->Branch("tag_dz", &the_tag_dz);
   tree->Branch("tag_dxy_sig", &the_tag_dxy_sig);
+  tree->Branch("tag_dxy_sig_bs", &the_tag_dxy_sig_bs);
   tree->Branch("tag_dz_sig", &the_tag_dz_sig);
   tree->Branch("tag_fired_HLT_Mu7_IP4", &the_tag_fired_HLT_Mu7_IP4);
   tree->Branch("tag_fired_HLT_Mu8_IP6", &the_tag_fired_HLT_Mu8_IP6);
@@ -133,8 +135,10 @@ void TagAndProbeDumper::SlaveBegin(TTree * /*tree*/)
   tree->Branch("probe_eta", &the_probe_eta);
   tree->Branch("probe_phi", &the_probe_phi);
   tree->Branch("probe_dxy", &the_probe_dxy);
+  tree->Branch("probe_dxy_bs", &the_probe_dxy_bs);
   tree->Branch("probe_dz", &the_probe_dz);
   tree->Branch("probe_dxy_sig", &the_probe_dxy_sig);
+  tree->Branch("probe_dxy_sig_bs", &the_probe_dxy_sig_bs);
   tree->Branch("probe_dz_sig", &the_probe_dz_sig);
   tree->Branch("probe_istight", &the_probe_istight);
   tree->Branch("probe_fired_HLT_Mu7_IP4", &the_probe_fired_HLT_Mu7_IP4);
@@ -247,8 +251,10 @@ Bool_t TagAndProbeDumper::Process(Long64_t entry)
     the_tag_eta = fabs(JPsiToMuMu_lep1_eta[0]);
     the_tag_phi = JPsiToMuMu_lep1_phi[0];
     the_tag_dxy = fabs(Muon_dxy[JPsiToMuMu_lep1_idx[0]]);
+    the_tag_dxy_bs = fabs(Muon_dxy_BS[JPsiToMuMu_lep1_idx[0]]);
     the_tag_dz = fabs(Muon_dz[JPsiToMuMu_lep1_idx[0]]);
     the_tag_dxy_sig = fabs(Muon_dxyS[JPsiToMuMu_lep1_idx[0]]);
+    the_tag_dxy_sig_bs = fabs(Muon_dxyS_BS[JPsiToMuMu_lep1_idx[0]]);
     the_tag_dz_sig = fabs(Muon_dzS[JPsiToMuMu_lep1_idx[0]]);
     the_tag_fired_HLT_Mu7_IP4 = Muon_fired_HLT_Mu7_IP4[JPsiToMuMu_lep1_idx[0]];
     the_tag_fired_HLT_Mu8_IP6 = Muon_fired_HLT_Mu8_IP6[JPsiToMuMu_lep1_idx[0]];
@@ -293,8 +299,10 @@ Bool_t TagAndProbeDumper::Process(Long64_t entry)
     the_probe_eta = fabs(JPsiToMuMu_lep2_eta[0]);
     the_probe_phi = JPsiToMuMu_lep2_phi[0];
     the_probe_dxy = fabs(Muon_dxy[JPsiToMuMu_lep2_idx[0]]);
+    the_probe_dxy_bs = fabs(Muon_dxy_BS[JPsiToMuMu_lep2_idx[0]]);
     the_probe_dz = fabs(Muon_dz[JPsiToMuMu_lep2_idx[0]]);
     the_probe_dxy_sig = fabs(Muon_dxyS[JPsiToMuMu_lep2_idx[0]]);
+    the_probe_dxy_sig_bs = fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
     the_probe_dz_sig = fabs(Muon_dzS[JPsiToMuMu_lep2_idx[0]]);
     the_probe_istight = Muon_tightId[JPsiToMuMu_lep2_idx[0]];
     the_probe_fired_HLT_Mu7_IP4 = Muon_fired_HLT_Mu7_IP4[JPsiToMuMu_lep2_idx[0]];

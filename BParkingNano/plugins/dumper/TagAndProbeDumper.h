@@ -54,7 +54,9 @@ public :
    TTreeReaderValue<UInt_t> nMuon = {fReader, "nMuon"};
    TTreeReaderArray<Float_t> Muon_caloCompatibility = {fReader, "Muon_caloCompatibility"};
    TTreeReaderArray<Float_t> Muon_dxy = {fReader, "Muon_dxy"};
+   TTreeReaderArray<Float_t> Muon_dxy_BS = {fReader, "Muon_dxy_BS"};
    TTreeReaderArray<Float_t> Muon_dxyS = {fReader, "Muon_dxyS"};
+   TTreeReaderArray<Float_t> Muon_dxyS_BS = {fReader, "Muon_dxyS_BS"};
    TTreeReaderArray<Float_t> Muon_dz = {fReader, "Muon_dz"};
    TTreeReaderArray<Float_t> Muon_dzS = {fReader, "Muon_dzS"};
    TTreeReaderArray<Float_t> Muon_eta = {fReader, "Muon_eta"};
@@ -273,8 +275,10 @@ public :
    Float_t the_tag_eta;
    Float_t the_tag_phi;
    Float_t the_tag_dxy;
+   Float_t the_tag_dxy_bs;
    Float_t the_tag_dz;
    Float_t the_tag_dxy_sig;
+   Float_t the_tag_dxy_sig_bs;
    Float_t the_tag_dz_sig;
    Int_t the_tag_fired_HLT_Mu7_IP4;
    Int_t the_tag_fired_HLT_Mu8_IP6;
@@ -319,8 +323,10 @@ public :
    Float_t the_probe_eta;
    Float_t the_probe_phi;
    Float_t the_probe_dxy;
+   Float_t the_probe_dxy_bs;
    Float_t the_probe_dz;
    Float_t the_probe_dxy_sig;
+   Float_t the_probe_dxy_sig_bs;
    Float_t the_probe_dz_sig;
    Int_t the_probe_istight;
    Int_t the_probe_fired_HLT_Mu7_IP4;
