@@ -132,7 +132,9 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("mu0_phi", &the_sig_mu0_phi);
   signal_tree->Branch("mu0_charge", &the_sig_mu0_charge);
   signal_tree->Branch("mu0_dxy", &the_sig_mu0_dxy);
+  signal_tree->Branch("mu0_dxy_bs", &the_sig_mu0_dxy_bs);
   signal_tree->Branch("mu0_dxysig", &the_sig_mu0_dxysig);
+  signal_tree->Branch("mu0_dxysig_bs", &the_sig_mu0_dxysig_bs);
   signal_tree->Branch("mu0_dz", &the_sig_mu0_dz);
   signal_tree->Branch("mu0_dzsig", &the_sig_mu0_dzsig);
   signal_tree->Branch("mu0_triggermatching_dr", &the_sig_mu0_triggermatching_dr);
@@ -202,7 +204,9 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("mu_phi", &the_sig_mu_phi);
   signal_tree->Branch("mu_charge", &the_sig_mu_charge);
   signal_tree->Branch("mu_dxy", &the_sig_mu_dxy);
+  signal_tree->Branch("mu_dxy_bs", &the_sig_mu_dxy_bs);
   signal_tree->Branch("mu_dxysig", &the_sig_mu_dxysig);
+  signal_tree->Branch("mu_dxysig_bs", &the_sig_mu_dxysig_bs);
   signal_tree->Branch("mu_dz", &the_sig_mu_dz);
   signal_tree->Branch("mu_dzsig", &the_sig_mu_dzsig);
   signal_tree->Branch("mu_triggermatching_dr", &the_sig_mu_triggermatching_dr);
@@ -602,7 +606,9 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       //the_sig_mu0_phi = Muon_phi[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_charge = Muon_charge[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_dxy = Muon_dxy[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
+      the_sig_mu0_dxy_bs = Muon_dxy_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_dxysig = Muon_dxyS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
+      the_sig_mu0_dxysig_bs = Muon_dxyS_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_dz = Muon_dz[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_dzsig = Muon_dzS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_triggermatching_dr = Muon_matched_dr[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
@@ -672,7 +678,9 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       the_sig_mu_phi = BToMuMuPi_fit_mu_phi[selectedCandIdx_sig]; 
       the_sig_mu_charge = Muon_charge[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_dxy = Muon_dxy[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      the_sig_mu_dxy_bs = Muon_dxy_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_dxysig = Muon_dxyS[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      the_sig_mu_dxysig_bs = Muon_dxyS_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_dz = Muon_dz[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_dzsig = Muon_dzS[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_triggermatching_dr = Muon_matched_dr[BToMuMuPi_mu_idx[selectedCandIdx_sig]];

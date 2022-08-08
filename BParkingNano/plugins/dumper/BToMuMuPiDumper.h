@@ -213,7 +213,9 @@ public :
    TTreeReaderArray<Float_t> Muon_dsaToSlimmedMatching_deltadzRel = {fReader, "Muon_dsaToSlimmedMatching_deltadzRel"};
    TTreeReaderArray<Float_t> Muon_caloCompatibility = {fReader, "Muon_caloCompatibility"};
    TTreeReaderArray<Float_t> Muon_dxy = {fReader, "Muon_dxy"};
+   TTreeReaderArray<Float_t> Muon_dxy_BS = {fReader, "Muon_dxy_BS"};
    TTreeReaderArray<Float_t> Muon_dxyS = {fReader, "Muon_dxyS"};
+   TTreeReaderArray<Float_t> Muon_dxyS_BS = {fReader, "Muon_dxyS_BS"};
    TTreeReaderArray<Float_t> Muon_dz = {fReader, "Muon_dz"};
    TTreeReaderArray<Float_t> Muon_dzS = {fReader, "Muon_dzS"};
    TTreeReaderArray<Float_t> Muon_eta = {fReader, "Muon_eta"};
@@ -484,7 +486,9 @@ public :
    Float_t the_sig_mu0_phi = -99.;
    Int_t the_sig_mu0_charge = -99;
    Float_t the_sig_mu0_dxy = -99.;
-   Float_t the_sig_mu0_dxysig = -99.;
+   Float_t the_sig_mu0_dxy_bs = -99.;
+   Float_t the_sig_mu0_dxysig = -99;
+   Float_t the_sig_mu0_dxysig_bs = -99.;
    Float_t the_sig_mu0_dz = -99.;
    Float_t the_sig_mu0_dzsig = -99.;
    Float_t the_sig_mu0_triggermatching_dr = -99.;
@@ -554,7 +558,9 @@ public :
    Float_t the_sig_mu_phi = -99.;
    Int_t the_sig_mu_charge = -99;
    Float_t the_sig_mu_dxy = -99.;
+   Float_t the_sig_mu_dxy_bs = -99.;
    Float_t the_sig_mu_dxysig = -99.;
+   Float_t the_sig_mu_dxysig_bs = -99.;
    Float_t the_sig_mu_dz = -99.;
    Float_t the_sig_mu_dzsig = -99.;
    Float_t the_sig_mu_triggermatching_dr = -99.;
