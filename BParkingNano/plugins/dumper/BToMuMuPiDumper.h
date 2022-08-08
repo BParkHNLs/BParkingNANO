@@ -434,6 +434,7 @@ public :
 
    // some branches will be added only if sample is MC
    Bool_t isMC;
+   Bool_t isSignalMC;
 
    // some option
    // this option is intentionally hardcoded

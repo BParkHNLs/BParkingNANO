@@ -65,11 +65,18 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   TString option = GetOption();
   TString outFileName = option;
 
-  if(outFileName.Contains("isMC")){
+  isSignalMC = false;
+  isMC = false;
+
+  if(outFileName.Contains("isSignalMC")){
+    isMC = true;
+    isSignalMC = true;
+    outFileName.Resize(outFileName.Length()-11);
+  }
+  else if(outFileName.Contains("isMC")){
     isMC = true;
     outFileName.Resize(outFileName.Length()-5);
   }
-  else isMC = false;
 
   // check if outputfile exists
   if(gSystem->AccessPathName(outFileName)){
@@ -574,6 +581,9 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
 
     // - and select the candidate
     UInt_t selectedCandIdx_sig = pair_candIdx_desc_cos2d_sign_matched_sig[0].first;
+
+    // for signal MC, only keep the matched events
+    if(isSignalMC && BToMuMuPi_isMatched[selectedCandIdx_sig] != 1) return false;
 
     // fill the signal_tree
     if(BToMuMuPi_mu0_pt[selectedCandIdx_sig] == Muon_pt[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]){ // temporary condition, skip events with faulty indexing

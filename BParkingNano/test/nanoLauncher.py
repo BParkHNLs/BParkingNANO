@@ -182,13 +182,20 @@ class NanoLauncher(NanoTools):
     run_chain.append('  c_run->Process("NanoRunDumper.C+", outFileName);')
     run_chain = '\n'.join(run_chain)
 
+    if self.data:
+      addMC = ''
+    elif self.mcprivate or self.sigcentral or self.sigcrab:
+      addMC = 'outFileName += "_isSignalMC";'
+    elif self.mccentral:
+      addMC = 'outFileName += "_isMC";'
+
     content = [
       '#include "TChain.h"',
       '#include <iostream>',
       '#include "TProof.h"\n',
       'void starter(){',
       '  TString outFileName = "flat_bparknano.root";',
-      '  {addMC}'.format(addMC = '' if self.data else 'outFileName += "_isMC";'),
+      '  {addMC}'.format(addMC = addMC),
       '  {addevt}'.format(addevt = event_chain),
       '  {addrun}'.format(addrun = '' if self.data else run_chain),
       '}',
@@ -225,7 +232,7 @@ class NanoLauncher(NanoTools):
           '#include "TProof.h"\n',
           'void starter(){',
           '  TString outFileName = "flat_bparknano.root";',
-          '  {addMC}'.format(addMC = '' if self.data else 'outFileName += "_isMC";'),
+          '  {addMC}'.format(addMC = addMC),
           '  {addevt}'.format(addevt = event_chain),
           '  {addrun}'.format(addrun = '' if (self.data or self.dotageprobe) else run_chain),
           '}',
