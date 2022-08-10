@@ -95,6 +95,7 @@ class ScaleFactorComputer(object):
     # compute the weighted scale factor per x and y bin
     content = []
     weighted_scale_factors = []
+    weighted_errors = []
     for ifile, sf_file in enumerate(scale_factors_perchunk):
 
       # open per chunk sf file
@@ -106,6 +107,8 @@ class ScaleFactorComputer(object):
 
       for line in lines:
         weighted_scale_factors_perchunk = {}
+        weighted_err_perchunk = {}
+
         xmin, index = self.getItem(line, 0)
         xmax, index = self.getItem(line, index+1)
         x_bin = '{}_{}'.format(xmin, xmax)
@@ -122,22 +125,32 @@ class ScaleFactorComputer(object):
         weighted_scale_factors.append(weighted_scale_factors_perchunk)
 
         err, index = self.getItem(line, index+1)
+        weighted_err = float(err) * float(n_events_perchunk[ifile])
+        weighted_err_perchunk['{}_{}'.format(x_bin, y_bin)] = weighted_err
+        weighted_errors.append(weighted_err_perchunk)
 
     # compute the weighted average per x and y bin
     for x_bin, y_bin in zip(x_bins, y_bins):
 
       sum_weighted_scale_factor = 0.
+      sum_weighted_err = 0.
 
       for weighted_scale_factor in weighted_scale_factors:
         if '{}_{}'.format(x_bin, y_bin) in weighted_scale_factor.keys():
           sum_weighted_scale_factor += weighted_scale_factor['{}_{}'.format(x_bin, y_bin)]
 
+      for weighted_error in weighted_errors:
+        if '{}_{}'.format(x_bin, y_bin) in weighted_error.keys():
+          sum_weighted_err += weighted_error['{}_{}'.format(x_bin, y_bin)]
+
       average_scale_factor = sum_weighted_scale_factor / float(n_events_tot)
+      average_err = sum_weighted_err / float(n_events_tot)
+
       x_bin_min = x_bin[:x_bin.find('_')]
       x_bin_max = x_bin[x_bin.find('_')+1:]
       y_bin_min = y_bin[:y_bin.find('_')]
       y_bin_max = y_bin[y_bin.find('_')+1:]
-      content = '{} {} {} {} {}\n'.format(x_bin_min, x_bin_max, y_bin_min, y_bin_max, average_scale_factor) 
+      content = '{} {} {} {} {} {}\n'.format(x_bin_min, x_bin_max, y_bin_min, y_bin_max, average_scale_factor, average_err) 
       #print content
 
       average_sf_file.write(content)
@@ -159,6 +172,7 @@ class ScaleFactorComputer(object):
     y_bins = [ 0. ] # set the lowest bin
 
     scale_factor = {}
+    error = {}
 
     for line in lines:
       xmin, index = self.getItem(line, 0)
@@ -171,6 +185,9 @@ class ScaleFactorComputer(object):
 
       sf, index = self.getItem(line, index+1)
       scale_factor['{}_{}_{}_{}'.format(float(xmin), float(xmax), float(ymin), float(ymax))] = sf
+
+      err, index = self.getItem(line, index+1)
+      error['{}_{}_{}_{}'.format(float(xmin), float(xmax), float(ymin), float(ymax))] = err
       #print '{}_{}_{}_{}'.format(float(xmin), float(xmax), float(ymin), float(ymax))
 
     x_bins = array('d', x_bins)
@@ -185,6 +202,8 @@ class ScaleFactorComputer(object):
         #print '{} {} {}'.format(x_bin, y_bin, scale_factor['{}_{}_{}_{}'.format(x_bin, x_bins[ix+1], y_bin, y_bins[iy+1])])
         sf = float(scale_factor['{}_{}_{}_{}'.format(x_bin, x_bins[ix+1], y_bin, y_bins[iy+1])])
         hist_scale_factor.SetBinContent(ix+1, iy+1, sf)
+        err = float(error['{}_{}_{}_{}'.format(x_bin, x_bins[ix+1], y_bin, y_bins[iy+1])])
+        hist_scale_factor.SetBinError(ix+1, iy+1, err)
 
     hist_scale_factor.SetOption("colztexte")
     hist_scale_factor.SetTitle("")
@@ -232,6 +251,35 @@ class ScaleFactorComputer(object):
     canv.SaveAs(name + '.pdf')
 
 
+  def createErrorPlot(self, hist, name):
+    hist_scale_factor = ROOT.TH2D('hist_scale_factor', 'hist_scale_factor', hist.GetNbinsX(), 0, hist.GetNbinsX(), hist.GetNbinsY(), 0, hist.GetNbinsY()-1)
+
+    canv = ROOT.TCanvas('canv', 'canv', 1200, 1000)
+    canv.SetRightMargin(0.15)
+
+    nX = hist.GetNbinsX()
+    nY = hist.GetNbinsY()
+
+    for i in range(1, nX+1):
+      for j in range(1, nY+1):
+        x = hist.GetBinContent(i,j)
+        dx = hist.GetBinError(i,j)
+        rel_err = dx / x * 100
+        hist_scale_factor.SetBinContent(i, j, rel_err)
+
+    hist_scale_factor.GetZaxis().SetTitle("Relative Error (%)")
+    hist_scale_factor.GetZaxis().SetRangeUser(0, 50)
+    hist_scale_factor.SetOption("colztexte");
+    hist_scale_factor.SetTitle("")
+    hist_scale_factor.Draw()
+    ROOT.gStyle.SetTitleFillColor(0)
+    ROOT.gStyle.SetOptStat(0)
+
+    canv.SaveAs(name + '.png')
+    canv.SaveAs(name + '.pdf')
+
+
+
   def process(self):
     # get data files
     data_files = [f for f in glob.glob('/work/anlyon/tag_and_probe/outfiles/{}/results*root'.format(self.data_label))]
@@ -257,6 +305,10 @@ class ScaleFactorComputer(object):
 
       # create plot
       self.createPlot(hist_scale_factor, root_filename)
+        
+      # create relative error plot
+      error_name = './results/{}/error'.format(self.out_label)
+      self.createErrorPlot(hist_scale_factor, error_name)
 
     else:
       for eta_category in self.eta_categories:
@@ -274,6 +326,10 @@ class ScaleFactorComputer(object):
 
         # create plot
         self.createPlot(hist_scale_factor, root_filename)
+
+        # create relative error plot
+        error_name = './results/{}/error_eta{}'.format(self.out_label, eta_category)
+        self.createErrorPlot(hist_scale_factor, error_name)
 
     print '\nDone'
 
