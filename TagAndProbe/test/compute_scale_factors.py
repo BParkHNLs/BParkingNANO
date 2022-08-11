@@ -234,8 +234,16 @@ class ScaleFactorComputer(object):
     print '--> {}.root created'.format(name)
 
 
-  def createPlot(self, hist, name):
+  def createPlot(self, hist, name, eta_category=None):
     hist_scale_factor = ROOT.TH2D('hist_scale_factor', 'hist_scale_factor', hist.GetNbinsX(), 0, hist.GetNbinsX(), hist.GetNbinsY(), 0, hist.GetNbinsY()-1)
+
+    x_bins = []
+    for x in range(0, hist.GetNbinsX()+1):
+      x_bins.append(str(hist.GetXaxis().GetBinUpEdge(x)))
+
+    y_bins = []
+    for y in range(0, hist.GetNbinsY()+1):
+      y_bins.append(str(hist.GetYaxis().GetBinUpEdge(y)))
 
     canv = ROOT.TCanvas('canv', 'canv', 1200, 1000)
     canv.SetRightMargin(0.15)
@@ -247,9 +255,32 @@ class ScaleFactorComputer(object):
       for j in range(1, nY+1):
         x = hist.GetBinContent(i,j)
         dx = hist.GetBinError(i,j)
-        hist_scale_factor.SetBinContent(i, j, x)
+        hist_scale_factor.Fill(x_bins[i], y_bins[j], x)
+        #hist_scale_factor.SetBinContent(i, j, x)
         hist_scale_factor.SetBinError(i, j, dx)
 
+    if categorisation == 'pt_eta':
+      x_label = 'probe p_{T} [GeV]'
+      y_label = 'probe |#eta|'
+    elif categorisation == 'pt_eta_dxysig' or categorisation == 'pt_dxysig':
+      x_label = 'probe p_{T} [GeV]'
+      y_label = 'probe |d_{xy}/#sigma_{xy}|'
+
+    if eta_category != None:
+      cat = eta_category.replace('_', ',')
+      title = '#eta #in [{}]'.format(cat)
+      hist_scale_factor.SetTitle(title)
+    else:
+      hist_scale_factor.SetTitle('')
+    
+    hist_scale_factor.GetXaxis().SetTitle(x_label)
+    hist_scale_factor.GetXaxis().SetLabelSize(0.05)
+    hist_scale_factor.GetXaxis().SetTitleSize(0.042)
+    hist_scale_factor.GetXaxis().SetTitleOffset(1.1)
+    hist_scale_factor.GetYaxis().SetTitle(y_label)
+    hist_scale_factor.GetYaxis().SetLabelSize(0.05)
+    hist_scale_factor.GetYaxis().SetTitleSize(0.042)
+    hist_scale_factor.GetYaxis().SetTitleOffset(1.1)
     hist_scale_factor.GetZaxis().SetTitle("Scale Factor")
     hist_scale_factor.GetZaxis().SetRangeUser(-1e-3, 1)
     hist_scale_factor.SetOption("colztexte");
@@ -263,8 +294,16 @@ class ScaleFactorComputer(object):
     canv.SaveAs(name + '.pdf')
 
 
-  def createErrorPlot(self, hist, name):
+  def createErrorPlot(self, hist, name, eta_category=None):
     hist_scale_factor = ROOT.TH2D('hist_scale_factor', 'hist_scale_factor', hist.GetNbinsX(), 0, hist.GetNbinsX(), hist.GetNbinsY(), 0, hist.GetNbinsY()-1)
+
+    x_bins = []
+    for x in range(0, hist.GetNbinsX()+1):
+      x_bins.append(str(hist.GetXaxis().GetBinUpEdge(x)))
+
+    y_bins = []
+    for y in range(0, hist.GetNbinsY()+1):
+      y_bins.append(str(hist.GetYaxis().GetBinUpEdge(y)))
 
     canv = ROOT.TCanvas('canv', 'canv', 1200, 1000)
     canv.SetRightMargin(0.15)
@@ -276,13 +315,34 @@ class ScaleFactorComputer(object):
       for j in range(1, nY+1):
         x = hist.GetBinContent(i,j)
         dx = hist.GetBinError(i,j)
-        rel_err = dx / x * 100
-        hist_scale_factor.SetBinContent(i, j, rel_err)
+        rel_err = dx / x * 100 if x != 0 else 0
+        hist_scale_factor.Fill(x_bins[i], y_bins[j], rel_err)
 
+    if categorisation == 'pt_eta':
+      x_label = 'probe p_{T} [GeV]'
+      y_label = 'probe |#eta|'
+    elif categorisation == 'pt_eta_dxysig' or categorisation == 'pt_dxysig':
+      x_label = 'probe p_{T} [GeV]'
+      y_label = 'probe |d_{xy}/#sigma_{xy}|'
+
+    if eta_category != None:
+      cat = eta_category.replace('_', ',')
+      title = '#eta #in [{}]'.format(cat)
+      hist_scale_factor.SetTitle(title)
+    else:
+      hist_scale_factor.SetTitle('')
+    
+    hist_scale_factor.GetXaxis().SetTitle(x_label)
+    hist_scale_factor.GetXaxis().SetLabelSize(0.05)
+    hist_scale_factor.GetXaxis().SetTitleSize(0.042)
+    hist_scale_factor.GetXaxis().SetTitleOffset(1.1)
+    hist_scale_factor.GetYaxis().SetTitle(y_label)
+    hist_scale_factor.GetYaxis().SetLabelSize(0.05)
+    hist_scale_factor.GetYaxis().SetTitleSize(0.042)
+    hist_scale_factor.GetYaxis().SetTitleOffset(1.1)
     hist_scale_factor.GetZaxis().SetTitle("Relative Error (%)")
     hist_scale_factor.GetZaxis().SetRangeUser(0, 5)
-    hist_scale_factor.SetOption("colztexte");
-    hist_scale_factor.SetTitle("")
+    hist_scale_factor.SetOption("colztext");
     hist_scale_factor.Draw()
     ROOT.gStyle.SetTitleFillColor(0)
     ROOT.gStyle.SetOptStat(0)
@@ -341,11 +401,11 @@ class ScaleFactorComputer(object):
         hist_minus_one_sigma = self.createHistogram(filename, root_filename, 'minus_one_sigma')
 
         # create plot
-        self.createPlot(hist_scale_factor, root_filename)
+        self.createPlot(hist_scale_factor, root_filename, eta_category)
 
         # create relative error plot
         error_name = './results/{}/error_eta{}'.format(self.out_label, eta_category)
-        self.createErrorPlot(hist_scale_factor, error_name)
+        self.createErrorPlot(hist_scale_factor, error_name, eta_category)
 
     print '\nDone'
 
@@ -411,19 +471,19 @@ if __name__ == "__main__":
   #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_v2'
   #out_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2'
 
-  #data_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
-  #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
-  #out_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
+  data_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
+  mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
+  out_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
 
   #data_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
   #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
   #out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
 
-  data_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
-  mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
-  out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
+  #data_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
+  #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
+  #out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
 
-  categorisation = 'pt_dxysig'
+  categorisation = 'pt_eta_dxysig'
 
   ScaleFactorComputer(data_label=data_label, mc_label=mc_label, out_label=out_label, categorisation=categorisation).process()
 
