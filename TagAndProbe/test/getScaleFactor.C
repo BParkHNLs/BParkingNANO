@@ -206,8 +206,8 @@ void getScaleFactor(TString dataFileName, TString mcFileName, string dirLabel, s
     process(dir, "cat_eff", outdir, "cnt", fData, fMC, "probe_pt_probe_dxy_sig_PLOT_probe_eta_bin1", "eta_0p50_1p00", "3D"); 
     process(dir, "cat_eff", outdir, "fit", fData, fMC, "probe_pt_probe_dxy_sig_PLOT_probe_eta_bin2", "eta_1p00_1p50", "3D"); 
     process(dir, "cat_eff", outdir, "cnt", fData, fMC, "probe_pt_probe_dxy_sig_PLOT_probe_eta_bin2", "eta_1p00_1p50", "3D"); 
-    process(dir, "cat_eff", outdir, "fit", fData, fMC, "probe_pt_probe_dxy_sig_PLOT_probe_eta_bin2", "eta_1p50_2p00", "3D"); 
-    process(dir, "cat_eff", outdir, "cnt", fData, fMC, "probe_pt_probe_dxy_sig_PLOT_probe_eta_bin2", "eta_1p50_2p00", "3D"); 
+    process(dir, "cat_eff", outdir, "fit", fData, fMC, "probe_pt_probe_dxy_sig_PLOT_probe_eta_bin3", "eta_1p50_2p00", "3D"); 
+    process(dir, "cat_eff", outdir, "cnt", fData, fMC, "probe_pt_probe_dxy_sig_PLOT_probe_eta_bin3", "eta_1p50_2p00", "3D"); 
     //process(dir, "cat_pt_eta_dxysig", outdir, "fit", fData, fMC, "probe_pt_probe_dxy_sig_PLOT_probe_eta_bin0", "eta_0p00_0p50", "3D"); 
     //process(dir, "cat_pt_eta_dxysig", outdir, "cnt", fData, fMC, "probe_pt_probe_dxy_sig_PLOT_probe_eta_bin0", "eta_0p00_0p50", "3D"); 
     //process(dir, "cat_pt_eta_dxysig", outdir, "fit", fData, fMC, "probe_pt_probe_dxy_sig_PLOT_probe_eta_bin1", "eta_0p50_1p00", "3D"); 
