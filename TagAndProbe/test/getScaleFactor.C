@@ -146,13 +146,15 @@ void process(string dir, string subdir, string outdir, string method, TFile* fDa
   if(dim == "2D" || dim == "3D") hData2D = (TH2F*) c->FindObject(canvasname);
   else if(dim == "1D") hData1D = (TH1F*) c->FindObject(canvasname);
 
-
   fMC->cd(results_dir);
   c = (TCanvas*) gDirectory->Get(canvasname);
   TH2F* hMC2D = 0;
   TH1F* hMC1D = 0;
   if(dim == "2D" || dim == "3D") hMC2D = (TH2F*) c->FindObject(canvasname);
   else if(dim == "1D") hMC1D = (TH1F*) c->FindObject(canvasname);
+
+  hData2D->SetDefaultSumw2();
+  hMC2D->SetDefaultSumw2();
 
   string name = outdir + "scaleFactor_" + dir + "_" + subdir + "_" + method;
   if(dim == "3D") name += "_" + extraname;
@@ -165,7 +167,6 @@ void process(string dir, string subdir, string outdir, string method, TFile* fDa
   else if(dim == "1D"){
     write1DScaleFactor(hData1D, name);
   }
-
 
   std::cout << name << ".txt created " << std::endl;
   std::cout << name << ".root created " << std::endl;
@@ -186,16 +187,16 @@ void getScaleFactor(TString dataFileName, TString mcFileName, string dirLabel, s
   TFile* fMC = new TFile(mcFileName);
 
   if(categorisation == "pt_eta"){
-    //process(dir, "cat_eff", outdir, "fit", fData, fMC, "probe_pt_probe_eta_PLOT", "", "2D"); 
-    //process(dir, "cat_eff", outdir, "fit", fData, fMC, "probe_pt_probe_eta_PLOT", "", "2D"); 
-    process(dir, "cat_pt_eta", outdir, "cnt", fData, fMC, "probe_pt_probe_eta_PLOT", "", "2D"); 
-    process(dir, "cat_pt_eta", outdir, "cnt", fData, fMC, "probe_pt_probe_eta_PLOT", "", "2D"); 
+    process(dir, "cat_eff", outdir, "fit", fData, fMC, "probe_pt_probe_eta_PLOT", "", "2D"); 
+    process(dir, "cat_eff", outdir, "fit", fData, fMC, "probe_pt_probe_eta_PLOT", "", "2D"); 
+    //process(dir, "cat_pt_eta", outdir, "cnt", fData, fMC, "probe_pt_probe_eta_PLOT", "", "2D"); 
+    //process(dir, "cat_pt_eta", outdir, "cnt", fData, fMC, "probe_pt_probe_eta_PLOT", "", "2D"); 
   }
   else if(categorisation == "pt_dxysig"){
-    //process(dir, "cat_eff", outdir, "fit", fData, fMC, "probe_pt_probe_dxy_sig_PLOT", "", "2D"); 
-    //process(dir, "cat_eff", outdir, "cnt", fData, fMC, "probe_pt_probe_dxy_sig_PLOT", "", "2D"); 
-    process(dir, "cat_pt_dxysig", outdir, "fit", fData, fMC, "probe_pt_probe_dxy_sig_PLOT", "", "2D"); 
-    process(dir, "cat_pt_dxysig", outdir, "cnt", fData, fMC, "probe_pt_probe_dxy_sig_PLOT", "", "2D"); 
+    process(dir, "cat_eff", outdir, "fit", fData, fMC, "probe_pt_probe_dxy_sig_PLOT", "", "2D"); 
+    process(dir, "cat_eff", outdir, "cnt", fData, fMC, "probe_pt_probe_dxy_sig_PLOT", "", "2D"); 
+    //process(dir, "cat_pt_dxysig", outdir, "fit", fData, fMC, "probe_pt_probe_dxy_sig_PLOT", "", "2D"); 
+    //process(dir, "cat_pt_dxysig", outdir, "cnt", fData, fMC, "probe_pt_probe_dxy_sig_PLOT", "", "2D"); 
   }
   else if(categorisation == "pt_eta_dxysig"){
     // make sure that the eta categories are correct
