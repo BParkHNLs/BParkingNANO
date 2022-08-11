@@ -66,7 +66,8 @@ class ScaleFactorComputer(object):
         #scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_eta_fit.txt'.format(self.out_label, out_suffix))
         scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_eff_fit.txt'.format(self.out_label, out_suffix))
       elif self.categorisation == 'pt_dxysig':
-        scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_dxysig_fit.txt'.format(self.out_label, out_suffix))
+        #scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_dxysig_fit.txt'.format(self.out_label, out_suffix))
+        scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_eff_fit.txt'.format(self.out_label, out_suffix))
       elif self.categorisation == 'pt_eta_dxysig':
         for eta_category in self.eta_categories:
           scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_eff_fit_eta_{}.txt'.format(self.out_label, out_suffix, eta_category))
@@ -159,8 +160,12 @@ class ScaleFactorComputer(object):
     print '--> {} created'.format(filename)
 
 
-  def createHistogram(self, sf_filename, name):
+  def createHistogram(self, sf_filename, name, flag='standard'):
     # create 2D histogram
+    if flag == 'plus_one_sigma':
+      name += '_plus_one_sigma'
+    elif flag == 'minus_one_sigma':
+      name += '_minus_one_sigma'
     root_file = ROOT.TFile.Open(name + '.root', "RECREATE")
     canv = ROOT.TCanvas('canv', 'canv', 800, 700)
     
@@ -201,9 +206,16 @@ class ScaleFactorComputer(object):
         if iy == len(y_bins)-1: continue
         #print '{} {} {}'.format(x_bin, y_bin, scale_factor['{}_{}_{}_{}'.format(x_bin, x_bins[ix+1], y_bin, y_bins[iy+1])])
         sf = float(scale_factor['{}_{}_{}_{}'.format(x_bin, x_bins[ix+1], y_bin, y_bins[iy+1])])
-        hist_scale_factor.SetBinContent(ix+1, iy+1, sf)
         err = float(error['{}_{}_{}_{}'.format(x_bin, x_bins[ix+1], y_bin, y_bins[iy+1])])
-        hist_scale_factor.SetBinError(ix+1, iy+1, err)
+        if flag == 'standard':
+          hist_scale_factor.SetBinContent(ix+1, iy+1, sf)
+          hist_scale_factor.SetBinError(ix+1, iy+1, err)
+        elif flag == 'plus_one_sigma':
+          hist_scale_factor.SetBinContent(ix+1, iy+1, sf+err)
+          hist_scale_factor.SetBinError(ix+1, iy+1, err)
+        elif flag == 'minus_one_sigma':
+          hist_scale_factor.SetBinContent(ix+1, iy+1, sf-err)
+          hist_scale_factor.SetBinError(ix+1, iy+1, err)
 
     hist_scale_factor.SetOption("colztexte")
     hist_scale_factor.SetTitle("")
@@ -268,7 +280,7 @@ class ScaleFactorComputer(object):
         hist_scale_factor.SetBinContent(i, j, rel_err)
 
     hist_scale_factor.GetZaxis().SetTitle("Relative Error (%)")
-    hist_scale_factor.GetZaxis().SetRangeUser(0, 50)
+    hist_scale_factor.GetZaxis().SetRangeUser(0, 5)
     hist_scale_factor.SetOption("colztexte");
     hist_scale_factor.SetTitle("")
     hist_scale_factor.Draw()
@@ -302,6 +314,8 @@ class ScaleFactorComputer(object):
       # create 2D histogram
       root_filename = './results/{}/scale_factors'.format(self.out_label)
       hist_scale_factor = self.createHistogram(filename, root_filename)
+      hist_plus_one_sigma = self.createHistogram(filename, root_filename, 'plus_one_sigma')
+      hist_minus_one_sigma = self.createHistogram(filename, root_filename, 'minus_one_sigma')
 
       # create plot
       self.createPlot(hist_scale_factor, root_filename)
@@ -323,6 +337,8 @@ class ScaleFactorComputer(object):
         # create 2D histogram
         root_filename = './results/{}/scale_factors_eta{}'.format(self.out_label, eta_category)
         hist_scale_factor = self.createHistogram(filename, root_filename)
+        hist_plus_one_sigma = self.createHistogram(filename, root_filename, 'plus_one_sigma')
+        hist_minus_one_sigma = self.createHistogram(filename, root_filename, 'minus_one_sigma')
 
         # create plot
         self.createPlot(hist_scale_factor, root_filename)
@@ -391,19 +407,23 @@ if __name__ == "__main__":
   #mc_label = 'test_mc_tag_fired_anyBParkHLT_pteta_v2'
   #out_label = 'test_D1_tag_fired_anyBParkHLT_pteta_max3e6_v3'
 
-  #data_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2'
+  #data_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2'
   #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_v2'
-  #out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2'
+  #out_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2'
 
   #data_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
   #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
   #out_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
 
-  data_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
-  mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
-  out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
+  #data_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
+  #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
+  #out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
 
-  categorisation = 'pt_eta_dxysig'
+  data_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
+  mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
+  out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
+
+  categorisation = 'pt_dxysig'
 
   ScaleFactorComputer(data_label=data_label, mc_label=mc_label, out_label=out_label, categorisation=categorisation).process()
 
