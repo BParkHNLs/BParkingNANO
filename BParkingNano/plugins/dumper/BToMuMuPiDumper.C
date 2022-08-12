@@ -206,6 +206,14 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("mu0_prescale_hlt_mu10p5_ip3p5", &the_sig_mu0_prescale_hlt_mu10p5_ip3p5);
   signal_tree->Branch("mu0_prescale_hlt_mu12_ip6", &the_sig_mu0_prescale_hlt_mu12_ip6);
 
+  signal_tree->Branch("mu0_triggering_pt", &the_sig_mu0_triggering_pt);
+  signal_tree->Branch("mu0_triggering_eta", &the_sig_mu0_triggering_eta);
+  signal_tree->Branch("mu0_triggering_phi", &the_sig_mu0_triggering_phi);
+  signal_tree->Branch("mu0_triggering_dxy", &the_sig_mu0_triggering_dxy);
+  signal_tree->Branch("mu0_triggering_dxy_bs", &the_sig_mu0_triggering_dxy_bs);
+  signal_tree->Branch("mu0_triggering_dxysig", &the_sig_mu0_triggering_dxysig);
+  signal_tree->Branch("mu0_triggering_dxysig_bs", &the_sig_mu0_triggering_dxysig_bs);
+
   signal_tree->Branch("mu_pt", &the_sig_mu_pt);
   signal_tree->Branch("mu_eta", &the_sig_mu_eta);
   signal_tree->Branch("mu_phi", &the_sig_mu_phi);
@@ -273,6 +281,15 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("mu_numberoftrackerlayers", &the_sig_mu_numberoftrackerlayers);
   signal_tree->Branch("mu_numberofpixellayers", &the_sig_mu_numberofpixellayers);
   signal_tree->Branch("mu_numberofstations", &the_sig_mu_numberofstations);
+
+  signal_tree->Branch("mu_triggering_pt", &the_sig_mu_triggering_pt);
+  signal_tree->Branch("mu_triggering_eta", &the_sig_mu_triggering_eta);
+  signal_tree->Branch("mu_triggering_phi", &the_sig_mu_triggering_phi);
+  signal_tree->Branch("mu_triggering_charge", &the_sig_mu_triggering_charge);
+  signal_tree->Branch("mu_triggering_dxy", &the_sig_mu_triggering_dxy);
+  signal_tree->Branch("mu_triggering_dxy_bs", &the_sig_mu_triggering_dxy_bs);
+  signal_tree->Branch("mu_triggering_dxysig", &the_sig_mu_triggering_dxysig);
+  signal_tree->Branch("mu_triggering_dxysig_bs", &the_sig_mu_triggering_dxysig_bs);
 
   signal_tree->Branch("pi_pt", &the_sig_pi_pt);
   signal_tree->Branch("pi_eta", &the_sig_pi_eta);
@@ -683,6 +700,23 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       the_sig_mu0_prescale_hlt_mu10p5_ip3p5 = Muon_prescale_HLT_Mu10p5_IP3p5[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_prescale_hlt_mu12_ip6 = Muon_prescale_HLT_Mu12_IP6[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
 
+      the_sig_mu0_triggering_pt = -99;
+      the_sig_mu0_triggering_eta = -99;
+      the_sig_mu0_triggering_phi = -99;
+      the_sig_mu0_triggering_dxy = -99;
+      the_sig_mu0_triggering_dxy_bs = -99;
+      the_sig_mu0_triggering_dxysig = -99;
+      the_sig_mu0_triggering_dxysig_bs = -99;
+      if(the_sig_mu0_istriggering == 1){
+        the_sig_mu0_triggering_pt = the_sig_mu0_pt;
+        the_sig_mu0_triggering_eta = the_sig_mu0_eta;
+        the_sig_mu0_triggering_phi = the_sig_mu0_phi;
+        the_sig_mu0_triggering_dxy = the_sig_mu0_dxy;
+        the_sig_mu0_triggering_dxy_bs = the_sig_mu0_dxy_bs;
+        the_sig_mu0_triggering_dxysig = the_sig_mu0_dxysig;
+        the_sig_mu0_triggering_dxysig_bs = the_sig_mu0_dxysig_bs;
+      }
+
       the_sig_mu_pt = BToMuMuPi_fit_mu_pt[selectedCandIdx_sig];
       the_sig_mu_eta = BToMuMuPi_fit_mu_eta[selectedCandIdx_sig];
       the_sig_mu_phi = BToMuMuPi_fit_mu_phi[selectedCandIdx_sig]; 
@@ -757,6 +791,23 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
         the_sig_mu_customisedid = 0;
       }
 
+      // displaced triggering muon
+      the_sig_mu_triggering_pt = -99;
+      the_sig_mu_triggering_eta = -99;
+      the_sig_mu_triggering_phi = -99;
+      the_sig_mu_triggering_dxy = -99;
+      the_sig_mu_triggering_dxy_bs = -99;
+      the_sig_mu_triggering_dxysig = -99;
+      the_sig_mu_triggering_dxysig_bs = -99;
+      if(the_sig_mu_istriggering == 1){
+        the_sig_mu_triggering_pt = the_sig_mu_pt;
+        the_sig_mu_triggering_eta = the_sig_mu_eta;
+        the_sig_mu_triggering_phi = the_sig_mu_phi;
+        the_sig_mu_triggering_dxy = the_sig_mu_dxy;
+        the_sig_mu_triggering_dxy_bs = the_sig_mu_dxy_bs;
+        the_sig_mu_triggering_dxysig = the_sig_mu_dxysig;
+        the_sig_mu_triggering_dxysig_bs = the_sig_mu_dxysig_bs;
+      }
 
       the_sig_pi_pt = BToMuMuPi_fit_pi_pt[selectedCandIdx_sig];
       the_sig_pi_eta = BToMuMuPi_fit_pi_eta[selectedCandIdx_sig];
@@ -793,30 +844,29 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       bool pi_matchedtomuon_loose = 0;
       bool pi_matchedtomuon_medium = 0;
       bool pi_matchedtomuon_tight = 0;
-      /*
-      for(unsigned int iMuon(0); iMuon<*nMuon; ++iMuon){
-        // do not consider muons in the signal final state
-        if(iMuon == BToMuMuPi_mu0_idx[selectedCandIdx_sig] || iMuon == BToMuMuPi_mu_idx[selectedCandIdx_sig]) continue;
-        // compute the deltaR and deltaPtRel between the given track and the muon (unfitted values)
-        float deltaR_track_muon = reco::deltaR(Muon_eta[iMuon], Muon_phi[iMuon], BToMuMuPi_pi_eta[selectedCandIdx_sig], BToMuMuPi_pi_phi[selectedCandIdx_sig]);
-        float deltaPtRel = fabs(Muon_pt[iMuon] - BToMuMuPi_pi_pt[selectedCandIdx_sig]) / BToMuMuPi_pi_pt[selectedCandIdx_sig];
+      if(do_tracktomuon_matching){
+        for(unsigned int iMuon(0); iMuon<*nMuon; ++iMuon){
+          // do not consider muons in the signal final state
+          if(iMuon == BToMuMuPi_mu0_idx[selectedCandIdx_sig] || iMuon == BToMuMuPi_mu_idx[selectedCandIdx_sig]) continue;
+          // compute the deltaR and deltaPtRel between the given track and the muon (unfitted values)
+          float deltaR_track_muon = reco::deltaR(Muon_eta[iMuon], Muon_phi[iMuon], BToMuMuPi_pi_eta[selectedCandIdx_sig], BToMuMuPi_pi_phi[selectedCandIdx_sig]);
+          float deltaPtRel = fabs(Muon_pt[iMuon] - BToMuMuPi_pi_pt[selectedCandIdx_sig]) / BToMuMuPi_pi_pt[selectedCandIdx_sig];
 
-        // match if any muon fulfills requirements
-        if(deltaR_track_muon < 0.3 && deltaPtRel < 1.){
-          pi_matchedtomuon_loose = 1;
-        }
-        if(deltaR_track_muon < 0.3 && deltaPtRel < 0.3){
-          pi_matchedtomuon_medium = 1;
-        }
-        if(deltaR_track_muon < 0.1 && deltaPtRel < 0.3){
-          pi_matchedtomuon_tight = 1;
+          // match if any muon fulfills requirements
+          if(deltaR_track_muon < 0.3 && deltaPtRel < 1.){
+            pi_matchedtomuon_loose = 1;
+          }
+          if(deltaR_track_muon < 0.3 && deltaPtRel < 0.3){
+            pi_matchedtomuon_medium = 1;
+          }
+          if(deltaR_track_muon < 0.1 && deltaPtRel < 0.3){
+            pi_matchedtomuon_tight = 1;
+          }
         }
       }
-      */
       the_sig_pi_matchedtomuon_loose = pi_matchedtomuon_loose;
       the_sig_pi_matchedtomuon_medium = pi_matchedtomuon_medium;
       the_sig_pi_matchedtomuon_tight = pi_matchedtomuon_tight;
-
 
       the_sig_mu0_mu_mass = BToMuMuPi_mu0_mu_mass[selectedCandIdx_sig];
       the_sig_mu0_mu_pt = BToMuMuPi_mu0_mu_pt[selectedCandIdx_sig];

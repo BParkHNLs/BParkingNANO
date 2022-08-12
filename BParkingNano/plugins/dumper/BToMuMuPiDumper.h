@@ -436,9 +436,10 @@ public :
    Bool_t isMC;
    Bool_t isSignalMC;
 
-   // some option
-   // this option is intentionally hardcoded
+   // some options
+   // this options are intentionally hardcoded
    Bool_t do_fillhistograms = false;
+   Bool_t do_tracktomuon_matching = false;
 
    // trees to fill
    TTree* signal_tree;
@@ -554,6 +555,14 @@ public :
    Int_t the_sig_mu0_prescale_hlt_mu10p5_ip3p5 = -99;
    Int_t the_sig_mu0_prescale_hlt_mu12_ip6 = -99;
 
+   Float_t the_sig_mu0_triggering_pt = -99.;
+   Float_t the_sig_mu0_triggering_eta = -99.;
+   Float_t the_sig_mu0_triggering_phi = -99.;
+   Float_t the_sig_mu0_triggering_dxy = -99.;
+   Float_t the_sig_mu0_triggering_dxy_bs = -99.;
+   Float_t the_sig_mu0_triggering_dxysig = -99;
+   Float_t the_sig_mu0_triggering_dxysig_bs = -99.;
+
    Float_t the_sig_mu_pt = -99.;
    Float_t the_sig_mu_eta = -99.;
    Float_t the_sig_mu_phi = -99.;
@@ -616,6 +625,15 @@ public :
    Int_t the_sig_mu_numberoftrackerlayers = -99;
    Int_t the_sig_mu_numberofpixellayers = -99;
    Int_t the_sig_mu_numberofstations = -99;
+
+   Float_t the_sig_mu_triggering_pt = -99.;
+   Float_t the_sig_mu_triggering_eta = -99.;
+   Float_t the_sig_mu_triggering_phi = -99.;
+   Int_t the_sig_mu_triggering_charge = -99;
+   Float_t the_sig_mu_triggering_dxy = -99.;
+   Float_t the_sig_mu_triggering_dxy_bs = -99.;
+   Float_t the_sig_mu_triggering_dxysig = -99.;
+   Float_t the_sig_mu_triggering_dxysig_bs = -99.;
 
    Float_t the_sig_pi_pt = -99.;
    Float_t the_sig_pi_eta = -99.;
