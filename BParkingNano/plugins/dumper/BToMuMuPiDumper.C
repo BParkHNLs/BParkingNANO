@@ -619,12 +619,24 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
     // selecting the candidate as the one having the largest hnl pt
     // - create candIdx - cos2d pairs
     vector<pair<int,float>> pair_candIdx_desc_cos2d_sig = createPairWithDesc(nCand_sig, BToMuMuPi_hnl_cos2D);
+    //std::cout << "initial vector" << std::endl;
+    //for(unsigned int i(0); i<pair_candIdx_desc_cos2d_sig.size(); ++i){
+    //  std::cout << pair_candIdx_desc_cos2d_sig[i].first << " " << pair_candIdx_desc_cos2d_sig[i].second << " " << BToMuMuPi_hnl_charge[pair_candIdx_desc_cos2d_sig[i].first] << std::endl;
+    //}
     // - sort it in decreasing cos2d
     stable_sort(pair_candIdx_desc_cos2d_sig.begin(), pair_candIdx_desc_cos2d_sig.end(), sortcansbydesc);
+    //std::cout << std::endl << "after sort in cos2d" << std::endl;
+    //for(unsigned int i(0); i<pair_candIdx_desc_cos2d_sig.size(); ++i){
+    //  std::cout << pair_candIdx_desc_cos2d_sig[i].first << " " << pair_candIdx_desc_cos2d_sig[i].second << " " << BToMuMuPi_hnl_charge[pair_candIdx_desc_cos2d_sig[i].first] << std::endl;
+    //}
 
     // - then privilege OS cand over SS ones
     vector<pair<int,float>> pair_candIdx_desc_cos2d_sign_sig = updatePairWithDesc(pair_candIdx_desc_cos2d_sig, BToMuMuPi_hnl_charge);
     stable_sort(pair_candIdx_desc_cos2d_sign_sig.begin(), pair_candIdx_desc_cos2d_sign_sig.end(), sortcansbydesc_opp);
+    //std::cout << std::endl << "after sort in sign" << std::endl;
+    //for(unsigned int i(0); i<pair_candIdx_desc_cos2d_sign_sig.size(); ++i){
+    //  std::cout << pair_candIdx_desc_cos2d_sign_sig[i].first << " " << BToMuMuPi_hnl_cos2D[pair_candIdx_desc_cos2d_sign_sig[i].first] << " " << pair_candIdx_desc_cos2d_sign_sig[i].second << std::endl;
+    //}
 
     // - for signal, priviledge matched candidates
     //vector<pair<int,float>> pair_candIdx_desc_cos2d_sign_matched_sig = updatePairWithDesc(pair_candIdx_desc_cos2d_sign_sig, BToMuMuPi_isMatched);
@@ -636,9 +648,13 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
 
     // - and select the candidate
     UInt_t selectedCandIdx_sig = pair_candIdx_desc_cos2d_sign_sig[0].first;
+    //std::cout << std::endl << "selected candidate: " << selectedCandIdx_sig << std::endl;
 
     // for signal MC, only keep the matched events
     if(isSignalMC && BToMuMuPi_isMatched[selectedCandIdx_sig] != 1) return false;
+
+    // keep events in the signal region only //TODO add flag for signal region and control region?
+    if(BToMuMuPi_hnl_charge[selectedCandIdx_sig] != 0) return false;
 
     // fill the signal_tree
     if(BToMuMuPi_mu0_pt[selectedCandIdx_sig] == Muon_pt[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]){ // temporary condition, skip events with faulty indexing
