@@ -267,6 +267,7 @@ public :
    Float_t the_eta;
    Float_t the_phi;
    Float_t the_mass;
+   Float_t the_cos2d;
    Float_t the_deltar;
    Float_t the_lxy;
    Float_t the_lxy_sig;
@@ -282,6 +283,10 @@ public :
    Float_t the_tag_dxy_sig_bs;
    Float_t the_tag_dxy_sig_bs_rdst;
    Float_t the_tag_dz_sig;
+   Int_t the_tag_isloose;
+   Int_t the_tag_issoft;
+   Int_t the_tag_ismedium;
+   Int_t the_tag_istight;
    Int_t the_tag_fired_HLT_Mu7_IP4;
    Int_t the_tag_fired_HLT_Mu8_IP6;
    Int_t the_tag_fired_HLT_Mu8_IP5;
@@ -331,6 +336,9 @@ public :
    Float_t the_probe_dxy_sig_bs;
    Float_t the_probe_dxy_sig_bs_rdst;
    Float_t the_probe_dz_sig;
+   Int_t the_probe_isloose;
+   Int_t the_probe_issoft;
+   Int_t the_probe_ismedium;
    Int_t the_probe_istight;
    Int_t the_probe_fired_HLT_Mu7_IP4;
    Int_t the_probe_fired_HLT_Mu8_IP6;
