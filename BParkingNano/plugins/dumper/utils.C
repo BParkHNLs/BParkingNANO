@@ -19,6 +19,11 @@ bool sortcansbydesc_opp(const pair<int, float> &a1, const pair<int, float> &a2){
 }
 
 
+bool sortcansbydesc_diff(const pair<int, float> &a1, const pair<int, float> &a2){
+  return fabs(a1.second-6.274) < fabs(a2.second-6.274);
+}
+
+
 vector<pair<int,float>> createPairWithDesc(const UInt_t& nCand, const TTreeReaderArray<Float_t>& desc){
   vector<pair<int,float>> pair_candIdx_desc;
   for(unsigned int iCand(0); iCand < nCand; ++iCand){
@@ -146,6 +151,34 @@ float getPUWeight(TString filename, int var){
 }
 
 
+float getLeptonScaleFactor(TString filename, string ID, float pt, float eta){
+  // get file
+  TFile* file = TFile::Open(filename);
+  file->cd();
+
+  // get histogram
+  TH1D* hist = 0;
+  if(ID == "softid"){
+    hist = (TH1D*) file->Get("NUM_SoftID_DEN_genTracks_pt_abseta")->Clone("hist");
+  }
+  else if(ID == "looseid"){
+    hist = (TH1D*) file->Get("NUM_LooseID_DEN_genTracks_pt_abseta")->Clone("hist");
+  }
+
+  // get bin
+  pt = std::max(0., std::min(40., double(pt)));
+  int bin_pt = hist->GetXaxis()->FindBin(pt);
+  int bin_eta = hist->GetYaxis()->FindBin(eta);
+
+  // get scale factor
+  Float_t scale_factor = hist->GetBinContent(bin_pt, bin_eta);
+
+  file->Close();
+
+  return scale_factor;
+}
+
+
 float getTriggerScaleFactor(TString filename_sf, float pt, float eta){
   // get trigger scale factor file
   //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/scaleFactor_results_cat_pt_eta_fit_A1.root";
@@ -173,25 +206,312 @@ float getTriggerScaleFactor(TString filename_sf, float pt, float eta){
 }
 
 
-float getTriggerScaleFactor(float pt, float dxy_sig, float eta){
+float getTriggerScaleFactor_D1(float pt, float dxy_sig, float eta){
   // get trigger scale factor file
-  //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/scaleFactor_results_cat_pt_eta_fit_A1.root";
   TString filename_sf;
-  if(fabs(eta) >= 0 && fabs(eta) < 0.4){
-    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v0/scaleFactor_results_cat_pt_dxysig_eta_cnt_eta_0p00_0p50.root";
-    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v5/scaleFactor_results_cat_pt_eta_dxysig_cnt_eta_0p00_0p40.root";
+  if(fabs(eta) >= 0 && fabs(eta) < 0.5){
+    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_anyBParkHLT_ptetadxysig_max5e6/scale_factors_eta0p00_0p50.root";
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p00_0p50.root";
   }
-  else if(fabs(eta) >= 0.4 && fabs(eta) < 0.8){
-    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v0/scaleFactor_results_cat_pt_dxysig_eta_cnt_eta_0p50_1p00.root";
-    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v5/scaleFactor_results_cat_pt_eta_dxysig_cnt_eta_0p40_0p80.root";
+  else if(fabs(eta) >= 0.5 && fabs(eta) < 1.0){
+    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_anyBParkHLT_ptetadxysig_max5e6/scale_factors_eta0p50_1p00.root";
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p50_1p00.root";
   }
-  else if(fabs(eta) >= 0.8 && fabs(eta)<1.5){
-    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v0/scaleFactor_results_cat_pt_dxysig_eta_cnt_eta_1p00_1p50.root";
-    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v5/scaleFactor_results_cat_pt_eta_dxysig_cnt_eta_0p80_1p50.root";
+  else if(fabs(eta) >= 1.0 && fabs(eta)<1.5){
+    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_anyBParkHLT_ptetadxysig_max5e6/scale_factors_eta1p00_1p50.root";
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p00_1p50.root";
   }
   else if(fabs(eta) >= 1.5){
-    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v0/scaleFactor_results_cat_pt_dxysig_eta_cnt_eta_1p50_2p00.root";
-    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v5/scaleFactor_results_cat_pt_eta_dxysig_cnt_eta_0p00_0p40.root";
+    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_anyBParkHLT_ptetadxysig_max5e6/scale_factors_eta1p50_2p00.root";
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p50_2p00.root";
+  }
+  TFile* file_sf = TFile::Open(filename_sf);
+  file_sf->cd();
+
+  // get histogram
+  TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
+
+  pt = std::max(6., std::min(99.9, double(pt)));
+
+  // get bin
+  int bin_pt = hist_sf->GetXaxis()->FindBin(pt);
+  int bin_dxysig = hist_sf->GetYaxis()->FindBin(dxy_sig);
+
+  // get scale factor
+  Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_dxysig);
+  
+  file_sf->Close();
+
+  return scale_factor;
+}
+
+float getTriggerScaleFactor_D1_plus_one_sigma(float pt, float dxy_sig, float eta){
+  // get trigger scale factor file
+  TString filename_sf;
+  if(fabs(eta) >= 0 && fabs(eta) < 0.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p00_0p50_plus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 0.5 && fabs(eta) < 1.0){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p50_1p00_plus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.0 && fabs(eta)<1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p00_1p50_plus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p50_2p00_plus_one_sigma.root";
+  }
+  TFile* file_sf = TFile::Open(filename_sf);
+  file_sf->cd();
+
+  // get histogram
+  TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
+
+  pt = std::max(6., std::min(99.9, double(pt)));
+
+  // get bin
+  int bin_pt = hist_sf->GetXaxis()->FindBin(pt);
+  int bin_dxysig = hist_sf->GetYaxis()->FindBin(dxy_sig);
+
+  // get scale factor
+  Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_dxysig);
+  
+  file_sf->Close();
+
+  return scale_factor;
+}
+
+float getTriggerScaleFactor_D1_minus_one_sigma(float pt, float dxy_sig, float eta){
+  // get trigger scale factor file
+  TString filename_sf;
+  if(fabs(eta) >= 0 && fabs(eta) < 0.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p00_0p50_minus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 0.5 && fabs(eta) < 1.0){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p50_1p00_minus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.0 && fabs(eta)<1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p00_1p50_minus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p50_2p00_minus_one_sigma.root";
+  }
+  TFile* file_sf = TFile::Open(filename_sf);
+  file_sf->cd();
+
+  // get histogram
+  TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
+
+  pt = std::max(6., std::min(99.9, double(pt)));
+
+  // get bin
+  int bin_pt = hist_sf->GetXaxis()->FindBin(pt);
+  int bin_dxysig = hist_sf->GetYaxis()->FindBin(dxy_sig);
+
+  // get scale factor
+  Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_dxysig);
+  
+  file_sf->Close();
+
+  return scale_factor;
+}
+
+
+
+float getTriggerScaleFactor_D1_bs(float pt, float dxy_sig, float eta){
+  // get trigger scale factor file
+  TString filename_sf;
+  if(fabs(eta) >= 0 && fabs(eta) < 0.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta0p00_0p50.root";
+  }
+  else if(fabs(eta) >= 0.5 && fabs(eta) < 1.0){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta0p50_1p00.root";
+  }
+  else if(fabs(eta) >= 1.0 && fabs(eta)<1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta1p00_1p50.root";
+  }
+  else if(fabs(eta) >= 1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta1p50_2p00.root";
+  }
+  TFile* file_sf = TFile::Open(filename_sf);
+  file_sf->cd();
+
+  // get histogram
+  TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
+
+  pt = std::max(6., std::min(99.9, double(pt)));
+
+  // get bin
+  int bin_pt = hist_sf->GetXaxis()->FindBin(pt);
+  int bin_dxysig = hist_sf->GetYaxis()->FindBin(dxy_sig);
+
+  // get scale factor
+  Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_dxysig);
+  
+  file_sf->Close();
+
+  return scale_factor;
+}
+
+float getTriggerScaleFactor_D1_bs_plus_one_sigma(float pt, float dxy_sig, float eta){
+  // get trigger scale factor file
+  TString filename_sf;
+  if(fabs(eta) >= 0 && fabs(eta) < 0.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta0p00_0p50_plus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 0.5 && fabs(eta) < 1.0){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta0p50_1p00_plus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.0 && fabs(eta)<1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta1p00_1p50_plus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta1p50_2p00_plus_one_sigma.root";
+  }
+  TFile* file_sf = TFile::Open(filename_sf);
+  file_sf->cd();
+
+  // get histogram
+  TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
+
+  pt = std::max(6., std::min(99.9, double(pt)));
+
+  // get bin
+  int bin_pt = hist_sf->GetXaxis()->FindBin(pt);
+  int bin_dxysig = hist_sf->GetYaxis()->FindBin(dxy_sig);
+
+  // get scale factor
+  Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_dxysig);
+  
+  file_sf->Close();
+
+  return scale_factor;
+}
+
+float getTriggerScaleFactor_D1_bs_minus_one_sigma(float pt, float dxy_sig, float eta){
+  // get trigger scale factor file
+  TString filename_sf;
+  if(fabs(eta) >= 0 && fabs(eta) < 0.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta0p00_0p50_minus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 0.5 && fabs(eta) < 1.0){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta0p50_1p00_minus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.0 && fabs(eta)<1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta1p00_1p50_minus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6/scale_factors_eta1p50_2p00_minus_one_sigma.root";
+  }
+  TFile* file_sf = TFile::Open(filename_sf);
+  file_sf->cd();
+
+  // get histogram
+  TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
+
+  pt = std::max(6., std::min(99.9, double(pt)));
+
+  // get bin
+  int bin_pt = hist_sf->GetXaxis()->FindBin(pt);
+  int bin_dxysig = hist_sf->GetYaxis()->FindBin(dxy_sig);
+
+  // get scale factor
+  Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_dxysig);
+  
+  file_sf->Close();
+
+  return scale_factor;
+}
+
+
+
+float getTriggerScaleFactor_fullBPark(float pt, float dxy_sig, float eta){
+  // get trigger scale factor file
+  TString filename_sf;
+  if(fabs(eta) >= 0 && fabs(eta) < 0.5){
+    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_anyBParkHLT_ptetadxysig_max5e6/scale_factors_eta0p00_0p50.root";
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p00_0p50.root";
+  }
+  else if(fabs(eta) >= 0.5 && fabs(eta) < 1.0){
+    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_anyBParkHLT_ptetadxysig_max5e6/scale_factors_eta0p50_1p00.root";
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p50_1p00.root";
+  }
+  else if(fabs(eta) >= 1.0 && fabs(eta)<1.5){
+    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_anyBParkHLT_ptetadxysig_max5e6/scale_factors_eta1p00_1p50.root";
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p00_1p50.root";
+  }
+  else if(fabs(eta) >= 1.5){
+    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_anyBParkHLT_ptetadxysig_max5e6/scale_factors_eta1p50_2p00.root";
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p50_2p00.root";
+  }
+  TFile* file_sf = TFile::Open(filename_sf);
+  file_sf->cd();
+
+  // get histogram
+  TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
+
+  pt = std::max(6., std::min(99.9, double(pt)));
+
+  // get bin
+  int bin_pt = hist_sf->GetXaxis()->FindBin(pt);
+  int bin_dxysig = hist_sf->GetYaxis()->FindBin(dxy_sig);
+
+  // get scale factor
+  Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_dxysig);
+  
+  file_sf->Close();
+
+  return scale_factor;
+}
+
+float getTriggerScaleFactor_fullBPark_plus_one_sigma(float pt, float dxy_sig, float eta){
+  // get trigger scale factor file
+  TString filename_sf;
+  if(fabs(eta) >= 0 && fabs(eta) < 0.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p00_0p50_plus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 0.5 && fabs(eta) < 1.0){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p50_1p00_plus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.0 && fabs(eta)<1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p00_1p50_plus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p50_2p00_plus_one_sigma.root";
+  }
+  TFile* file_sf = TFile::Open(filename_sf);
+  file_sf->cd();
+
+  // get histogram
+  TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
+
+  pt = std::max(6., std::min(99.9, double(pt)));
+
+  // get bin
+  int bin_pt = hist_sf->GetXaxis()->FindBin(pt);
+  int bin_dxysig = hist_sf->GetYaxis()->FindBin(dxy_sig);
+
+  // get scale factor
+  Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_dxysig);
+  
+  file_sf->Close();
+
+  return scale_factor;
+}
+
+float getTriggerScaleFactor_fullBPark_minus_one_sigma(float pt, float dxy_sig, float eta){
+  // get trigger scale factor file
+  TString filename_sf;
+  if(fabs(eta) >= 0 && fabs(eta) < 0.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p00_0p50_minus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 0.5 && fabs(eta) < 1.0){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta0p50_1p00_minus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.0 && fabs(eta)<1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p00_1p50_minus_one_sigma.root";
+  }
+  else if(fabs(eta) >= 1.5){
+    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2/scale_factors_eta1p50_2p00_minus_one_sigma.root";
   }
   TFile* file_sf = TFile::Open(filename_sf);
   file_sf->cd();
