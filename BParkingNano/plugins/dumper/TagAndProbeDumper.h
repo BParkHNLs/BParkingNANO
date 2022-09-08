@@ -11,6 +11,7 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <TF1.h>
 #include <TSelector.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
@@ -261,6 +262,28 @@ public :
 
    Bool_t isMC;
 
+   TF1* double_gauss_1;
+   TF1* double_gauss_2;
+
+   TF1* gauss_function_0p01;
+   TF1* gauss_function_0p02;
+   TF1* gauss_function_0p03;
+   TF1* gauss_function_0p04;
+   TF1* gauss_function_0p05;
+   TF1* gauss_function_0p06;
+   TF1* gauss_function_0p07;
+   TF1* gauss_function_0p08;
+   TF1* gauss_function_0p09;
+   TF1* gauss_function_0p1;
+   TF1* gauss_function_0p15;
+   TF1* gauss_function_0p2;
+   TF1* gauss_function_0p25;
+   TF1* gauss_function_0p3;
+   TF1* gauss_function_0p35;
+   TF1* gauss_function_0p4;
+   TF1* gauss_function_0p45;
+   TF1* gauss_function_0p5;
+
    TTree* tree;
 
    Float_t the_pt;
@@ -331,8 +354,51 @@ public :
    Float_t the_probe_phi;
    Float_t the_probe_dxy;
    Float_t the_probe_dxy_bs;
+   Float_t the_probe_dxy_bs_uncorrected;
+   Float_t the_probe_dxy_bs_corrected_weight;
+   Float_t the_weight_dxy_bs;
    Float_t the_probe_dz;
    Float_t the_probe_dxy_sig;
+
+   Float_t the_smeared_corr_0p01;
+   Float_t the_smeared_corr_0p02;
+   Float_t the_smeared_corr_0p03;
+   Float_t the_smeared_corr_0p04;
+   Float_t the_smeared_corr_0p05;
+   Float_t the_smeared_corr_0p06;
+   Float_t the_smeared_corr_0p07;
+   Float_t the_smeared_corr_0p08;
+   Float_t the_smeared_corr_0p09;
+   Float_t the_smeared_corr_0p1;
+   Float_t the_smeared_corr_0p15;
+   Float_t the_smeared_corr_0p2;
+   Float_t the_smeared_corr_0p25;
+   Float_t the_smeared_corr_0p3;
+   Float_t the_smeared_corr_0p35;
+   Float_t the_smeared_corr_0p4;
+   Float_t the_smeared_corr_0p45;
+   Float_t the_smeared_corr_0p5;
+
+   Float_t the_double_gauss_corr_1;
+   Float_t the_double_gauss_corr_2;
+
+   Float_t the_probe_dxy_sig_bs_uncorrected;
+   Float_t the_probe_dxy_sig_bs_corrected_weight;
+   Float_t the_probe_dxy_sig_bs_corrected_linearscale;
+   Float_t the_probe_dxy_sig_bs_corrected_linearscale_2;
+   Float_t the_weight_dxy_sig_bs;
+   Float_t the_probe_dxy_sig_bs_0p01;
+   Float_t the_probe_dxy_sig_bs_0p05;
+   Float_t the_probe_dxy_sig_bs_0p1;
+   Float_t the_probe_dxy_sig_bs_0p15;
+   Float_t the_probe_dxy_sig_bs_0p2;
+   Float_t the_probe_dxy_sig_bs_0p25;
+   Float_t the_probe_dxy_sig_bs_0p3;
+   Float_t the_probe_dxy_sig_bs_0p35;
+   Float_t the_probe_dxy_sig_bs_0p4;
+   Float_t the_probe_dxy_sig_bs_0p45;
+   Float_t the_probe_dxy_sig_bs_0p5;
+
    Float_t the_probe_dxy_sig_bs;
    Float_t the_probe_dxy_sig_bs_rdst;
    Float_t the_probe_dz_sig;

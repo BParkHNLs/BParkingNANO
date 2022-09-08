@@ -142,9 +142,51 @@ void TagAndProbeDumper::SlaveBegin(TTree * /*tree*/)
   tree->Branch("probe_phi", &the_probe_phi);
   tree->Branch("probe_dxy", &the_probe_dxy);
   tree->Branch("probe_dxy_bs", &the_probe_dxy_bs);
+  tree->Branch("probe_dxy_bs_uncorrected", &the_probe_dxy_bs_uncorrected);
+  tree->Branch("probe_dxy_bs_corrected_weight", &the_probe_dxy_bs_corrected_weight);
+  tree->Branch("weight_dxy_bs", &the_weight_dxy_bs);
   tree->Branch("probe_dz", &the_probe_dz);
   tree->Branch("probe_dxy_sig", &the_probe_dxy_sig);
+
+  tree->Branch("smeared_corr_0p01", &the_smeared_corr_0p01);
+  tree->Branch("smeared_corr_0p02", &the_smeared_corr_0p02);
+  tree->Branch("smeared_corr_0p03", &the_smeared_corr_0p03);
+  tree->Branch("smeared_corr_0p04", &the_smeared_corr_0p04);
+  tree->Branch("smeared_corr_0p05", &the_smeared_corr_0p05);
+  tree->Branch("smeared_corr_0p06", &the_smeared_corr_0p06);
+  tree->Branch("smeared_corr_0p07", &the_smeared_corr_0p07);
+  tree->Branch("smeared_corr_0p08", &the_smeared_corr_0p08);
+  tree->Branch("smeared_corr_0p09", &the_smeared_corr_0p09);
+  tree->Branch("smeared_corr_0p1", &the_smeared_corr_0p1);
+  tree->Branch("smeared_corr_0p15", &the_smeared_corr_0p15);
+  tree->Branch("smeared_corr_0p2", &the_smeared_corr_0p2);
+  tree->Branch("smeared_corr_0p3", &the_smeared_corr_0p3);
+  tree->Branch("smeared_corr_0p35", &the_smeared_corr_0p35);
+  tree->Branch("smeared_corr_0p4", &the_smeared_corr_0p4);
+  tree->Branch("smeared_corr_0p45", &the_smeared_corr_0p45);
+  tree->Branch("smeared_corr_0p5", &the_smeared_corr_0p5);
+
+  tree->Branch("double_gauss_corr_1", &the_double_gauss_corr_1);
+  tree->Branch("double_gauss_corr_2", &the_double_gauss_corr_2);
+
+  tree->Branch("probe_dxy_sig_bs_uncorrected", &the_probe_dxy_sig_bs_uncorrected);
   tree->Branch("probe_dxy_sig_bs", &the_probe_dxy_sig_bs);
+  tree->Branch("probe_dxy_sig_bs_corrected_weight", &the_probe_dxy_sig_bs_corrected_weight);
+  tree->Branch("probe_dxy_sig_bs_corrected_linearscale", &the_probe_dxy_sig_bs_corrected_linearscale);
+  tree->Branch("probe_dxy_sig_bs_corrected_linearscale_2", &the_probe_dxy_sig_bs_corrected_linearscale_2);
+  tree->Branch("weight_dxy_sig_bs", &the_weight_dxy_sig_bs);
+  //tree->Branch("probe_dxy_sig_bs_0p01", &the_probe_dxy_sig_bs_0p01);
+  //tree->Branch("probe_dxy_sig_bs_0p05", &the_probe_dxy_sig_bs_0p05);
+  //tree->Branch("probe_dxy_sig_bs_0p1", &the_probe_dxy_sig_bs_0p1);
+  //tree->Branch("probe_dxy_sig_bs_0p15", &the_probe_dxy_sig_bs_0p15);
+  //tree->Branch("probe_dxy_sig_bs_0p2", &the_probe_dxy_sig_bs_0p2);
+  //tree->Branch("probe_dxy_sig_bs_0p25", &the_probe_dxy_sig_bs_0p25);
+  //tree->Branch("probe_dxy_sig_bs_0p3", &the_probe_dxy_sig_bs_0p3);
+  //tree->Branch("probe_dxy_sig_bs_0p35", &the_probe_dxy_sig_bs_0p35);
+  //tree->Branch("probe_dxy_sig_bs_0p4", &the_probe_dxy_sig_bs_0p4);
+  //tree->Branch("probe_dxy_sig_bs_0p45", &the_probe_dxy_sig_bs_0p45);
+  //tree->Branch("probe_dxy_sig_bs_0p5", &the_probe_dxy_sig_bs_0p5);
+
   tree->Branch("probe_dxy_sig_bs_rdst", &the_probe_dxy_sig_bs_rdst);
   tree->Branch("probe_dz_sig", &the_probe_dz_sig);
   tree->Branch("probe_isloose", &the_probe_isloose);
@@ -201,6 +243,57 @@ void TagAndProbeDumper::SlaveBegin(TTree * /*tree*/)
   tree->Branch("weight_pu_D", &the_weight_pu_D);
   tree->Branch("weight_pu_tot", &the_weight_pu_tot);
 
+  double_gauss_1 = new TF1("double_gauss_1","[0]/sqrt(2.*TMath::Pi())/[2]*exp(-(x-[1])*(x-[1])/2./[2]/[2])+(1-[0])/sqrt(2.*TMath::Pi())/[4]*exp(-(x-[3])*(x-[3])/2./[4]/[4])", 0.9, 1.3);
+  double_gauss_1->SetParameter(0, 0.62);
+  double_gauss_1->SetParameter(1, 1.042);
+  double_gauss_1->SetParameter(2, 0.034);
+  double_gauss_1->SetParameter(3, 1.144);
+  double_gauss_1->SetParameter(4, 0.026);
+
+  double_gauss_2 = new TF1("double_gauss_2","[0]/sqrt(2.*TMath::Pi())/[2]*exp(-(x-[1])*(x-[1])/2./[2]/[2])+(1-[0])/sqrt(2.*TMath::Pi())/[4]*exp(-(x-[3])*(x-[3])/2./[4]/[4])", 0.9, 1.3);
+  double_gauss_2->SetParameter(0, 0.4);
+  double_gauss_2->SetParameter(1, 1.03);
+  double_gauss_2->SetParameter(2, 0.030);
+  double_gauss_2->SetParameter(3, 1.13);
+  double_gauss_2->SetParameter(4, 0.05);
+
+  gauss_function_0p01 = new TF1("gauss_function_0p01", "gaus",-10, 10);
+  gauss_function_0p01->SetParameters(1, 1., 0.01);
+  gauss_function_0p02 = new TF1("gauss_function_0p02", "gaus",-10, 10);
+  gauss_function_0p02->SetParameters(1, 1., 0.02);
+  gauss_function_0p03 = new TF1("gauss_function_0p03", "gaus",-10, 10);
+  gauss_function_0p03->SetParameters(1, 1., 0.03);
+  gauss_function_0p04 = new TF1("gauss_function_0p04", "gaus",-10, 10);
+  gauss_function_0p04->SetParameters(1, 1., 0.04);
+  gauss_function_0p05 = new TF1("gauss_function_0p05", "gaus",-10, 10);
+  gauss_function_0p05->SetParameters(1, 1., 0.05);
+  gauss_function_0p06 = new TF1("gauss_function_0p06", "gaus",-10, 10);
+  gauss_function_0p06->SetParameters(1, 1., 0.06);
+  gauss_function_0p07 = new TF1("gauss_function_0p07", "gaus",-10, 10);
+  gauss_function_0p07->SetParameters(1, 1., 0.07);
+  gauss_function_0p08 = new TF1("gauss_function_0p08", "gaus",-10, 10);
+  gauss_function_0p08->SetParameters(1, 1., 0.08);
+  gauss_function_0p09 = new TF1("gauss_function_0p09", "gaus",-10, 10);
+  gauss_function_0p09->SetParameters(1, 1., 0.09);
+  gauss_function_0p1 = new TF1("gauss_function_0p1", "gaus",-10, 10);
+  gauss_function_0p1->SetParameters(1, 1., 0.1);
+  gauss_function_0p15 = new TF1("gauss_function_0p15", "gaus",-10, 10);
+  gauss_function_0p15->SetParameters(1, 1., 0.15);
+  gauss_function_0p2 = new TF1("gauss_function_0p2", "gaus",-10, 10);
+  gauss_function_0p2->SetParameters(1, 1., 0.2);
+  gauss_function_0p25 = new TF1("gauss_function_0p25", "gaus",-10, 10);
+  gauss_function_0p25->SetParameters(1, 1., 0.25);
+  gauss_function_0p3 = new TF1("gauss_function_0p3", "gaus",-10, 10);
+  gauss_function_0p3->SetParameters(1, 1., 0.3);
+  gauss_function_0p35 = new TF1("gauss_function_0p35", "gaus",-10, 10);
+  gauss_function_0p35->SetParameters(1, 1., 0.35);
+  gauss_function_0p4 = new TF1("gauss_function_0p4", "gaus",-10, 10);
+  gauss_function_0p4->SetParameters(1, 1., 0.4);
+  gauss_function_0p45 = new TF1("gauss_function_0p45", "gaus",-10, 10);
+  gauss_function_0p45->SetParameters(1, 1., 0.45);
+  gauss_function_0p5 = new TF1("gauss_function_0p5", "gaus",-10, 10);
+  gauss_function_0p5->SetParameters(1, 1., 0.5);
+
 }
 
 Bool_t TagAndProbeDumper::Process(Long64_t entry)
@@ -222,6 +315,8 @@ Bool_t TagAndProbeDumper::Process(Long64_t entry)
   // The return value is currently not used.
 
   fReader.SetLocalEntry(entry);
+  //if(entry > 10000) return false;
+  //std::cout << entry << std::endl;
 
   // for data, we skip the event in case it doesn't pass the lumi mask
   if(!isMC && lumiMask(*run, *luminosityBlock) == false) return false;
@@ -322,12 +417,84 @@ Bool_t TagAndProbeDumper::Process(Long64_t entry)
     the_probe_eta = fabs(JPsiToMuMu_lep2_eta[0]);
     the_probe_phi = JPsiToMuMu_lep2_phi[0];
     the_probe_dxy = fabs(Muon_dxy[JPsiToMuMu_lep2_idx[0]]);
+    //float corr_dxy_bs = isMC ? 1.21 : 1.; 
     float corr_dxy_bs = isMC ? 1.21 : 1.; 
     the_probe_dxy_bs = corr_dxy_bs * fabs(Muon_dxy_BS[JPsiToMuMu_lep2_idx[0]]);
+    the_probe_dxy_bs_uncorrected = fabs(Muon_dxy_BS[JPsiToMuMu_lep2_idx[0]]);
+    the_probe_dxy_bs_corrected_weight = isMC ? the_probe_dxy_bs_uncorrected * getMCCorrection("mc_weight_probe_dxy_bs.root", the_probe_dxy_bs_uncorrected, 0.3) : the_probe_dxy_bs_uncorrected;
+    the_weight_dxy_bs = isMC ? getMCCorrection("mc_weight_probe_dxy_bs.root", the_probe_dxy_bs_uncorrected, 0.3) : 1.;
+
+    float smeared_corr_0p01 = gauss_function_0p01->GetRandom(); 
+    float smeared_corr_0p02 = gauss_function_0p02->GetRandom(); 
+    float smeared_corr_0p03 = gauss_function_0p03->GetRandom(); 
+    float smeared_corr_0p04 = gauss_function_0p04->GetRandom(); 
+    float smeared_corr_0p05 = gauss_function_0p05->GetRandom(); 
+    float smeared_corr_0p06 = gauss_function_0p06->GetRandom(); 
+    float smeared_corr_0p07 = gauss_function_0p07->GetRandom(); 
+    float smeared_corr_0p08 = gauss_function_0p08->GetRandom(); 
+    float smeared_corr_0p09 = gauss_function_0p09->GetRandom(); 
+    float smeared_corr_0p1 = gauss_function_0p1->GetRandom(); 
+    float smeared_corr_0p15 = gauss_function_0p15->GetRandom(); 
+    float smeared_corr_0p2 = gauss_function_0p2->GetRandom(); 
+    float smeared_corr_0p25 = gauss_function_0p25->GetRandom(); 
+    float smeared_corr_0p3 = gauss_function_0p3->GetRandom(); 
+    float smeared_corr_0p35 = gauss_function_0p35->GetRandom(); 
+    float smeared_corr_0p4 = gauss_function_0p4->GetRandom(); 
+    float smeared_corr_0p45 = gauss_function_0p45->GetRandom(); 
+    float smeared_corr_0p5 = gauss_function_0p5->GetRandom(); 
+
+    the_smeared_corr_0p01 = smeared_corr_0p01;
+    the_smeared_corr_0p02 = smeared_corr_0p02;
+    the_smeared_corr_0p03 = smeared_corr_0p03;
+    the_smeared_corr_0p04 = smeared_corr_0p04;
+    the_smeared_corr_0p05 = smeared_corr_0p05;
+    the_smeared_corr_0p06 = smeared_corr_0p06;
+    the_smeared_corr_0p07 = smeared_corr_0p07;
+    the_smeared_corr_0p08 = smeared_corr_0p08;
+    the_smeared_corr_0p09 = smeared_corr_0p09;
+    the_smeared_corr_0p1 = smeared_corr_0p1;
+    the_smeared_corr_0p15 = smeared_corr_0p15;
+    the_smeared_corr_0p2 = smeared_corr_0p2;
+    the_smeared_corr_0p25 = smeared_corr_0p25;
+    the_smeared_corr_0p3 = smeared_corr_0p3;
+    the_smeared_corr_0p35 = smeared_corr_0p35;
+    the_smeared_corr_0p4 = smeared_corr_0p4;
+    the_smeared_corr_0p45 = smeared_corr_0p45;
+    the_smeared_corr_0p5 = smeared_corr_0p5;
+
+    the_double_gauss_corr_1 = double_gauss_1->GetRandom();
+    the_double_gauss_corr_2 = double_gauss_2->GetRandom();
+
     the_probe_dz = fabs(Muon_dz[JPsiToMuMu_lep2_idx[0]]);
     the_probe_dxy_sig = fabs(Muon_dxyS[JPsiToMuMu_lep2_idx[0]]);
+
     float corr_dxy_sig_bs = isMC ? 1.10 : 1.; 
-    the_probe_dxy_sig_bs = corr_dxy_sig_bs * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    the_probe_dxy_sig_bs_uncorrected = fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    the_probe_dxy_sig_bs = fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+
+    the_probe_dxy_sig_bs_corrected_weight = isMC ? the_probe_dxy_sig_bs_uncorrected * getMCCorrection("mc_weight_probe_dxy_sig_bs.root", the_probe_dxy_sig_bs_uncorrected, 60) : the_probe_dxy_sig_bs_uncorrected;
+    the_weight_dxy_sig_bs = isMC ? getMCCorrection("mc_weight_probe_dxy_sig_bs.root", the_probe_dxy_sig_bs_uncorrected, 60) : 1.;
+
+    the_probe_dxy_sig_bs_corrected_linearscale = isMC ? (1.176 -0.002932 * the_probe_dxy_sig_bs_uncorrected) * the_probe_dxy_sig_bs_uncorrected : the_probe_dxy_sig_bs_uncorrected;
+    the_probe_dxy_sig_bs_corrected_linearscale_2 = isMC ? (1.178 -0.002968 * the_probe_dxy_sig_bs_uncorrected) * the_probe_dxy_sig_bs_uncorrected : the_probe_dxy_sig_bs_uncorrected;
+
+    //std::cout << the_probe_dxy_sig_bs_uncorrected << " " << getMCCorrection("mc_weight_probe_dxy_sig_bs.root", the_probe_dxy_sig_bs_uncorrected, 60) << std::endl;
+
+    //the_probe_dxy_sig_bs = corr_dxy_sig_bs * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    //the_probe_dxy_sig_bs_0p01 = smeared_corr_0p01 * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+
+    //the_probe_dxy_sig_bs_0p05 = smeared_corr_0p05 * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    //the_probe_dxy_sig_bs_0p1 = smeared_corr_0p1 * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    //the_probe_dxy_sig_bs_0p15 = smeared_corr_0p15 * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    //the_probe_dxy_sig_bs_0p2 = smeared_corr_0p2 * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    //the_probe_dxy_sig_bs_0p25 = smeared_corr_0p25 * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    //the_probe_dxy_sig_bs_0p3 = smeared_corr_0p3 * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    //the_probe_dxy_sig_bs_0p35 = smeared_corr_0p35 * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    //the_probe_dxy_sig_bs_0p4 = smeared_corr_0p4 * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    //the_probe_dxy_sig_bs_0p45 = smeared_corr_0p45 * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+    //the_probe_dxy_sig_bs_0p5 = smeared_corr_0p5 * fabs(Muon_dxyS_BS[JPsiToMuMu_lep2_idx[0]]);
+
+
     the_probe_dxy_sig_bs_rdst = fabs(Muon_dxyS_BS_alaRdst[JPsiToMuMu_lep2_idx[0]]);
     the_probe_dz_sig = fabs(Muon_dzS[JPsiToMuMu_lep2_idx[0]]);
     the_probe_isloose = Muon_looseId[JPsiToMuMu_lep2_idx[0]];
