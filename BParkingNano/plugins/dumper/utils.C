@@ -131,6 +131,28 @@ bool lumiMask(int run, int lumi){
   }
 }
 
+float getMCCorrection(TString filename, double var, double max_val){
+  // get file
+  TFile* file = TFile::Open(filename);
+  file->cd();
+
+  // get histogram
+  TH1D* hist = (TH1D*) file->Get("hist_ratio")->Clone("hist");
+
+  // truncate the variable
+  var = std::max(0., std::min(max_val-1e-03, double(var)));
+  
+  // get the bin
+  int bin = hist->GetXaxis()->FindBin(var);
+  
+  // get weight
+  Float_t mc_weight = hist->GetBinContent(bin);
+
+  file->Close();
+
+  return mc_weight;
+}
+
 
 float getPUWeight(TString filename, int var){
   // get file
@@ -179,12 +201,8 @@ float getLeptonScaleFactor(TString filename, string ID, float pt, float eta){
 }
 
 
-float getTriggerScaleFactor(TString filename_sf, float pt, float eta){
+float getTriggerScaleFactor(TString filename_sf, float pt, float dxysig){
   // get trigger scale factor file
-  //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/scaleFactor_results_cat_pt_eta_fit_A1.root";
-  //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_tag_fired_DST_DoubleMu1_A1_extraptbin/scaleFactor_results_cat_pt_eta_fit.root";
-  //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_6_v1/scaleFactor_results_cat_pt_eta_fit.root";
-  //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_6_B1_v1/scaleFactor_results_cat_pt_eta_fit.root";
   TFile* file_sf = TFile::Open(filename_sf);
   file_sf->cd();
 
@@ -192,13 +210,14 @@ float getTriggerScaleFactor(TString filename_sf, float pt, float eta){
   TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
 
   pt = std::max(6., std::min(99.9, double(pt)));
+  dxysig = std::max(0., std::min(499.9, double(dxysig)));
 
   // get bin
   int bin_pt = hist_sf->GetXaxis()->FindBin(pt);
-  int bin_eta = hist_sf->GetYaxis()->FindBin(eta);
+  int bin_dxysig = hist_sf->GetYaxis()->FindBin(dxysig);
 
   // get scale factor
-  Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_eta);
+  Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_dxysig);
   
   file_sf->Close();
 
