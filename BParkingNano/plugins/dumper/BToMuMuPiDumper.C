@@ -39,8 +39,6 @@
 
 using namespace std;
 
-//TODO add branch triggering_mu (pt etc.) with all muons, either displaced or primary
-// add branch primary_triggering_mu and displaced_triggering_mu
 
 void BToMuMuPiDumper::Begin(TTree * /*tree*/)
 {
@@ -142,6 +140,9 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("mu0_dxy_bs", &the_sig_mu0_dxy_bs);
   signal_tree->Branch("mu0_dxysig", &the_sig_mu0_dxysig);
   signal_tree->Branch("mu0_dxysig_bs", &the_sig_mu0_dxysig_bs);
+  signal_tree->Branch("mu0_dxysig_bs_linearscale", &the_sig_mu0_dxysig_bs_linearscale);
+  signal_tree->Branch("mu0_dxysig_bs_scale1p12_smear0p03", &the_sig_mu0_dxysig_bs_scale1p12_smear0p03);
+  //signal_tree->Branch("mu0_dxysig_bs_smeared", &the_sig_mu0_dxysig_bs_smeared);
   signal_tree->Branch("mu0_dxysig_bs_rdst", &the_sig_mu0_dxysig_bs_rdst);
   signal_tree->Branch("mu0_dz", &the_sig_mu0_dz);
   signal_tree->Branch("mu0_dzsig", &the_sig_mu0_dzsig);
@@ -214,6 +215,8 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("mu0_triggering_dxy_bs", &the_sig_mu0_triggering_dxy_bs);
   signal_tree->Branch("mu0_triggering_dxysig", &the_sig_mu0_triggering_dxysig);
   signal_tree->Branch("mu0_triggering_dxysig_bs", &the_sig_mu0_triggering_dxysig_bs);
+  signal_tree->Branch("mu0_triggering_dxysig_bs_linearscale", &the_sig_mu0_triggering_dxysig_bs_linearscale);
+  signal_tree->Branch("mu0_triggering_dxysig_bs_scale1p12_smear0p03", &the_sig_mu0_triggering_dxysig_bs_scale1p12_smear0p03);
   signal_tree->Branch("mu0_triggering_dxysig_bs_rdst", &the_sig_mu0_triggering_dxysig_bs_rdst);
 
   signal_tree->Branch("mu_pt", &the_sig_mu_pt);
@@ -224,6 +227,8 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("mu_dxy_bs", &the_sig_mu_dxy_bs);
   signal_tree->Branch("mu_dxysig", &the_sig_mu_dxysig);
   signal_tree->Branch("mu_dxysig_bs", &the_sig_mu_dxysig_bs);
+  signal_tree->Branch("mu_dxysig_bs_linearscale", &the_sig_mu_dxysig_bs_linearscale);
+  signal_tree->Branch("mu_dxysig_bs_scale1p12_smear0p03", &the_sig_mu_dxysig_bs_scale1p12_smear0p03);
   signal_tree->Branch("mu_dxysig_bs_rdst", &the_sig_mu_dxysig_bs_rdst);
   signal_tree->Branch("mu_dz", &the_sig_mu_dz);
   signal_tree->Branch("mu_dzsig", &the_sig_mu_dzsig);
@@ -293,6 +298,8 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("mu_triggering_dxy_bs", &the_sig_mu_triggering_dxy_bs);
   signal_tree->Branch("mu_triggering_dxysig", &the_sig_mu_triggering_dxysig);
   signal_tree->Branch("mu_triggering_dxysig_bs", &the_sig_mu_triggering_dxysig_bs);
+  signal_tree->Branch("mu_triggering_dxysig_bs_linearscale", &the_sig_mu_triggering_dxysig_bs_linearscale);
+  signal_tree->Branch("mu_triggering_dxysig_bs_scale1p12_smear0p03", &the_sig_mu_triggering_dxysig_bs_scale1p12_smear0p03);
   signal_tree->Branch("mu_triggering_dxysig_bs_rdst", &the_sig_mu_triggering_dxysig_bs_rdst);
 
   signal_tree->Branch("pi_pt", &the_sig_pi_pt);
@@ -407,6 +414,11 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
     signal_tree->Branch("weight_mu0_softid", &the_sig_weight_mu0_softid);
     signal_tree->Branch("weight_mu_looseid", &the_sig_weight_mu_looseid);
 
+    signal_tree->Branch("weight_mu0_dxy_bs", &the_sig_weight_mu0_dxy_bs);
+    signal_tree->Branch("weight_mu_dxy_bs", &the_sig_weight_mu_dxy_bs);
+    signal_tree->Branch("weight_mu0_dxysig_bs", &the_sig_weight_mu0_dxysig_bs);
+    signal_tree->Branch("weight_mu_dxysig_bs", &the_sig_weight_mu_dxysig_bs);
+
     //signal_tree->Branch("weight_hlt_A1", &the_sig_weight_hlt_A1);
     //signal_tree->Branch("weight_hlt_A1_6", &the_sig_weight_hlt_A1_6);
     //signal_tree->Branch("weight_hlt_HLT_Mu9_IP6_A1_6", &the_sig_weight_hlt_HLT_Mu9_IP6_A1_6);
@@ -443,38 +455,41 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
     //signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2);
     
     signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2);
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma);
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma);
 
     signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2);
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma);
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma);
 
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2);
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma);
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_minus_one_sigma);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_minus_one_sigma);
 
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2);
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma);
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma);
 
 
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2);
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2);
     //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_bsrdst_newcat_max3e6_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_bsrdst_newcat_max3e6_smalltable_v2);
     //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_bsrdst_inicat_max3e6_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_bsrdst_inicat_max3e6_smalltable_v2);
 
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2);
-    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2);
+    //signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2);
+
+    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale_smalltable_v2);
+    signal_tree->Branch("weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03_smalltable_v2", &the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03_smalltable_v2);
 
 
     signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2);
-    signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma);
-    signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma);
+    //signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma);
+    //signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma);
 
-    signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2);
-    signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma);
-    signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_minus_one_sigma);
+    //signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2);
+    //signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma);
+    //signal_tree->Branch("weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_minus_one_sigma", &the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_minus_one_sigma);
 
     signal_tree->Branch("weight_pu_qcd_A", &the_sig_weight_pu_qcd_A);
     signal_tree->Branch("weight_pu_qcd_B", &the_sig_weight_pu_qcd_B);
@@ -538,6 +553,17 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   //signal_tree->Branch("hlt_mu9_ip4", &the_hlt_mu9_ip4);
   //signal_tree->Branch("hlt_mu10p5_ip3p5", &the_hlt_mu10p5_ip3p5);
   //signal_tree->Branch("hlt_mu12_ip6", &the_hlt_mu12_ip6);
+
+
+  //// generate toys for smearing
+  ////TF1* gauss_function = new TF1("gauss_function", "gauss",-10, 10);
+  //gauss_function = new TF1("gauss_function", "gaus",-10, 10);
+  //gauss_function->SetParameters(1, 1.1, 0.1);
+  ////gauss_function->SetParameters(1,0,1);
+  
+  //TODO add flag isMC here and for the random choice
+  gauss_function_0p03 = new TF1("gauss_function_0p03", "gaus",-10, 10);
+  gauss_function_0p03->SetParameters(1, 1., 0.03);
 
 
   // defining histograms
@@ -660,8 +686,14 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
     //if(BToMuMuPi_hnl_charge[selectedCandIdx_sig] != 0) return false;
 
     // mc corrections
-    float corr_dxy_bs = isMC ? 1.21 : 1.; 
-    float corr_dxysig_bs = isMC ? 1.10 : 1.; 
+    //float corr_dxy_bs = 1.; //isMC ? 1.21 : 1.; 
+    //float corr_dxysig_bs = 1.; //isMC ? 1.10 : 1.; 
+
+    //// smearing
+    ////gauss_function->SetParameters(1, corr_dxysig_bs, 0.1);
+    //float smearing_dxysig_bs = gauss_function->GetRandom(); 
+    ////std::cout << "smearing " << smearing_dxysig_bs << std::endl;
+    float smeared_corr_0p03 = gauss_function_0p03->GetRandom(); 
 
     // fill the signal_tree
     if(BToMuMuPi_mu0_pt[selectedCandIdx_sig] == Muon_pt[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]){ // temporary condition, skip events with faulty indexing
@@ -693,11 +725,15 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       the_sig_mu0_phi = BToMuMuPi_mu0_phi[selectedCandIdx_sig];
       //the_sig_mu0_phi = Muon_phi[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_charge = Muon_charge[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
-      the_sig_mu0_dxy = Muon_dxy[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
-      the_sig_mu0_dxy_bs = corr_dxy_bs * Muon_dxy_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
-      the_sig_mu0_dxysig = Muon_dxyS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
-      the_sig_mu0_dxysig_bs = corr_dxysig_bs * Muon_dxyS_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
-      the_sig_mu0_dxysig_bs_rdst = Muon_dxyS_BS_alaRdst[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
+      the_sig_mu0_dxy = fabs(Muon_dxy[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]);
+      //the_sig_mu0_dxy_bs = corr_dxy_bs * Muon_dxy_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
+      the_sig_mu0_dxy_bs = fabs(Muon_dxy_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]);
+      the_sig_mu0_dxysig = fabs(Muon_dxyS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]);
+      the_sig_mu0_dxysig_bs =  fabs(Muon_dxyS_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]);
+      the_sig_mu0_dxysig_bs_linearscale =  isMC ? (1.178 - 0.002968 * fabs(Muon_dxyS_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]])) * fabs(Muon_dxyS_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]) : fabs(Muon_dxyS_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]);
+      the_sig_mu0_dxysig_bs_scale1p12_smear0p03 = isMC ? 1.12 * smeared_corr_0p03 * fabs(Muon_dxyS_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]) : fabs(Muon_dxyS_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]); 
+      //the_sig_mu0_dxysig_bs_smeared = (corr_dxysig_bs + smearing_dxysig_bs) * Muon_dxyS_BS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
+      the_sig_mu0_dxysig_bs_rdst = fabs(Muon_dxyS_BS_alaRdst[BToMuMuPi_mu0_idx[selectedCandIdx_sig]]);
       the_sig_mu0_dz = Muon_dz[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_dzsig = Muon_dzS[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_triggermatching_dr = Muon_matched_dr[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
@@ -762,22 +798,27 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       //the_sig_mu0_prescale_hlt_mu10p5_ip3p5 = Muon_prescale_HLT_Mu10p5_IP3p5[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       //the_sig_mu0_prescale_hlt_mu12_ip6 = Muon_prescale_HLT_Mu12_IP6[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
 
-      the_sig_mu0_triggering_pt = -99;
-      the_sig_mu0_triggering_eta = -99;
-      the_sig_mu0_triggering_phi = -99;
-      the_sig_mu0_triggering_dxy = -99999;
-      the_sig_mu0_triggering_dxy_bs = -99999;
-      the_sig_mu0_triggering_dxysig = -99999;
-      the_sig_mu0_triggering_dxysig_bs = -99999;
-      the_sig_mu0_triggering_dxysig_bs_rdst = -99999;
+      the_sig_mu0_triggering_pt = -99.;
+      the_sig_mu0_triggering_eta = -99.;
+      the_sig_mu0_triggering_phi = -99.;
+      the_sig_mu0_triggering_dxy = -99.;
+      the_sig_mu0_triggering_dxy_bs = -99.;
+      the_sig_mu0_triggering_dxysig = -99.;
+      the_sig_mu0_triggering_dxysig_bs = -99.;
+      the_sig_mu0_triggering_dxysig_bs_rdst = -99.;
+      the_sig_mu0_triggering_dxysig_bs_linearscale = -99.;
+      the_sig_mu0_triggering_dxysig_bs_scale1p12_smear0p03 = -99.;
       if(the_sig_mu0_istriggering == 1){
         the_sig_mu0_triggering_pt = the_sig_mu0_pt;
         the_sig_mu0_triggering_eta = the_sig_mu0_eta;
         the_sig_mu0_triggering_phi = the_sig_mu0_phi;
         the_sig_mu0_triggering_dxy = the_sig_mu0_dxy;
-        the_sig_mu0_triggering_dxy_bs = corr_dxy_bs * the_sig_mu0_dxy_bs;
+        the_sig_mu0_triggering_dxy_bs = the_sig_mu0_dxy_bs;
         the_sig_mu0_triggering_dxysig = the_sig_mu0_dxysig;
-        the_sig_mu0_triggering_dxysig_bs = corr_dxysig_bs * the_sig_mu0_dxysig_bs;
+        //the_sig_mu0_triggering_dxysig_bs = corr_dxysig_bs * the_sig_mu0_dxysig_bs;
+        the_sig_mu0_triggering_dxysig_bs = the_sig_mu0_dxysig_bs; // corrected above
+        the_sig_mu0_triggering_dxysig_bs_linearscale = the_sig_mu0_dxysig_bs_linearscale; // corrected above
+        the_sig_mu0_triggering_dxysig_bs_scale1p12_smear0p03 = the_sig_mu0_dxysig_bs_scale1p12_smear0p03; // corrected above
         the_sig_mu0_triggering_dxysig_bs_rdst = the_sig_mu0_dxysig_bs_rdst;
       }
 
@@ -785,11 +826,14 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       the_sig_mu_eta = BToMuMuPi_fit_mu_eta[selectedCandIdx_sig];
       the_sig_mu_phi = BToMuMuPi_fit_mu_phi[selectedCandIdx_sig]; 
       the_sig_mu_charge = Muon_charge[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      the_sig_mu_dxy = Muon_dxy[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      the_sig_mu_dxy_bs = corr_dxy_bs * Muon_dxy_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      the_sig_mu_dxysig = Muon_dxyS[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      the_sig_mu_dxysig_bs = corr_dxysig_bs * Muon_dxyS_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      the_sig_mu_dxysig_bs_rdst = Muon_dxyS_BS_alaRdst[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      the_sig_mu_dxy = fabs(Muon_dxy[BToMuMuPi_mu_idx[selectedCandIdx_sig]]);
+      the_sig_mu_dxy_bs = fabs(Muon_dxy_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]]);
+      the_sig_mu_dxysig = fabs(Muon_dxyS[BToMuMuPi_mu_idx[selectedCandIdx_sig]]);
+      //the_sig_mu_dxysig_bs = corr_dxysig_bs * Muon_dxyS_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      the_sig_mu_dxysig_bs =  fabs(Muon_dxyS_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]]);
+      the_sig_mu_dxysig_bs_linearscale =  isMC ? (1.178 - 0.002968 * fabs(Muon_dxyS_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]])) * fabs(Muon_dxyS_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]]) : fabs(Muon_dxyS_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]]);
+      the_sig_mu_dxysig_bs_scale1p12_smear0p03 = isMC ? 1.12 * smeared_corr_0p03 * fabs(Muon_dxyS_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]]) : fabs(Muon_dxyS_BS[BToMuMuPi_mu_idx[selectedCandIdx_sig]]); 
+      the_sig_mu_dxysig_bs_rdst = fabs(Muon_dxyS_BS_alaRdst[BToMuMuPi_mu_idx[selectedCandIdx_sig]]);
       the_sig_mu_dz = Muon_dz[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_dzsig = Muon_dzS[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_triggermatching_dr = Muon_matched_dr[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
@@ -857,22 +901,27 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       }
 
       // displaced triggering muon
-      the_sig_mu_triggering_pt = -99;
-      the_sig_mu_triggering_eta = -99;
-      the_sig_mu_triggering_phi = -99;
-      the_sig_mu_triggering_dxy = -99999;
-      the_sig_mu_triggering_dxy_bs = -99999;
-      the_sig_mu_triggering_dxysig = -99999;
-      the_sig_mu_triggering_dxysig_bs = -99999;
-      the_sig_mu_triggering_dxysig_bs_rdst = -99999;
+      the_sig_mu_triggering_pt = -99.;
+      the_sig_mu_triggering_eta = -99.;
+      the_sig_mu_triggering_phi = -99.;
+      the_sig_mu_triggering_dxy = -99.;
+      the_sig_mu_triggering_dxy_bs = -99.;
+      the_sig_mu_triggering_dxysig = -99.;
+      the_sig_mu_triggering_dxysig_bs = -99.;
+      the_sig_mu_triggering_dxysig_bs_rdst = -99.;
+      the_sig_mu_triggering_dxysig_bs_linearscale = -99.;
+      the_sig_mu_triggering_dxysig_bs_scale1p12_smear0p03 = -99.;
       if(the_sig_mu_istriggering == 1){
         the_sig_mu_triggering_pt = the_sig_mu_pt;
         the_sig_mu_triggering_eta = the_sig_mu_eta;
         the_sig_mu_triggering_phi = the_sig_mu_phi;
         the_sig_mu_triggering_dxy = the_sig_mu_dxy;
-        the_sig_mu_triggering_dxy_bs = corr_dxy_bs * the_sig_mu_dxy_bs;
+        the_sig_mu_triggering_dxy_bs = the_sig_mu_dxy_bs;
         the_sig_mu_triggering_dxysig = the_sig_mu_dxysig;
-        the_sig_mu_triggering_dxysig_bs = corr_dxysig_bs * the_sig_mu_dxysig_bs;
+        //the_sig_mu_triggering_dxysig_bs = corr_dxysig_bs * the_sig_mu_dxysig_bs;
+        the_sig_mu_triggering_dxysig_bs = the_sig_mu_dxysig_bs; // corrected above
+        the_sig_mu_triggering_dxysig_bs_linearscale = the_sig_mu_dxysig_bs_linearscale; // corrected above
+        the_sig_mu_triggering_dxysig_bs_scale1p12_smear0p03 = the_sig_mu_dxysig_bs_scale1p12_smear0p03; // corrected above
         the_sig_mu_triggering_dxysig_bs_rdst = the_sig_mu_dxysig_bs_rdst;
       }
 
@@ -1212,28 +1261,31 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
         //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
 
         the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2 = -99.;
-        the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
-        the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
+        //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
+        //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
 
         the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2 = -99.;
-        the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
-        the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
+        //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
+        //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
 
-        the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2 = -99.;
-        the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2 = -99.;
+        //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2 = -99.;
+        //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2 = -99.;
         //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_bsrdst_newcat_max3e6_smalltable_v2 = -99.;
         //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_bsrdst_inicat_max3e6_smalltable_v2 = -99.;
         
-        the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = -99.;
-        the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = -99.;
+        //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = -99.;
+        //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = -99.;
+
+        the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale_smalltable_v2 = -99;
+        the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03_smalltable_v2 = -99;
 
         //the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2 = -99.;
         //the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
         //the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
 
         the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2 = -99.;
-        the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
-        the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
+        //the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
+        //the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
 
         if(the_sig_mu0_istriggering && the_sig_mu_istriggering){
           the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig)) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig)); 
@@ -1252,11 +1304,13 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
           //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma = getTriggerScaleFactor_D1_bs_plus_one_sigma(the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs), fabs(the_sig_mu0_eta)) * getTriggerScaleFactor_D1_bs(the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs), fabs(the_sig_mu_eta));
           //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma = getTriggerScaleFactor_D1_bs_minus_one_sigma(the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs), fabs(the_sig_mu0_eta)) * getTriggerScaleFactor_D1_bs(the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs), fabs(the_sig_mu_eta));
 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
+          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale/scale_factors.root", the_sig_mu0_pt, the_sig_mu0_dxysig_bs_linearscale) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale/scale_factors.root", the_sig_mu_pt, the_sig_mu_dxysig_bs_linearscale); 
+          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03/scale_factors.root", the_sig_mu0_pt, the_sig_mu0_dxysig_bs_scale1p12_smear0p03) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03/scale_factors.root", the_sig_mu_pt, the_sig_mu_dxysig_bs_scale1p12_smear0p03); 
 
 
           the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig)) * getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig)); 
@@ -1285,11 +1339,14 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
           //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma = getTriggerScaleFactor_D1_bs_plus_one_sigma(the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs), fabs(the_sig_mu0_eta));
           //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma = getTriggerScaleFactor_D1_bs_minus_one_sigma(the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs), fabs(the_sig_mu0_eta));
 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)); 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)); 
 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)); 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs_rdst)); 
+
+          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale/scale_factors.root", the_sig_mu0_pt, the_sig_mu0_dxysig_bs_linearscale); // abs removed as applied above 
+          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03/scale_factors.root", the_sig_mu0_pt, the_sig_mu0_dxysig_bs_scale1p12_smear0p03); 
 
           the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2/scale_factors.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig)); 
           //the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2/scale_factors_plus_one_sigma.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig)); 
@@ -1317,11 +1374,14 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
           //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma = getTriggerScaleFactor_D1_bs_plus_one_sigma(the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs), fabs(the_sig_mu_eta));
           //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma = getTriggerScaleFactor_D1_bs_minus_one_sigma(the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs), fabs(the_sig_mu_eta));
 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs_rdst)); 
+
+          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale/scale_factors.root", the_sig_mu_pt, the_sig_mu_dxysig_bs_linearscale); 
+          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03/scale_factors.root", the_sig_mu_pt, the_sig_mu_dxysig_bs_scale1p12_smear0p03); 
 
 
           the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2/scale_factors.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig)); 
@@ -1350,11 +1410,14 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
           //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma = 1.;
           //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma = 1.;
 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2 = 1.;
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2 = 1.;
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2 = 1.;
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2 = 1.;
 
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = 1.;
-          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = 1.;
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = 1.;
+          //the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = 1.;
+
+          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale_smalltable_v2 = 1.;
+          the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03_smalltable_v2 = 1.;
 
           the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2 = 1.;
           //the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma = 1.;
@@ -1381,6 +1444,13 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
         // lepton scale factor
         the_sig_weight_mu0_softid = isMC ? getLeptonScaleFactor("RunABCD_SF_MuonID_2018.root", "softid", the_sig_mu0_pt, abs(the_sig_mu0_eta)) : 1.;
         the_sig_weight_mu_looseid = isMC ? getLeptonScaleFactor("RunABCD_SF_MuonID_2018.root", "looseid", the_sig_mu_pt, abs(the_sig_mu_eta)) : 1.;
+
+        // mc corrections
+        the_sig_weight_mu0_dxy_bs = isMC ? getMCCorrection("mc_weight_probe_dxy_bs.root", the_sig_mu0_dxy_bs, 0.3) : 1.;
+        the_sig_weight_mu_dxy_bs = isMC ? getMCCorrection("mc_weight_probe_dxy_bs.root", the_sig_mu_dxy_bs, 0.3) : 1.;
+        the_sig_weight_mu0_dxysig_bs = isMC ? getMCCorrection("mc_weight_probe_dxy_sig_bs.root", the_sig_mu0_dxysig_bs, 60) : 1.;
+        the_sig_weight_mu_dxysig_bs = isMC ? getMCCorrection("mc_weight_probe_dxy_sig_bs.root", the_sig_mu_dxysig_bs, 60) : 1.;
+
 
       } // end isMC
         

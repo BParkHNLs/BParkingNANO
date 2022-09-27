@@ -12,6 +12,7 @@
 #include <TChain.h>
 #include <TFile.h>
 #include <TH1F.h>
+#include <TF1.h>
 #include <TSelector.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
@@ -490,6 +491,9 @@ public :
    Float_t the_sig_mu0_dxy_bs = -99.;
    Float_t the_sig_mu0_dxysig = -99;
    Float_t the_sig_mu0_dxysig_bs = -99.;
+   Float_t the_sig_mu0_dxysig_bs_linearscale = -99.;
+   Float_t the_sig_mu0_dxysig_bs_scale1p12_smear0p03 = -99.;
+   //Float_t the_sig_mu0_dxysig_bs_smeared = -99.;
    Float_t the_sig_mu0_dxysig_bs_rdst = -99.;
    Float_t the_sig_mu0_dz = -99.;
    Float_t the_sig_mu0_dzsig = -99.;
@@ -562,6 +566,8 @@ public :
    Float_t the_sig_mu0_triggering_dxy_bs = -99.;
    Float_t the_sig_mu0_triggering_dxysig = -99;
    Float_t the_sig_mu0_triggering_dxysig_bs = -99.;
+   Float_t the_sig_mu0_triggering_dxysig_bs_linearscale = -99.;
+   Float_t the_sig_mu0_triggering_dxysig_bs_scale1p12_smear0p03 = -99.;
    Float_t the_sig_mu0_triggering_dxysig_bs_rdst = -99.;
 
    Float_t the_sig_mu_pt = -99.;
@@ -572,6 +578,8 @@ public :
    Float_t the_sig_mu_dxy_bs = -99.;
    Float_t the_sig_mu_dxysig = -99.;
    Float_t the_sig_mu_dxysig_bs = -99.;
+   Float_t the_sig_mu_dxysig_bs_linearscale = -99.;
+   Float_t the_sig_mu_dxysig_bs_scale1p12_smear0p03 = -99.;
    Float_t the_sig_mu_dxysig_bs_rdst = -99.;
    Float_t the_sig_mu_dz = -99.;
    Float_t the_sig_mu_dzsig = -99.;
@@ -636,6 +644,8 @@ public :
    Float_t the_sig_mu_triggering_dxy_bs = -99.;
    Float_t the_sig_mu_triggering_dxysig = -99.;
    Float_t the_sig_mu_triggering_dxysig_bs = -99.;
+   Float_t the_sig_mu_triggering_dxysig_bs_linearscale = -99.;
+   Float_t the_sig_mu_triggering_dxysig_bs_scale1p12_smear0p03 = -99.;
    Float_t the_sig_mu_triggering_dxysig_bs_rdst = -99.;
 
    Float_t the_sig_pi_pt = -99.;
@@ -749,6 +759,12 @@ public :
    // weights
    Float_t the_sig_weight_mu0_softid = -99.;
    Float_t the_sig_weight_mu_looseid = -99.;
+
+   Float_t the_sig_weight_mu0_dxy_bs = -99.;
+   Float_t the_sig_weight_mu_dxy_bs = -99.;
+   Float_t the_sig_weight_mu0_dxysig_bs = -99.;
+   Float_t the_sig_weight_mu_dxysig_bs = -99.;
+
    //Float_t the_sig_weight_hlt_A1 = -99.;
    //Float_t the_sig_weight_hlt_A1_6 = -99.;
    //Float_t the_sig_weight_hlt_HLT_Mu9_IP6_A1_6 = -99.;
@@ -805,6 +821,9 @@ public :
 
    Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = -99.;
    Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = -99.;
+
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale_smalltable_v2 = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03_smalltable_v2 = -99.;
 
    Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2 = -99.;
    Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
@@ -863,6 +882,9 @@ public :
    Float_t the_gen_pi_vx = -99.;
    Float_t the_gen_pi_vy = -99.;
    Float_t the_gen_pi_vz = -99.;
+
+   // functions
+   TF1* gauss_function_0p03;
 
    // histograms
    TH1F* sighist_ncand_perevent;
