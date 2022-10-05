@@ -27,13 +27,13 @@ if options.categorisation == 'pt_eta':
 elif options.categorisation == 'pt_dxysig':
   categorisation = cms.PSet(
         probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
-        probe_dxy_sig = cms.vdouble(0.0, 3.0, 4.0, 6.0, 8.0, 10.0, 20.0, 500.0),
+        probe_dxy_sig = cms.vdouble(0.0, 3.0, 3.5, 4.0, 5.0, 6.0, 8.0, 10.0, 20.0, 500.0),
       )
 elif options.categorisation == 'pt_eta_dxysig':
   categorisation = cms.PSet(
         probe_pt = cms.vdouble(6.0, 7.0, 8.0, 8.5, 9.0, 10.0, 10.5, 11.0, 12.0, 20.0, 100.0),
         probe_eta = cms.vdouble(0.0, 0.5, 1.0, 1.5, 2.0),
-        probe_dxy_sig = cms.vdouble(0.0, 3.0, 4.0, 6.0, 8.0, 10.0, 20.0, 500.0),
+        probe_dxy_sig = cms.vdouble(0.0, 3.0, 3.5, 4.0, 5.0, 6.0, 8.0, 10.0, 20.0, 500.0),
         )
 
 process.TagProbeFitTreeAnalyzer = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
@@ -57,7 +57,7 @@ process.TagProbeFitTreeAnalyzer = cms.EDAnalyzer("TagProbeFitTreeAnalyzer",
         mass = cms.vstring("mass", "2.9", "3.3", "GeV/c^{2}"),
         probe_pt = cms.vstring("probe_pt", "0", "100", "GeV/c"),
         probe_eta = cms.vstring("probe_eta", "0", "2.5", ""),
-        probe_dxy_sig = cms.vstring("probe_dxy_sig", "0", "500", ""),
+        probe_dxy_sig = cms.vstring("probe_dxy_sig_bs", "0", "500", ""),
     ),
 
     # defines all the discrete variables of the probes available in the input tree and intended for use in the efficiency calculations
