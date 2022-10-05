@@ -457,7 +457,8 @@ Bool_t TagAndProbeDumper::Process(Long64_t entry)
     //the_probe_dxy_sig_bs = isMC ? (1.178 -0.002968 * the_probe_dxy_sig_bs_uncorrected) * the_probe_dxy_sig_bs_uncorrected : the_probe_dxy_sig_bs_uncorrected;
 
     // scale plus smear correction applied
-    the_probe_dxy_sig_bs = isMC ? the_probe_dxy_sig_bs_uncorrected * 1.12 * the_smeared_corr_0p03 : the_probe_dxy_sig_bs_uncorrected;
+    //the_probe_dxy_sig_bs = isMC ? the_probe_dxy_sig_bs_uncorrected * 1.12 * the_smeared_corr_0p03 : the_probe_dxy_sig_bs_uncorrected;
+    the_probe_dxy_sig_bs = the_probe_dxy_sig_bs_uncorrected;
 
     the_weight_dxy_sig_bs = isMC ? getMCCorrection("mc_weight_probe_dxy_sig_bs.root", the_probe_dxy_sig_bs_uncorrected, 60) : 1.;
     the_probe_dxy_sig_bs_corrected_linearscale = isMC ? (1.178 -0.002968 * the_probe_dxy_sig_bs_uncorrected) * the_probe_dxy_sig_bs_uncorrected : the_probe_dxy_sig_bs_uncorrected;
