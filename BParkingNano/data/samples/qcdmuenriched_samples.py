@@ -36,3 +36,4 @@ qcd_samples['pt170to300'] = '/QCD_Pt-170to300_MuEnrichedPt5_TuneCP5_13TeV_pythia
 #crossSection = cms.untracked.double(117989),
 #filterEfficiency = cms.untracked.double(0.07335),
 
+qcd_samples['BtoJpsiKstar'] = '/BdToJpsiKstar_BMuonFilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/RunIIAutumn18MiniAOD-N1_102X_upgrade2018_realistic_v15-v1/MINIAODSIM'
