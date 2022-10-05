@@ -36,7 +36,6 @@ cp ../data/json/golden_2018.json $workdir
 cp -r ../data/pileup/pileup_weight_data*_mcAutumn18.root $workdir
 cp -r ../data/pileup/pileup_weight_data*_sigAug21.root $workdir
 cp -r ../data/lepton_scale_factors/RunABCD_SF_MuonID_2018.root $workdir
-cp -r ../plugins/dumper/mc_weight*.root $workdir #FIXME modify input dir
 cp ../plugins/dumper/utils.C $workdir 
 if [ ${5} == 1 ] ; then
   cp ../plugins/dumper/NanoRunDumper.C $workdir 

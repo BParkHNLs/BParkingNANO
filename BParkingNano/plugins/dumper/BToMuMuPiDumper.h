@@ -760,10 +760,10 @@ public :
    Float_t the_sig_weight_mu0_softid = -99.;
    Float_t the_sig_weight_mu_looseid = -99.;
 
-   Float_t the_sig_weight_mu0_dxy_bs = -99.;
-   Float_t the_sig_weight_mu_dxy_bs = -99.;
-   Float_t the_sig_weight_mu0_dxysig_bs = -99.;
-   Float_t the_sig_weight_mu_dxysig_bs = -99.;
+   //Float_t the_sig_weight_mu0_dxy_bs = -99.;
+   //Float_t the_sig_weight_mu_dxy_bs = -99.;
+   //Float_t the_sig_weight_mu0_dxysig_bs = -99.;
+   //Float_t the_sig_weight_mu_dxysig_bs = -99.;
 
    //Float_t the_sig_weight_hlt_A1 = -99.;
    //Float_t the_sig_weight_hlt_A1_6 = -99.;
