@@ -162,21 +162,18 @@ To make contributions to the central code, see intructions in https://github.com
 cd TagAndProbe/test
 ```
 
-## Compute efficiencies
-Configure tagProbeFitTreeAnalyzer_JPsiMuMu_cfg.py and run it
+To run the Tag&Probe tool
+* Update the `__main__` function in `launch_tag_and_probe.py` with the datasets to analyse
+* If necessary, adapt some class attributes in the TagAndProbeLauncher class constructor (`__init__` function) 
+* Run the tool with the command:
 ```
-cmsRun tagProbeFitTreeAnalyzer_JPsiMuMu_cfg.py
-```
-
-## Plot fits and efficiencies
-Adapt the global variables in savePlots.C and run the script
-```
-root -l -b savePlots.C+
+python launch_tag_and_probe.py
 ```
 
-## Compute the scale factors
-Adapt the global variables in getScaleFactor.C and run the script
+To compute the scale factors
+* Adapt the `__main__` function in `compute_scale_factors.py` with the data and mc Tag&Probe files
+* Run the tool with the command:
 ```
-root -l -b getScaleFactor.C+
+python compute_scale_factors.py
 ```
 

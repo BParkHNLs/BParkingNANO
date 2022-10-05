@@ -10,7 +10,7 @@ from nanoTools import NanoTools
 sys.path.append('../data/samples')
 from bparkingdata_samples import bpark_samples
 from qcdmuenriched_samples import qcd_samples
-from signal_samples_Aug21 import signal_samples
+from signal_samples_Jun22 import signal_samples
 
 
 def getOptions():
@@ -25,6 +25,7 @@ def getOptions():
   parser.add_argument('--mcprivate'         , dest='mcprivate'   , help='run the BParking nano tool on a private MC sample'              , action='store_true', default=False)
   parser.add_argument('--mccentral'         , dest='mccentral'   , help='run the BParking nano tool on a central MC sample'              , action='store_true', default=False)
   parser.add_argument('--sigcentral'        , dest='sigcentral'  , help='run the BParking nano tool on a central signal sample'          , action='store_true', default=False)
+  parser.add_argument('--sigcrab'           , dest='sigcrab'     , help='run the BParking nano tool on a CRAB signal sample'             , action='store_true', default=False)
   parser.add_argument('--data'              , dest='data'        , help='run the BParking nano tool on a data sample'                    , action='store_true', default=False)
   parser.add_argument('--donano'            , dest='donano'      , help='launch the nano tool on top of the minifile'                    , action='store_true', default=False)
   parser.add_argument('--doflat'            , dest='doflat'      , help='launch the ntupliser on top of the nanofile'                    , action='store_true', default=False)
@@ -62,11 +63,11 @@ def checkParser(opt):
   if opt.dosignal==False and opt.docontrol==False and opt.dohnl==False and opt.dotageprobe==False:
     raise RuntimeError('Please indicate the process you want to run (--dosignal and/or --docontrol and/or --dohnl and/or --dotageprobe)')
 
-  if opt.mcprivate==False and opt.mccentral==False and opt.sigcentral==False and opt.data==False:
-    raise RuntimeError('Please indicate if you want to run on data or MC by adding either --data or--mcprivate or --mccentral or --sigcentral to the command line')
+  if opt.mcprivate==False and opt.mccentral==False and opt.sigcentral==False and opt.sigcrab==False and opt.data==False:
+    raise RuntimeError('Please indicate if you want to run on data or MC by adding either --data or --mcprivate or --mccentral or --sigcentral or --sigcrab to the command line')
 
-  if opt.mcprivate + opt.mccentral +opt.sigcentral + opt.data > 1:
-    raise RuntimeError('Please indicate if you want to run on data or MC by adding only --data or --mcprivate or --mccentral or --sigcentral to the command line')
+  if opt.mcprivate + opt.mccentral + opt.sigcentral + opt.sigcrab + opt.data > 1:
+    raise RuntimeError('Please indicate if you want to run on data or MC by adding only --data or --mcprivate or --mccentral or --sigcentral or --sigcrab to the command line')
 
 
 class NanoLauncher(NanoTools):
@@ -79,6 +80,7 @@ class NanoLauncher(NanoTools):
     self.mcprivate   = vars(opt)['mcprivate']
     self.mccentral   = vars(opt)['mccentral']
     self.sigcentral  = vars(opt)['sigcentral']
+    self.sigcrab     = vars(opt)['sigcrab']
     self.data        = vars(opt)['data']
     self.user        = vars(opt)["user"]
     self.donano      = vars(opt)["donano"]
@@ -118,16 +120,16 @@ class NanoLauncher(NanoTools):
     if not path.exists('./files'):
       os.system('mkdir ./files') 
 
-    if self.mcprivate:
+    if self.mcprivate or self.sigcrab:
       filename = './files/filelist_{}_{}'.format(self.prodlabel, point)
     else:
       ds_label = NanoTools.getDataLabel(self, self.dataset) if self.data else NanoTools.getMCLabel(self, self.dataset)
       filename = './files/filelist_{dsl}_{pl}'.format(dsl=ds_label, pl=self.prodlabel) 
 
     if len(glob.glob('{}*.txt'.format(filename))) == 0: # do not create file if already exists
-      if self.mcprivate: # fetch miniAOD files
+      if self.mcprivate or self.sigcrab: # fetch miniAOD files
         myfile = open(filename + '.txt', "w+")
-        nanofiles = NanoTools.getLocalMiniAODFiles(self, self.user, self.prodlabel, point)
+        nanofiles = NanoTools.getLocalMiniAODFiles(self, user=self.user, prodlabel=self.prodlabel, point=point, iscrab = True if self.sigcrab else False)
 
         for nanofile in nanofiles:
           if NanoTools.checkLocalFile(self, nanofile):
@@ -161,24 +163,31 @@ class NanoLauncher(NanoTools):
     event_chain = []
     event_chain.append('TChain* c = new TChain("Events");')
     for iFile in range(1, nfiles+1):
-      file_step = NanoTools.getStep(self, lines[iFile-1]) if self.mcprivate else iFile
+      file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
       #file_step = iFile
       event_chain.append('  c->Add("{}/{}_nj{}.root");'.format(outputdir, nanoname, file_step))
-    if self.dosignal:    event_chain.append('  c->Process("BToMuMuPiDumper.C+", outFileName);')
-    #if self.dosignal:    event_chain.append('  c->Process("NanoDumper.C+", outFileName);')
-    if self.docontrol:   event_chain.append('  c->Process("BToKMuMuDumper.C+", outFileName);')
-    if self.dohnl:       event_chain.append('  c->Process("HNLToMuPiDumper.C+", outFileName);')
-    if self.dotageprobe: event_chain.append('  c->Process("TagAndProbeDumper.C+", outFileName);')
+    if self.dosignal:                    event_chain.append('  c->Process("BToMuMuPiDumper.C+", outFileName);')
+    if self.docontrol:                   event_chain.append('  c->Process("BToKMuMuDumper.C+", outFileName);')
+    if self.dohnl:                       event_chain.append('  c->Process("HNLToMuPiDumper.C+", outFileName);')
+    if self.dotageprobe:                 event_chain.append('  c->Process("TagAndProbeDumper.C+", outFileName);')
+    #if self.mccentral and self.dosignal: event_chain.append('  c->Process("BackgroundSources.C+", outFileName);')
     event_chain = '\n'.join(event_chain)
 
     run_chain = []
     run_chain.append('TChain* c_run = new TChain("Runs");')
     for iFile in range(1, nfiles+1):
-      file_step = NanoTools.getStep(self, lines[iFile-1]) if self.mcprivate else iFile
+      file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
       #file_step = iFile
       run_chain.append('  c_run->Add("{}/{}_nj{}.root");'.format(outputdir, nanoname, file_step))
     run_chain.append('  c_run->Process("NanoRunDumper.C+", outFileName);')
     run_chain = '\n'.join(run_chain)
+
+    if self.data:
+      addMC = ''
+    elif self.mcprivate or self.sigcentral or self.sigcrab:
+      addMC = 'outFileName += "_isSignalMC";'
+    elif self.mccentral:
+      addMC = 'outFileName += "_isMC";'
 
     content = [
       '#include "TChain.h"',
@@ -186,9 +195,9 @@ class NanoLauncher(NanoTools):
       '#include "TProof.h"\n',
       'void starter(){',
       '  TString outFileName = "flat_bparknano.root";',
-      '  {addMC}'.format(addMC = '' if (self.data or self.dotageprobe) else 'outFileName += "_isMC";'),
+      '  {addMC}'.format(addMC = addMC),
       '  {addevt}'.format(addevt = event_chain),
-      '  {addrun}'.format(addrun = '' if (self.data or self.dotageprobe) else run_chain),
+      '  {addrun}'.format(addrun = '' if self.data else run_chain),
       '}',
     ]
     content = '\n'.join(content)
@@ -200,7 +209,7 @@ class NanoLauncher(NanoTools):
       dumper_starter.close()
     else:
       for iFile in range(1, nfiles+1):
-        file_step = NanoTools.getStep(self, lines[iFile-1]) if self.mcprivate else iFile
+        file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
 
         event_chain = []
         event_chain.append('TChain* c = new TChain("Events");')
@@ -223,7 +232,7 @@ class NanoLauncher(NanoTools):
           '#include "TProof.h"\n',
           'void starter(){',
           '  TString outFileName = "flat_bparknano.root";',
-          '  {addMC}'.format(addMC = '' if self.data else 'outFileName += "_isMC";'),
+          '  {addMC}'.format(addMC = addMC),
           '  {addevt}'.format(addevt = event_chain),
           '  {addrun}'.format(addrun = '' if (self.data or self.dotageprobe) else run_chain),
           '}',
@@ -236,7 +245,7 @@ class NanoLauncher(NanoTools):
         dumper_starter.close()
 
 
-  def writeMergerSubmitter(self, label, filetype):
+  def writeMergerSubmitter(self, label, filetype, point=None):
     # defining the command
     command = 'python nanoMerger.py --dobatch --pl {pl}'.format(
         pl = self.prodlabel,
@@ -247,7 +256,9 @@ class NanoLauncher(NanoTools):
     if filetype == 'nano': command += ' --donano' 
     else: command += ' --doflat'
     
-    if self.mcprivate: command += ' --mcprivate'
+    if self.mcprivate or self.sigcrab: 
+      command += ' --mcprivate'
+      command += ' --point {}'.format(point)
     if self.mccentral: command += ' --ds {} --mccentral'.format(self.ds)
     if self.sigcentral: command += ' --ds {} --sigcentral'.format(self.ds)
     if self.data: command += ' --ds {} --data'.format(self.ds)
@@ -299,7 +310,7 @@ class NanoLauncher(NanoTools):
       usr       = os.environ["USER"], 
       tag       = 0 if self.tagnano == None else self.tagnano,
       isMC      = 0 if self.data else 1,
-      rmt       = 0 if self.mcprivate else 1,
+      rmt       = 0 if (self.mcprivate or self.sigcrab) else 1,
       lst       = filelist,
       dosig     = 1 if self.dosignal else 0, 
       doctrl    = 1 if self.docontrol else 0, 
@@ -350,8 +361,8 @@ class NanoLauncher(NanoTools):
     return NanoTools.getJobId(self, job_dump)
 
 
-  def launchMerger(self, logdir, label, jobIds, filetype):
-    self.writeMergerSubmitter(label, filetype)
+  def launchMerger(self, logdir, label, jobIds, filetype, point=None):
+    self.writeMergerSubmitter(label, filetype, point)
 
     slurm_options = '-p {part} --account=t3 -o {ld}/merger{ft}step.log -e {ld}/merger{ft}step.log --job-name=mergerstep_{pl} --time={hh}:00:00 --dependency=afterany:{jobid}'.format(
       part    = 'standard' if not self.doquick else 'short', 
@@ -413,7 +424,7 @@ class NanoLauncher(NanoTools):
         
       print '\n  --> Creating output directory'
       outputdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/'.format(os.environ["USER"])
-      if self.mcprivate:
+      if self.mcprivate or self.sigcrab:
         outputdir += '{}/{}/nanoFiles/Chunk{}_n{}'.format(self.prodlabel, point, iFile, nfiles)
       else:
         dirname = 'data' if self.data else ('mc_central' if self.mccentral else 'signal_central')
@@ -422,8 +433,8 @@ class NanoLauncher(NanoTools):
         os.system('mkdir -p {}'.format(outputdir))
       
       print '\n  --> Creating log directory'
-      label1 = self.prodlabel if self.mcprivate else ds_label
-      label2 = point if self.mcprivate else self.prodlabel
+      label1 = self.prodlabel if (self.mcprivate or self.sigcrab) else ds_label
+      label2 = point if (self.mcprivate or self.sigcrab) else self.prodlabel
       tag = NanoTools.getTag(self, self.tagnano, self.tagflat)
       #logdir = './logs/{}/{}/Chunk{}_n{}'.format(label1, label2, iFile, nfiles) if tag == 0 \
       #         else './logs/{}/{}_{}/Chunk{}_n{}'.format(label1, label2, tag, iFile, nfiles)
@@ -456,7 +467,10 @@ class NanoLauncher(NanoTools):
         flat_jobIds.append(flat_jobId)
 
         if merge_cond:
-          self.launchMerger(logdir, label, flat_jobIds, 'flat')
+          if point == None:
+            self.launchMerger(logdir, label, flat_jobIds, 'flat')
+          else:
+            self.launchMerger(logdir, label, flat_jobIds, 'flat', point)
 
 
   def process(self):
@@ -465,11 +479,11 @@ class NanoLauncher(NanoTools):
       self.compile()
 
     print '\n------------'
-    print ' Processing NanoLauncher on production {} '.format(self.prodlabel if self.mcprivate else self.dataset)
+    print ' Processing NanoLauncher on production {} '.format(self.prodlabel if (self.mcprivate or self.sigcrab) else self.dataset)
     print ' --> on the batch'
     print '------------'
     
-    if self.mcprivate:
+    if self.mcprivate or self.sigcrab:
       locationSE = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/'.format(self.user, self.prodlabel)
 
       print '\n-> Getting the different mass points'

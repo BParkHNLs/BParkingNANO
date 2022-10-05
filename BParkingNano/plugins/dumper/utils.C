@@ -19,6 +19,11 @@ bool sortcansbydesc_opp(const pair<int, float> &a1, const pair<int, float> &a2){
 }
 
 
+bool sortcansbydesc_diff(const pair<int, float> &a1, const pair<int, float> &a2){
+  return fabs(a1.second-6.274) < fabs(a2.second-6.274);
+}
+
+
 vector<pair<int,float>> createPairWithDesc(const UInt_t& nCand, const TTreeReaderArray<Float_t>& desc){
   vector<pair<int,float>> pair_candIdx_desc;
   for(unsigned int iCand(0); iCand < nCand; ++iCand){
@@ -126,6 +131,28 @@ bool lumiMask(int run, int lumi){
   }
 }
 
+float getMCCorrection(TString filename, double var, double max_val){
+  // get file
+  TFile* file = TFile::Open(filename);
+  file->cd();
+
+  // get histogram
+  TH1D* hist = (TH1D*) file->Get("hist_ratio")->Clone("hist");
+
+  // truncate the variable
+  var = std::max(0., std::min(max_val-1e-03, double(var)));
+  
+  // get the bin
+  int bin = hist->GetXaxis()->FindBin(var);
+  
+  // get weight
+  Float_t mc_weight = hist->GetBinContent(bin);
+
+  file->Close();
+
+  return mc_weight;
+}
+
 
 float getPUWeight(TString filename, int var){
   // get file
@@ -146,53 +173,36 @@ float getPUWeight(TString filename, int var){
 }
 
 
-float getTriggerScaleFactor(TString filename_sf, float pt, float eta){
-  // get trigger scale factor file
-  //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/scaleFactor_results_cat_pt_eta_fit_A1.root";
-  //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_tag_fired_DST_DoubleMu1_A1_extraptbin/scaleFactor_results_cat_pt_eta_fit.root";
-  //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_6_v1/scaleFactor_results_cat_pt_eta_fit.root";
-  //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_6_B1_v1/scaleFactor_results_cat_pt_eta_fit.root";
-  TFile* file_sf = TFile::Open(filename_sf);
-  file_sf->cd();
+float getLeptonScaleFactor(TString filename, string ID, float pt, float eta){
+  // get file
+  TFile* file = TFile::Open(filename);
+  file->cd();
 
   // get histogram
-  TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
-
-  pt = std::max(6., std::min(99.9, double(pt)));
+  TH1D* hist = 0;
+  if(ID == "softid"){
+    hist = (TH1D*) file->Get("NUM_SoftID_DEN_genTracks_pt_abseta")->Clone("hist");
+  }
+  else if(ID == "looseid"){
+    hist = (TH1D*) file->Get("NUM_LooseID_DEN_genTracks_pt_abseta")->Clone("hist");
+  }
 
   // get bin
-  int bin_pt = hist_sf->GetXaxis()->FindBin(pt);
-  int bin_eta = hist_sf->GetYaxis()->FindBin(eta);
+  pt = std::max(0., std::min(40., double(pt)));
+  int bin_pt = hist->GetXaxis()->FindBin(pt);
+  int bin_eta = hist->GetYaxis()->FindBin(eta);
 
   // get scale factor
-  Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_eta);
-  
-  file_sf->Close();
+  Float_t scale_factor = hist->GetBinContent(bin_pt, bin_eta);
+
+  file->Close();
 
   return scale_factor;
 }
 
 
-float getTriggerScaleFactor(float pt, float dxy_sig, float eta){
+float getTriggerScaleFactor(TString filename_sf, float pt, float dxysig){
   // get trigger scale factor file
-  //TString filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/scaleFactor_results_cat_pt_eta_fit_A1.root";
-  TString filename_sf;
-  if(fabs(eta) >= 0 && fabs(eta) < 0.4){
-    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v0/scaleFactor_results_cat_pt_dxysig_eta_cnt_eta_0p00_0p50.root";
-    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v5/scaleFactor_results_cat_pt_eta_dxysig_cnt_eta_0p00_0p40.root";
-  }
-  else if(fabs(eta) >= 0.4 && fabs(eta) < 0.8){
-    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v0/scaleFactor_results_cat_pt_dxysig_eta_cnt_eta_0p50_1p00.root";
-    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v5/scaleFactor_results_cat_pt_eta_dxysig_cnt_eta_0p40_0p80.root";
-  }
-  else if(fabs(eta) >= 0.8 && fabs(eta)<1.5){
-    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v0/scaleFactor_results_cat_pt_dxysig_eta_cnt_eta_1p00_1p50.root";
-    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v5/scaleFactor_results_cat_pt_eta_dxysig_cnt_eta_0p80_1p50.root";
-  }
-  else if(fabs(eta) >= 1.5){
-    //filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v0/scaleFactor_results_cat_pt_dxysig_eta_cnt_eta_1p50_2p00.root";
-    filename_sf = "/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v5/scaleFactor_results_cat_pt_eta_dxysig_cnt_eta_0p00_0p40.root";
-  }
   TFile* file_sf = TFile::Open(filename_sf);
   file_sf->cd();
 
@@ -200,10 +210,11 @@ float getTriggerScaleFactor(float pt, float dxy_sig, float eta){
   TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
 
   pt = std::max(6., std::min(99.9, double(pt)));
+  dxysig = std::max(0., std::min(499.9, double(dxysig)));
 
   // get bin
   int bin_pt = hist_sf->GetXaxis()->FindBin(pt);
-  int bin_dxysig = hist_sf->GetYaxis()->FindBin(dxy_sig);
+  int bin_dxysig = hist_sf->GetYaxis()->FindBin(dxysig);
 
   // get scale factor
   Float_t scale_factor = hist_sf->GetBinContent(bin_pt, bin_dxysig);

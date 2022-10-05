@@ -49,9 +49,12 @@ class NanoTools(object):
     return '{}/nanostep_{}.log'.format(logdir, file_[file_.rfind('_nj')+1:file_.rfind('.root')])
 
 
-  def getLocalMiniAODFiles(self, user, prodlabel, point):
-    pointdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/{}/'.format(user, prodlabel, point)
-    return [f for f in glob.glob(pointdir+'/step4_nj*.root')]
+  def getLocalMiniAODFiles(self, user, prodlabel, point, iscrab=False):
+    if not iscrab:
+      pointdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/{}/'.format(user, prodlabel, point)
+    else:
+      pointdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/{}/*/*/*/'.format(user, prodlabel, point)
+    return [f for f in glob.glob(pointdir+'/step4_*.root')]
 
 
   def checkLocalFile(self, nanofile, cond=True, branch_check=False, branchname=''):
@@ -67,6 +70,14 @@ class NanoTools(object):
           if(branch.GetName() == branchname):
             return True
         return False
+
+
+  def checkFlatFile(self, flatfile, cond=True, branch_check=False, branchname=''):
+    rootFile = ROOT.TNetXNGFile.Open(flatfile, 'r')
+    if not rootFile: return False
+    if cond and not rootFile.GetListOfKeys().Contains('signal_tree'): return False
+    else:
+      return True
 
 
   def checkFileExists(self, file_):
@@ -107,8 +118,12 @@ class NanoTools(object):
     return label
 
 
-  def getStep(self, file_): 
-    return file_[file_.rfind('_nj')+3:file_.rfind('.root')]
+  def getStep(self, file_, iscrab=False): 
+    if not iscrab:
+      index = file_[file_.rfind('_nj')+3:file_.rfind('.root')]
+    else:
+      index = file_[file_.rfind('step4_')+6:file_.rfind('.root')]
+    return index
 
 
   def getTag(self, tagnano, tagflat):

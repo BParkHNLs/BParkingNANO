@@ -416,6 +416,9 @@ public :
    Float_t the_ctrl_dimu_mass = -99.;
    Float_t the_ctrl_dimu_sv_prob = -99.;
 
+   Float_t the_ctrl_maxdr = -99.;
+   Float_t the_ctrl_mindr = -99.;
+
    Float_t the_ctrl_sv_x = -99.;
    Float_t the_ctrl_sv_y = -99.;
    Float_t the_ctrl_sv_z = -99.;

@@ -11,6 +11,7 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <TF1.h>
 #include <TSelector.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
@@ -54,7 +55,10 @@ public :
    TTreeReaderValue<UInt_t> nMuon = {fReader, "nMuon"};
    TTreeReaderArray<Float_t> Muon_caloCompatibility = {fReader, "Muon_caloCompatibility"};
    TTreeReaderArray<Float_t> Muon_dxy = {fReader, "Muon_dxy"};
+   TTreeReaderArray<Float_t> Muon_dxy_BS = {fReader, "Muon_dxy_BS"};
    TTreeReaderArray<Float_t> Muon_dxyS = {fReader, "Muon_dxyS"};
+   TTreeReaderArray<Float_t> Muon_dxyS_BS = {fReader, "Muon_dxyS_BS"};
+   TTreeReaderArray<Float_t> Muon_dxyS_BS_alaRdst = {fReader, "Muon_dxyS_BS_alaRdst"};
    TTreeReaderArray<Float_t> Muon_dz = {fReader, "Muon_dz"};
    TTreeReaderArray<Float_t> Muon_dzS = {fReader, "Muon_dzS"};
    TTreeReaderArray<Float_t> Muon_eta = {fReader, "Muon_eta"};
@@ -258,12 +262,35 @@ public :
 
    Bool_t isMC;
 
+   TF1* double_gauss_1;
+   TF1* double_gauss_2;
+
+   TF1* gauss_function_0p01;
+   TF1* gauss_function_0p02;
+   TF1* gauss_function_0p03;
+   TF1* gauss_function_0p04;
+   TF1* gauss_function_0p05;
+   TF1* gauss_function_0p06;
+   TF1* gauss_function_0p07;
+   TF1* gauss_function_0p08;
+   TF1* gauss_function_0p09;
+   TF1* gauss_function_0p1;
+   TF1* gauss_function_0p15;
+   TF1* gauss_function_0p2;
+   TF1* gauss_function_0p25;
+   TF1* gauss_function_0p3;
+   TF1* gauss_function_0p35;
+   TF1* gauss_function_0p4;
+   TF1* gauss_function_0p45;
+   TF1* gauss_function_0p5;
+
    TTree* tree;
 
    Float_t the_pt;
    Float_t the_eta;
    Float_t the_phi;
    Float_t the_mass;
+   Float_t the_cos2d;
    Float_t the_deltar;
    Float_t the_lxy;
    Float_t the_lxy_sig;
@@ -273,9 +300,16 @@ public :
    Float_t the_tag_eta;
    Float_t the_tag_phi;
    Float_t the_tag_dxy;
+   Float_t the_tag_dxy_bs;
    Float_t the_tag_dz;
    Float_t the_tag_dxy_sig;
+   Float_t the_tag_dxy_sig_bs;
+   Float_t the_tag_dxy_sig_bs_rdst;
    Float_t the_tag_dz_sig;
+   Int_t the_tag_isloose;
+   Int_t the_tag_issoft;
+   Int_t the_tag_ismedium;
+   Int_t the_tag_istight;
    Int_t the_tag_fired_HLT_Mu7_IP4;
    Int_t the_tag_fired_HLT_Mu8_IP6;
    Int_t the_tag_fired_HLT_Mu8_IP5;
@@ -319,9 +353,44 @@ public :
    Float_t the_probe_eta;
    Float_t the_probe_phi;
    Float_t the_probe_dxy;
+   Float_t the_probe_dxy_bs;
+   Float_t the_probe_dxy_bs_uncorrected;
+   Float_t the_weight_dxy_bs;
    Float_t the_probe_dz;
    Float_t the_probe_dxy_sig;
+
+   //Float_t the_smeared_corr_0p01;
+   //Float_t the_smeared_corr_0p02;
+   Float_t the_smeared_corr_0p03;
+   //Float_t the_smeared_corr_0p04;
+   //Float_t the_smeared_corr_0p05;
+   //Float_t the_smeared_corr_0p06;
+   //Float_t the_smeared_corr_0p07;
+   //Float_t the_smeared_corr_0p08;
+   //Float_t the_smeared_corr_0p09;
+   //Float_t the_smeared_corr_0p1;
+   //Float_t the_smeared_corr_0p15;
+   //Float_t the_smeared_corr_0p2;
+   //Float_t the_smeared_corr_0p25;
+   //Float_t the_smeared_corr_0p3;
+   //Float_t the_smeared_corr_0p35;
+   //Float_t the_smeared_corr_0p4;
+   //Float_t the_smeared_corr_0p45;
+   //Float_t the_smeared_corr_0p5;
+
+   //Float_t the_double_gauss_corr_1;
+   //Float_t the_double_gauss_corr_2;
+
+   Float_t the_probe_dxy_sig_bs_uncorrected;
+   Float_t the_probe_dxy_sig_bs_corrected_linearscale;
+   Float_t the_weight_dxy_sig_bs;
+
+   Float_t the_probe_dxy_sig_bs;
+   Float_t the_probe_dxy_sig_bs_rdst;
    Float_t the_probe_dz_sig;
+   Int_t the_probe_isloose;
+   Int_t the_probe_issoft;
+   Int_t the_probe_ismedium;
    Int_t the_probe_istight;
    Int_t the_probe_fired_HLT_Mu7_IP4;
    Int_t the_probe_fired_HLT_Mu8_IP6;

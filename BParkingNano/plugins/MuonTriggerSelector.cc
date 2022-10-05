@@ -63,6 +63,7 @@ class MuonTriggerSelector : public edm::EDProducer {
     edm::EDGetTokenT<edm::TriggerResults> triggerBits_;
     edm::EDGetTokenT<std::vector<pat::TriggerObjectStandAlone>> triggerObjects_;
     edm::EDGetTokenT<pat::PackedTriggerPrescales> triggerPrescales_;
+    const edm::EDGetTokenT<reco::BeamSpot> beamSpotSrc_;
 
     // trigger muon matching
     const double max_deltaR_trigger_matching_;
@@ -87,11 +88,12 @@ class MuonTriggerSelector : public edm::EDProducer {
 MuonTriggerSelector::MuonTriggerSelector(const edm::ParameterSet &iConfig):
   muonSrc_(consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("muonCollection"))),
   displacedStandaloneMuonSrc_(consumes<std::vector<reco::Track>> (iConfig.getParameter<edm::InputTag>("displacedStandaloneMuonCollection"))),
-  vertexSrc_( consumes<reco::VertexCollection> (iConfig.getParameter<edm::InputTag>( "vertexCollection"))),
+  vertexSrc_( consumes<reco::VertexCollection> (iConfig.getParameter<edm::InputTag>("vertexCollection"))),
   // added
   triggerBits_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("bits"))),
   triggerObjects_(consumes<std::vector<pat::TriggerObjectStandAlone>>(iConfig.getParameter<edm::InputTag>("triggerObjects"))),
   triggerPrescales_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("prescales"))),
+  beamSpotSrc_(consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpot"))),
   //
   max_deltaR_trigger_matching_(iConfig.getParameter<double>("max_deltaR_trigger_matching")),
   max_deltaPtRel_trigger_matching_(iConfig.getParameter<double>("max_deltaPtRel_trigger_matching")),
@@ -130,6 +132,7 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     edm::Handle<reco::VertexCollection> vertexHandle;
     iEvent.getByToken(vertexSrc_, vertexHandle);
+    const reco::VertexCollection& vertices = *vertexHandle;
 
     edm::Handle<edm::TriggerResults> triggerBits;
     iEvent.getByToken(triggerBits_, triggerBits);
@@ -137,6 +140,13 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
     edm::Handle<pat::PackedTriggerPrescales> triggerPrescales;
     iEvent.getByToken(triggerPrescales_, triggerPrescales);
+
+    edm::Handle<reco::BeamSpot> beamSpotHandle;
+    iEvent.getByToken(beamSpotSrc_, beamSpotHandle);
+    if ( ! beamSpotHandle.isValid() ) {
+      edm::LogError("MuonTriggerSelector") << "No beam spot available from Event" ;
+    }  
+    const reco::BeamSpot& beamSpot = *beamSpotHandle;
 
     std::vector<int> muonIsTrigger(slimmed_muons->size(), 0);
     std::vector<int> muonIsTriggerBPark(slimmed_muons->size(), 0);
@@ -410,6 +420,51 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
       ETHmuons_out->back().addUserFloat("dzS", slimmed_muon.dB(slimmed_muon.PVDZ)/slimmed_muon.edB(slimmed_muon.PVDZ));
       ETHmuons_out->back().addUserFloat("dxy", slimmed_muon.dB(slimmed_muon.PV2D));
       ETHmuons_out->back().addUserFloat("dxyS", slimmed_muon.dB(slimmed_muon.PV2D)/slimmed_muon.edB(slimmed_muon.PV2D));
+
+      // computing the IP with respect to the beamspot
+      // first, a la R(D*)
+      float dz_alaRdst = -99.;
+      float dxy_BS_alaRdst = -99.;
+      float dxyS_BS_alaRdst = -99.;
+      if(!slimmed_muon.innerTrack().isNull()){
+        auto tk = slimmed_muon.innerTrack();
+        dz_alaRdst = tk->dz(PV.position());
+        dxy_BS_alaRdst = tk->dxy(beamSpot);
+        dxyS_BS_alaRdst = tk->dxy(beamSpot) / dxyError(*tk, beamSpot.position(), beamSpot.rotatedCovariance3D());
+      }
+
+      ETHmuons_out->back().addUserFloat("dz_alaRdst", dz_alaRdst);
+      ETHmuons_out->back().addUserFloat("dxy_BS_alaRdst", dxy_BS_alaRdst);
+      ETHmuons_out->back().addUserFloat("dxyS_BS_alaRdst", dxyS_BS_alaRdst);
+
+      // then, by accounting for that the axis of the beamspot can be shifted
+      // get the vertex the closest in dz to the muon
+      const reco::Vertex& the_PV = PV; // initialise it to the first primary vertex
+      float dist = -99;
+      for(const reco::Vertex& vertex: vertices){
+        // compute muon dz at this vertex
+        float slimmed_muon_dz = abs(slimmed_muon.bestTrack()->dz(vertex.position()));
+        if(dist == -99 || slimmed_muon_dz < dist){
+          dist = slimmed_muon_dz;
+          auto the_PV = vertex;
+        }
+      }
+      auto bs_point = reco::Vertex::Point(beamSpot.x(the_PV.z()), beamSpot.y(the_PV.z()), beamSpot.z0());
+      auto bs_error = beamSpot.covariance3D();
+      float chi2 = 0.;
+      float ndof = 0.;
+      auto the_BS = reco::Vertex(bs_point, bs_error, chi2, ndof, 3);
+        
+      float mu_dxy_BS = -99.;
+      float mu_dxyS_BS = -99.;
+      if(slimmed_muon.bestTrack()){
+        mu_dxy_BS = slimmed_muon.bestTrack()->dxy(the_BS.position());
+        mu_dxyS_BS = slimmed_muon.bestTrack()->dxy(the_BS.position()) / dxyError(*slimmed_muon.bestTrack(), the_BS.position(), the_BS.error());
+      }
+
+      ETHmuons_out->back().addUserFloat("dxy_BS", mu_dxy_BS);
+      ETHmuons_out->back().addUserFloat("dxyS_BS", mu_dxyS_BS);
+
       ETHmuons_out->back().addUserInt("isMatchedToSlimmedMuon", -99);
       ETHmuons_out->back().addUserInt("indexMatchedSlimmedMuon", -99);
       ETHmuons_out->back().addUserFloat("dsaToSlimmedMatching_deltaPtRel", -99.);

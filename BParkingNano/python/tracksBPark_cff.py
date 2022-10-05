@@ -94,7 +94,7 @@ tracksBParkMCMatchForTable = cms.EDProducer("MCMatcher",   # cut on deltaR, delt
     maxDPtRel   = cms.double(0.5),              # Minimum deltaPt/Pt for the match
     resolveAmbiguities    = cms.bool(False),     # Forbid two RECO objects to match to the same GEN object
     resolveByMatchQuality = cms.bool(True),     # False = just match input in order; True = pick lowest deltaR pair first
-    motherPdgId = cms.vint32(9900015, 521),
+    motherPdgId = cms.vint32(9900015, 521, 541),
     #minPt = tracksBPark.trkPtCut,
     #maxEta = tracksBPark.trkEtaCut,
 )

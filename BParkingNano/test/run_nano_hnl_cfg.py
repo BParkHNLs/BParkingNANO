@@ -20,8 +20,8 @@ options.register('skip'                    ,  0              , VarParsing.multip
 options.register('inputFile'               , None            , VarParsing.multiplicity.singleton, VarParsing.varType.string, "inputFile name"                         )
 options.register('outFile'                 , 'bparknano.root', VarParsing.multiplicity.singleton, VarParsing.varType.string, "outputFile name"                        )
 
-
 options.setDefault('maxEvents', -1)
+
 options.parseArguments()
 
 
@@ -38,8 +38,8 @@ if not options.inputFiles:
     #options.inputFiles = ['/store/mc/RunIIAutumn18MiniAOD/QCD_Pt-20to30_MuEnrichedPt5_TuneCP5_13TeV_pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v4/110000/A1ADA5DA-4A57-7945-9B9D-6FAC167A1627.root'] if options.isMC else \
     #options.inputFiles = ['/store/data/Run2018B/ParkingBPH4/MINIAOD/05May2019-v2/230000/F7E7EF39-476F-1C48-95F7-74CB5C7A542C.root'] if not options.isMC else \
     #options.inputFiles = ['/store/data/Run2018A/ParkingBPH1/MINIAOD/05May2019-v1/20000/72A32519-B235-654F-AB7A-3ABAFD0A0818.root'] if not options.isMC else \
-    options.inputFiles = ['/store/data/Run2018A/ParkingBPH3/MINIAOD/05May2019-v1/100000/75A4F19E-33BA-334F-9975-B5C8D2EB2026.root'] if not options.isMC else \
-                         ['file:%s' %i for i in glob('/pnfs/psi.ch/cms/trivcat/store/user/mratti/BHNLsGen/V20_emu/mass3.0_ctau184.0/step4_nj5*.root')]
+    options.inputFiles = ['/store/data/Run2018D/ParkingBPH1/MINIAOD/05May2019promptD-v1/270000/8D4EC1FC-2E3D-934D-85FC-DC4B94925765.root'] if not options.isMC else \
+                         ['file:%s' %i for i in glob('/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/V39/mass3.0_ctau100.0/step4_nj15.root')]
 
 annotation = '%s nevts:%d' % (outputFileNANO, options.maxEvents)
 
@@ -70,6 +70,7 @@ process.source = cms.Source(
     skipEvents=cms.untracked.uint32(options.skip),
     duplicateCheckMode = cms.untracked.string('checkEachFile' if options.skipDuplicated else 'noDuplicateCheck'),
 )
+
 
 process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool(options.wantSummary),
@@ -131,6 +132,7 @@ process = nanoAOD_customizeTagAndProbeJPsiToMuMu (process, isMC=options.isMC)
 process = nanoAOD_customizeTriggerBitsBPark      (process)
 
 # Path and EndPath definitions
+#process.nanoAOD_general_step = cms.Path(process.nanoSequence)
 process.nanoAOD_MuMuPi_step = cms.Path(process.nanoSequence + process.nanoBMuMuPiSequence + CountBToMuMuPi )
 process.nanoAOD_KMuMu_step  = cms.Path(process.nanoSequence + process.nanoBKMuMuSequence + CountBToKmumu ) 
 process.nanoAOD_HNLToMuPi_step = cms.Path(process.nanoSequence + process.nanoHNLToMuPiSequence + CountHNLToMuPi )
@@ -141,6 +143,11 @@ if options.isMC:
     from PhysicsTools.BParkingNano.nanoBPark_cff import nanoAOD_customizeMC
     nanoAOD_customizeMC(process, ancestor_particles=[511, 521, 531, 541, 9900015], addTriggerMuonCollection=options.addTriggerMuonCollection, addProbeTracksCollection=options.addProbeTracksCollection) 
 
+if not options.isMC:
+  # apply lumi mask, see https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideGoodLumiSectionsJSONFile#cmsRun
+  import FWCore.PythonUtilities.LumiList as LumiList
+  process.source.lumisToProcess = LumiList.LumiList(url='https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions18/13TeV/ReReco/Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt').getVLuminosityBlockRange()
+
 process.endjob_step = cms.EndPath(process.endOfProcess)
 process.FEVTDEBUGHLToutput_step = cms.EndPath(process.FEVTDEBUGHLToutput)
 process.NANOAODoutput_step = cms.EndPath(process.NANOAODoutput)
@@ -150,6 +157,7 @@ process.schedule = cms.Schedule(
 )
 if options.doSignal:
   process.schedule += cms.Schedule(
+      #process.nanoAOD_general_step,
       process.nanoAOD_MuMuPi_step,
   )
 if options.doControl:
@@ -173,6 +181,7 @@ from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
 process_string = cms.vstring()
+#process_string.append('nanoAOD_general_step')
 if options.doSignal: process_string.append('nanoAOD_MuMuPi_step')
 if options.doControl: process_string.append('nanoAOD_KMuMu_step')
 if options.doHNL: process_string.append('nanoAOD_HNLToMuPi_step')
