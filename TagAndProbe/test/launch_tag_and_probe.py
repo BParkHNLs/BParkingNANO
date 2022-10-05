@@ -127,7 +127,7 @@ class TagAndProbeLauncher(object):
           flat_files += [f for f in glob.glob('{}/merged/flat_bparknano_{}.root'.format(indirectory, self.tagflat))]
 
       if len(flat_files) == 0:
-        raise RuntimeError('No sample was found - Please check')
+        raise RuntimeError('No sample "{}/Chunk*/flat/flat_bparknano_{}_{}.root" was found - Please check'.format(indirectory, self.tagnano, self.tagflat))
 
     # create file list
     print '\n-> Preparing the file lists'
@@ -182,7 +182,6 @@ class TagAndProbeLauncher(object):
       print '\n' + submit_command
       os.system(submit_command)
 
-
     print ' - Done -'
 
 
@@ -190,22 +189,162 @@ class TagAndProbeLauncher(object):
 
 if __name__ == "__main__":
   
-  is_data = True
-  out_label = 'test_D1_tag_fired_anyBParkHLT_ptetadxysig_max5e6'
-  version_label = 'V10_30Dec21'
+  #is_data = True
+  #out_label = 'test_D1_tag_fired_anyBParkHLT_ptetadxysig_max5e6'
+  #version_label = 'V10_30Dec21'
+  ##datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
+  #datasets = ['D1']
+  #categorisation = 'pt_eta_dxysig'
+  #tagnano = '30Dec21'
+  #tagflat = 'tag_fired_anyBParkHLT'
+
+  #is_data = True
+  #out_label = 'test_fullA_V06_tag_fired_HLT_Mu9_IP6_pteta_max3e6'
+  #version_label = 'V06_tag_and_probe'
+  #datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6']
+  #categorisation = 'pt_eta'
+  #tagnano = 'tag_and_probe_v2'
+  #tagflat = 'fired_HLT_Mu9_IP6'
+
+  #is_data = True
+  #out_label = 'test_D1_tag_fired_anyBParkHLT_pteta_max3e6_v3'
+  #version_label = 'V10_30Dec21'
+  ##datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
+  ##datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6']
+  #datasets = ['D1']
+  #categorisation = 'pt_eta'
+  #tagnano = '30Dec21'
+  #tagflat = 'tag_fired_anyBParkHLT_v2'
+
+  #is_data = True
+  #out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2'
+  #version_label = 'V10_30Dec21'
   #datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
-  datasets = ['D1']
-  categorisation = 'pt_eta_dxysig'
-  tagnano = '30Dec21'
-  tagflat = 'tag_fired_anyBParkHLT'
+  ##datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6']
+  ##datasets = ['D1']
+  #categorisation = 'pt_eta_dxysig'
+  #tagnano = '30Dec21'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
+
+  #is_data = True
+  #out_label = 'test_fullA_tag_fired_HLT_Mu9_IP6_pteta_max4e6_v2'
+  #version_label = 'V10_30Dec21'
+  #datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6']
+  #categorisation = 'pt_eta'
+  #tagnano = '30Dec21'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6'
+
+  #is_data = True
+  #out_label = 'test_D1_tag_fired_DST_DoubleMu1_pteta_max3e6'
+  #version_label = 'V10_30Dec21'
+  #datasets = ['D1']
+  #categorisation = 'pt_eta'
+  #tagnano = '30Dec21'
+  #tagflat = 'fired_DST_DoubleMu1'
 
   #is_data = False
-  #out_label = 'test_mc_tag_fired_anyBParkHLT_ptetadxysig'
+  #out_label = 'test_mc_tag_fired_anyBParkHLT_pteta'
+  #version_label = 'BToJPsiKstar_V10_30Dec21'
+  #datasets = []
+  #categorisation = 'pt_eta'
+  #tagnano = '30Dec21'
+  #tagflat = 'tag_fired_anyBParkHLT'
+
+  #is_data = False
+  #out_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
   #version_label = 'BToJPsiKstar_V10_30Dec21'
   #datasets = []
   #categorisation = 'pt_eta_dxysig'
   #tagnano = '30Dec21'
-  #tagflat = 'tag_fired_anyBParkHLT'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
+
+  #is_data = False
+  #out_label = 'test_mc_V06_tag_fired_HLT_Mu9_IP6_pteta'
+  #version_label = 'BToJPsiKstar_V0'
+  #datasets = []
+  #categorisation = 'pt_eta'
+  #tagnano = None
+  #tagflat = 'fired_HLT_Mu9_IP6'
+
+  #is_data = False
+  #out_label = 'test_mc_tag_fired_DST_DoubleMu1_pteta'
+  #version_label = 'BToJPsiKstar_V10_30Dec21'
+  #datasets = []
+  #categorisation = 'pt_eta'
+  #tagnano = '30Dec21'
+  #tagflat = 'fired_DST_DoubleMu1'
+
+  #is_data = False
+  #out_label = 'test_mc_tag_fired_HLT_Mu12_IP6_pteta_v2'
+  #version_label = 'BToJPsiKstar_V10_30Dec21'
+  #datasets = []
+  #categorisation = 'pt_eta'
+  #tagnano = '30Dec21'
+  #tagflat = 'tag_fired_HLT_Mu12_IP6'
+
+  #is_data = True
+  #out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
+  #version_label = 'V10_30Dec21'
+  #datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
+  #categorisation = 'pt_dxysig'
+  #tagnano = '30Dec21'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
+
+  #is_data = True
+  #out_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
+  #version_label = 'V10_30Dec21'
+  #datasets = ['D1']
+  #categorisation = 'pt_dxysig'
+  #tagnano = '30Dec21'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
+
+  #is_data = False
+  #out_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
+  #version_label = 'BToJPsiKstar_V10_30Dec21'
+  #datasets = []
+  #categorisation = 'pt_dxysig'
+  #tagnano = '30Dec21'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
+
+  #is_data = True
+  #out_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_bsrdst_newcat_max3e6'
+  #version_label = 'V12_08Aug22'
+  #datasets = ['D1']
+  #categorisation = 'pt_eta_dxysig'
+  #tagnano = '08Aug22'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
+
+  #is_data = False
+  #out_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_bsrdst_newcat'
+  #version_label = 'BToJPsiKstar_V12_08Aug22'
+  #datasets = []
+  #categorisation = 'pt_eta_dxysig'
+  #tagnano = '08Aug22'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
+
+  #is_data = True
+  #out_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid'
+  #version_label = 'V12_08Aug22'
+  #datasets = ['D1']
+  #categorisation = 'pt_dxysig'
+  #tagnano = '08Aug22'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_looseid'
+
+  #is_data = False
+  #out_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid'
+  #version_label = 'BToJPsiKstar_V12_08Aug22'
+  #datasets = []
+  #categorisation = 'pt_dxysig'
+  #tagnano = '08Aug22'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_looseid'
+
+  is_data = False
+  out_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_scale1p12_smear0p03'
+  version_label = 'BToJPsiKstar_V12_08Aug22'
+  datasets = []
+  categorisation = 'pt_dxysig'
+  tagnano = '08Aug22'
+  tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_scale1p12_smear0p03'
 
   TagAndProbeLauncher(is_data=is_data, out_label=out_label, version_label=version_label, ds=datasets, tagnano=tagnano, tagflat=tagflat, categorisation=categorisation).process()
 
