@@ -235,15 +235,17 @@ class ScaleFactorComputer(object):
 
 
   def createPlot(self, hist, name, eta_category=None):
+    ROOT.gStyle.SetPadLeftMargin(0.15)
+    ROOT.gStyle.SetPadBottomMargin(0.13)
     hist_scale_factor = ROOT.TH2D('hist_scale_factor', 'hist_scale_factor', hist.GetNbinsX(), 0, hist.GetNbinsX(), hist.GetNbinsY(), 0, hist.GetNbinsY()-1)
 
     x_bins = []
     for x in range(0, hist.GetNbinsX()+1):
-      x_bins.append(str(hist.GetXaxis().GetBinUpEdge(x)))
+      x_bins.append('[{}, {}]'.format(str(hist.GetXaxis().GetBinUpEdge(x)), str(hist.GetXaxis().GetBinUpEdge(x+1))))
 
     y_bins = []
     for y in range(0, hist.GetNbinsY()+1):
-      y_bins.append(str(hist.GetYaxis().GetBinUpEdge(y)))
+      y_bins.append('[{}, {}]'.format(str(hist.GetYaxis().GetBinUpEdge(y)), str(hist.GetYaxis().GetBinUpEdge(y+1))))
 
     canv = ROOT.TCanvas('canv', 'canv', 1200, 1000)
     canv.SetRightMargin(0.15)
@@ -255,8 +257,7 @@ class ScaleFactorComputer(object):
       for j in range(1, nY+1):
         x = hist.GetBinContent(i,j)
         dx = hist.GetBinError(i,j)
-        hist_scale_factor.Fill(x_bins[i], y_bins[j], x)
-        #hist_scale_factor.SetBinContent(i, j, x)
+        hist_scale_factor.Fill(x_bins[i-1], y_bins[j-1], x)
         hist_scale_factor.SetBinError(i, j, dx)
 
     if categorisation == 'pt_eta':
@@ -274,13 +275,13 @@ class ScaleFactorComputer(object):
       hist_scale_factor.SetTitle('')
     
     hist_scale_factor.GetXaxis().SetTitle(x_label)
-    hist_scale_factor.GetXaxis().SetLabelSize(0.05)
+    hist_scale_factor.GetXaxis().SetLabelSize(0.04)
     hist_scale_factor.GetXaxis().SetTitleSize(0.042)
-    hist_scale_factor.GetXaxis().SetTitleOffset(1.1)
+    hist_scale_factor.GetXaxis().SetTitleOffset(1.4)
     hist_scale_factor.GetYaxis().SetTitle(y_label)
-    hist_scale_factor.GetYaxis().SetLabelSize(0.05)
+    hist_scale_factor.GetYaxis().SetLabelSize(0.04)
     hist_scale_factor.GetYaxis().SetTitleSize(0.042)
-    hist_scale_factor.GetYaxis().SetTitleOffset(1.1)
+    hist_scale_factor.GetYaxis().SetTitleOffset(1.9)
     hist_scale_factor.GetZaxis().SetTitle("Scale Factor")
     hist_scale_factor.GetZaxis().SetRangeUser(-1e-3, 1)
     hist_scale_factor.SetOption("colztexte");
@@ -483,9 +484,9 @@ if __name__ == "__main__":
   #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
   #out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
 
-  #data_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
-  #mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
-  #out_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
+  data_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
+  mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
+  out_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
 
   #data_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6'
   #mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
@@ -499,9 +500,9 @@ if __name__ == "__main__":
   #mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid'
   #out_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6'
 
-  data_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
-  mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_scale1p12_smear0p03'
-  out_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03'
+  #data_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
+  #mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_scale1p12_smear0p03'
+  #out_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03'
 
   categorisation = 'pt_dxysig'
 
