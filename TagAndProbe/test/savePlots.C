@@ -22,6 +22,7 @@ void savePlots(
          TString inputFileName,
          string dirLabel,
          string isMC,
+         string doLog,
 			   string dir="results", 
 			   bool isCutAndCount=false, 
 			   bool isMCTruth = false ) {
@@ -78,13 +79,23 @@ void savePlots(
       if(!(obj->IsA()->InheritsFrom("TDirectory")) || 
       !(TString(innername).Contains("_bin")) ) continue;
       gDirectory->cd(innername);
-      c = (TCanvas*) gDirectory->Get("fit_canvas");
+      TString canvasname = "fit_canvas";
+      if(doLog=="True"){
+        canvasname += "_log";
+      }
+      
+      c = (TCanvas*) gDirectory->Get(canvasname);
       c->Draw();
-      TString plotname = TString("fit")+TString(name)+TString("_")+
-      TString(innername)+TString(".png");
-      TString(innername)+TString(".pdf");
+      if(doLog=="True"){
+        TString(innername) += "_log";
+      }
+      TString plotname = TString("fit")+TString(name)+TString("_")+TString(innername);
+      if(doLog=="True"){
+        plotname += "_log";
+      }
       std::cout << "plotname " << plotname << std::endl;
-      c->SaveAs(TString(outdir) + plotname); 
+      c->SaveAs(TString(outdir) + plotname + ".png"); 
+      c->SaveAs(TString(outdir) + plotname + ".pdf"); 
       gDirectory->cd("../");
       } // end while innerkey
     } // end isCutAndCount

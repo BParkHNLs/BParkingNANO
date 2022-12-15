@@ -15,7 +15,7 @@ class ScaleFactorComputer(object):
     self.out_label = out_label
     self.categorisation = categorisation
     self.eta_categories = ['0p00_0p50', '0p50_1p00', '1p00_1p50', '1p50_2p00']
-    self.do_plots = False
+    self.do_plots = True
 
     categories = ['pt_eta', 'pt_dxysig', 'pt_eta_dxysig']
     if self.categorisation not in categories:
@@ -484,9 +484,13 @@ if __name__ == "__main__":
   #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
   #out_label = 'test_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
 
-  data_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
-  mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
-  out_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
+  #data_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
+  #mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
+  #out_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
+
+  data_label = 'V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6'
+  mc_label = 'V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs'
+  out_label = 'V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6'
 
   #data_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6'
   #mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
