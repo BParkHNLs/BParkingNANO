@@ -108,6 +108,15 @@ class NanoLauncher(NanoTools):
         raise RuntimeError('Please indicate on which signal dataset you want to run. Label "{}" not recognised. Choose among {}'.format(self.ds, signal_samples.keys()))
       self.dataset = signal_samples[self.ds]
 
+    if self.data:
+      if self.ds in ['D1', 'D2', 'D3', 'D4', 'D5']:
+        self.globaltag = '102X_dataRun2_Prompt_v12'
+      else:
+        self.globaltag = '102X_dataRun2_v11'
+    else: # mc
+      self.globaltag = '102X_upgrade2018_realistic_v15' 
+    print self.globaltag
+
 
   def compile(self):
     import subprocess
@@ -303,7 +312,7 @@ class NanoLauncher(NanoTools):
       hh = 5 if not self.doquick else 1,
       )
 
-    command = 'sbatch {slurm_opt} submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 0 {dosig} {doctrl} {dohnl} {dotep}'.format(
+    command = 'sbatch {slurm_opt} submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 0 {dosig} {doctrl} {dohnl} {dotep} {gt}'.format(
       slurm_opt = slurm_options,
       pl        = label,
       outdir    = outputdir,
@@ -316,6 +325,7 @@ class NanoLauncher(NanoTools):
       doctrl    = 1 if self.docontrol else 0, 
       dohnl     = 1 if self.dohnl else 0, 
       dotep     = 1 if self.dotageprobe else 0, 
+      gt        = self.globaltag,
       )
 
     job = subprocess.check_output(command, shell=True)
