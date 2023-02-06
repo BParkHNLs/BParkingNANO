@@ -77,7 +77,14 @@ class NanoTools(object):
     if not rootFile: return False
     if cond and not rootFile.GetListOfKeys().Contains('signal_tree'): return False
     else:
-      return True
+      if not branch_check: return True
+      else:
+        f = ROOT.TFile.Open(flatfile)
+        tree = f.Get('signal_tree')
+        for branch in tree.GetListOfBranches():
+          if(branch.GetName() == branchname):
+            return True
+        return False
 
 
   def checkFileExists(self, file_):
