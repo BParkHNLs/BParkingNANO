@@ -168,6 +168,8 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     const reco::Vertex & PV = vertexHandle->front();
 
     //std::cout << std::endl;
+    //std::cout << std::endl;
+    //std::cout << std::endl;
 
     //////////////////////////////
     /* method 1 */
@@ -201,8 +203,9 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
         } */
 
         // for each muon, we study whether it fires a HLT line or not
+        //std::cout << "study matching for that muon" << std::endl;
         for (const std::string path: HLTPaths_){
-            if(debug) std::cout << path << " " << muon.triggerObjectMatches().size() << std::endl;
+            if(debug) std::cout << "path: " << path << " " << muon.triggerObjectMatches().size() << std::endl;
             ipath++;
 
             // the following vectors are used in order to find the minimum DR between a reco muon and all the HLT objects that is matched to it
@@ -224,6 +227,7 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
                     // first bool is pathLastFilterAccepted, second is pathL3FilterAccepted
                     if(muon.triggerObjectMatch(i)!=0 && muon.triggerObjectMatch(i)->hasPathName(cstr,true,true)){
                     //if(muon.triggerObjectMatch(i)!=0 && muon.triggerObjectMatch(i)->hasPathName(cstr,false,false) && DR[iMuo][path]<max_deltaR_ && fabs(DPT[iMuo][path])<max_deltaPtRel_ && DR[iMuo][path]!=10000){
+                        //std::cout << "muon has this hlt as triggerObjectMatch" << std::endl;
                         //if(abs(muon.triggerObjectMatch(i)->eta())>1.5) std::cout << "eta=" <<muon.triggerObjectMatch(i)->eta();
                         frs[ipath]=1;
                         float dr = reco::deltaR(muon.triggerObjectMatch(i)->p4(), muon.p4()); 
@@ -231,12 +235,12 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
                         temp_dr[i]=dr;
                         temp_dpt[i]=dpt;
                         temp_pt[i]=muon.triggerObjectMatch(i)->pt();                   
-                        if(debug)std::cout <<"Path=" <<cstr << endl;
-                        if(debug)std::cout <<"HLT  Pt="<<muon.triggerObjectMatch(i)->pt() <<" Eta="<<muon.triggerObjectMatch(i)->eta() <<" Phi="<<muon.triggerObjectMatch(i)->phi() << endl;
-                        //std::cout <<"HLT " << cstr << " Pt="<<muon.triggerObjectMatch(i)->pt() <<" Eta="<<muon.triggerObjectMatch(i)->eta() <<" Phi="<<muon.triggerObjectMatch(i)->phi() << endl;
-                        if(debug)std::cout <<"Muon Pt="<< muon.pt() << " Eta=" << muon.eta() << " Phi=" << muon.phi()  <<endl;
-                        if(debug)std::cout <<"DR = " << temp_dr[i] <<endl;
-                        //std::cout <<"DR = " << temp_dr[i] << " DPT = " << temp_dpt[i] <<endl;
+                        //if(debug)std::cout <<"Path=" <<cstr << endl;
+                        //if(debug)std::cout <<"HLT  Pt="<<muon.triggerObjectMatch(i)->pt() <<" Eta="<<muon.triggerObjectMatch(i)->eta() <<" Phi="<<muon.triggerObjectMatch(i)->phi() << endl;
+                        ////std::cout <<"HLT " << cstr << " Pt="<<muon.triggerObjectMatch(i)->pt() <<" Eta="<<muon.triggerObjectMatch(i)->eta() <<" Phi="<<muon.triggerObjectMatch(i)->phi() << endl;
+                        //if(debug)std::cout <<"Muon Pt="<< muon.pt() << " Eta=" << muon.eta() << " Phi=" << muon.phi()  <<endl;
+                        //if(debug)std::cout <<"DR = " << temp_dr[i] <<endl;
+                        ////std::cout <<"DR = " << temp_dr[i] << " DPT = " << temp_dpt[i] <<endl;
                     }
                 }
                 // and now we find the real minimum between the reco muon and all its matched HLT objects. 
@@ -248,6 +252,7 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
             }
         //and now since we have found the minimum DR we save a few variables for plots       
         fires.push_back(frs); //This is used in order to see if a reco muon fired a Trigger (1) or not (0).
+        //std::cout << "check fires" << std::endl;
         //for(unsigned int i(0); i<frs.size(); ++i){
         //  std::cout << "fires " << frs[i] << " deltaR " << temp_DR[i] << " deltaPt " << temp_DPT[i] << std::endl;
         //}
@@ -259,42 +264,44 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
     }
 
     //now, check for different reco muons that are matched to the same HLTObject.
-    for(unsigned int path=0; path<HLTPaths_.size(); path++){
+    for(unsigned int ipath=0; ipath<HLTPaths_.size(); ipath++){
         for(unsigned int iMuo=0; iMuo<slimmed_muons->size(); iMuo++){
             for(unsigned int im=(iMuo+1); im<slimmed_muons->size(); im++){
-                if(matcher[iMuo][path]!=1000. && matcher[iMuo][path]==matcher[im][path]){
-                //if(matcher[iMuo][path]!=1000. && matcher[iMuo][path]==matcher[im][path] && DR[iMuo][path]<max_deltaR_ && fabs(DPT[iMuo][path])<max_deltaPtRel_ && DR[im][path]<max_deltaR_ && fabs(DPT[im][path])<max_deltaPtRel_){
-                    if(DR[iMuo][path]<DR[im][path]){ //Keep the one that has the minimum DR with the HLT object
-                        fires[im][path]=0;
-                        matcher[im][path]=1000.;
-                        DR[im][path]=1000.;                       
-                        DPT[im][path]=1000.;
+                if(matcher[iMuo][ipath]!=1000. && matcher[iMuo][ipath]==matcher[im][ipath]){
+                //if(matcher[iMuo][ipath]!=1000. && matcher[iMuo][ipath]==matcher[im][ipath] && DR[iMuo][ipath]<max_deltaR_ && fabs(DPT[iMuo][ipath])<max_deltaPtRel_ && DR[im][ipath]<max_deltaR_ && fabs(DPT[im][ipath])<max_deltaPtRel_){
+                    if(DR[iMuo][ipath]<DR[im][ipath]){ //Keep the one that has the minimum DR with the HLT object
+                        fires[im][ipath]=0;
+                        matcher[im][ipath]=1000.;
+                        DR[im][ipath]=1000.;                       
+                        DPT[im][ipath]=1000.;
                     }
                     else{
-                        fires[iMuo][path]=0;
-                        matcher[iMuo][path]=1000.;
-                        DR[iMuo][path]=1000.;                       
-                        DPT[iMuo][path]=1000.;
+                        fires[iMuo][ipath]=0;
+                        matcher[iMuo][ipath]=1000.;
+                        DR[iMuo][ipath]=1000.;                       
+                        DPT[iMuo][ipath]=1000.;
                     }
                 }              
             }
-            if(matcher[iMuo][path]!=1000. && DR[iMuo][path]<max_deltaR_trigger_matching_ && fabs(DPT[iMuo][path])<max_deltaPtRel_trigger_matching_ && DR[iMuo][path]!=10000){
+            if(matcher[iMuo][ipath]!=1000. && DR[iMuo][ipath]<max_deltaR_trigger_matching_ && fabs(DPT[iMuo][ipath])<max_deltaPtRel_trigger_matching_ && DR[iMuo][ipath]!=10000){
+              //std::cout << "there is a trigger muon" << std::endl;
               muonIsTrigger[iMuo]=1;
               // BParking trigger lines correspond to the 10 first element (0 to 9) of the HLTPaths vector
-              if(path < 10) muonIsTriggerBPark[iMuo]=1;
-              muonDR[iMuo]=DR[iMuo][path];
-              muonDPT[iMuo]=DPT[iMuo][path];                
+              if(ipath < 10) muonIsTriggerBPark[iMuo]=1;
+              muonDR[iMuo]=DR[iMuo][ipath];
+              muonDPT[iMuo]=DPT[iMuo][ipath];                
               
               for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) {
-                //if(names.triggerName(i).find(HLTPaths_[path]) != std::string::npos || names.triggerName(i)==HLTPaths_[path]){
-                if(names.triggerName(i).find(HLTPaths_[path]) != std::string::npos){
-                  prescales[iMuo][path] = triggerPrescales->getPrescaleForIndex(i);
+                //if(names.triggerName(i).find(HLTPaths_[ipath]) != std::string::npos || names.triggerName(i)==HLTPaths_[ipath]){
+                if(names.triggerName(i).find(HLTPaths_[ipath]) != std::string::npos){
+                  prescales[iMuo][ipath] = triggerPrescales->getPrescaleForIndex(i);
                 }
               }
             }
             else{
-              fires[iMuo][path]=0;
-              //prescales[iMuo][path] = -1;
+              fires[iMuo][ipath]=0;
+              //std::cout << "there is not a trigger muon" << std::endl;
+              //prescales[iMuo][ipath] = -1;
             }
         }
     }
@@ -391,14 +398,74 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
         }
     }
 
+    ////std::cout << "after matching" << std::endl;
+    ////vector<vector<std::pair<string, int>>> triggering_info;
+    vector<vector<int>> triggering_info;
+    vector<int> is_triggering;
+    ////vector<string> triggerTag = {"HLT_Mu12_IP6", "HLT_Mu9_IP5", "HLT_Mu7_IP4", "HLT_Mu9_IP4", "HLT_Mu8_IP5", "HLT_Mu8_IP6", "HLT_Mu9_IP6", "HLT_Mu8_IP3"};
+    vector<string> triggerTag {"HLT_Mu7_IP4", "HLT_Mu8_IP6", "HLT_Mu8_IP5", "HLT_Mu8_IP3", "HLT_Mu8p5_IP3p5", "HLT_Mu9_IP6", "HLT_Mu9_IP5", "HLT_Mu9_IP4", "HLT_Mu10p5_IP3p5", "HLT_Mu12_IP6"};
+    for (auto muon : (*slimmed_muons)) {
+     // std::cout << std::endl << "muon " << std::endl;
+      ////unsigned int iMuo(&muon - &(slimmed_muons->at(0)));
+      ////std::cout << "slimmed muon triggered 'HLT_Mu*_IP*_part*_v*' " << muon.triggered("HLT_Mu*_IP*_part*_v*") << std::endl;
+      ////if(muon.pt()<selmu_ptMin_) continue;
+      ////if(fabs(muon.eta())>selmu_absEtaMax_) continue;
+      ////if(!muon.triggered("HLT_Mu*_IP*_part*_v*")) continue;
+      if(!muon.triggered("HLT_Mu*_IP*_part*_v*")){
+        is_triggering.push_back(0);
+      }
+      else{
+        is_triggering.push_back(1);
+      }
+      //std::cout << "you see me" << std::endl;
+
+      //pat::ETHMuon the_muon(muon);
+      //ETHmuons_out->emplace_back(the_muon);
+
+      //vector<std::pair<string, int>> the_triggering_info;
+      vector<int> the_triggering_info;
+
+      for(auto tag : triggerTag) {
+        //string trgPath = "HLT_" + tag + "_part*_v*";
+        string trgPath = tag + "_part*_v*";
+        //if(muon.triggered(trgPath.c_str())) std::cout << "        muon pt " << muon.pt() << " eta " << muon.eta() << " trigger path: " << trgPath << " " << muon.triggered(trgPath.c_str()) << std::endl;
+        int mu_triggered = muon.triggered(trgPath.c_str()) ? 1 : 0; 
+        //std::cout << tag << ": " << mu_triggered << std::endl;
+
+        //pair<string, int> info_tmp;
+        //info_tmp.first = "triggered_"+tag;
+        //info_tmp.second = mu_triggered;
+        //the_triggering_info.push_back(info_tmp);
+        the_triggering_info.push_back(mu_triggered);
+
+        //ETHmuons_out->back().addUserInt(("triggered_"+tag).c_str(), mu_triggered);
+        //ETHmuons_out->back().addUserInt("triggered", 1);
+      }
+
+      triggering_info.push_back(the_triggering_info);
+    }
+
+    //std::cout << "size of triggering info: " << triggering_info.size() << std::endl;
+
+    //for(const pat::Muon & slimmed_muon : *slimmed_muons){
+    //  unsigned int iMuo(&slimmed_muon - &(slimmed_muons->at(0)));
+    //  vector<pair<string, int>> the_triggering_info = triggering_info[iMuo];
+    //  pair<string, int> info = the_triggering_info[0];
+    //  std::cout << info.first << " " << info.second << std::endl;
+    //}
+      
+    vector<int> hasPassed;
+
     // add the slimmed muons to the collection 
     for(const pat::Muon & slimmed_muon : *slimmed_muons){
       unsigned int iMuo(&slimmed_muon - &(slimmed_muons->at(0)));
+      //std::cout << "test slimmed muon " << iMuo << " triggered 'HLT_Mu*_IP*_part*_v*' " << slimmed_muon.triggered("HLT_Mu*_IP*_part*_v*") << std::endl;
       if(slimmed_muon.pt()<selmu_ptMin_) continue;
       if(fabs(slimmed_muon.eta())>selmu_absEtaMax_) continue;
+      //std::cout << &(slimmed_muon).triggered("HLT_Mu*_IP*_part*_v*") << std::endl;
 
       const reco::TransientTrack muonTT((*(slimmed_muon.bestTrack())),&(*bFieldHandle)); //sara:check,why not using inner track for muons? GM: What is this and why do we need this???
-      if(!muonTT.isValid()) continue; // GM: and why do we skip this muon if muonTT is invalid? This seems to have no effect so I kept it.
+      //if(!muonTT.isValid()) continue; // GM: and why do we skip this muon if muonTT is invalid? This seems to have no effect so I kept it.
       trans_muons_out->emplace_back(muonTT);
 
       //std::cout << "slimmed muon " << iMuo << " pt " << slimmed_muon.pt()  << " eta " << slimmed_muon.eta() << std::endl;
@@ -409,7 +476,27 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
       for(unsigned int i=0; i<HLTPaths_.size(); i++){
         ETHmuons_out->back().addUserInt(HLTPaths_[i], fires[iMuo][i]);
         ETHmuons_out->back().addUserInt(HLTPaths_[i] + "_prescale", prescales[iMuo][i]);
+        //if(fires[iMuo][i]){
+        //  std::cout << "slimmed muon pt " << slimmed_muon.pt() << " eta " << slimmed_muon.eta() << " trigger path: " << HLTPaths_[i] << " " << fires[iMuo][i] << std::endl;
+        //}
       }
+
+
+
+      for(unsigned int i=0; i<triggerTag.size(); i++){
+        ETHmuons_out->back().addUserInt("triggered_" + triggerTag[i], triggering_info[iMuo][i]);
+        //std::cout << "check: iMuo = " << iMuo << " "  << triggerTag[i] << ": " << triggering_info[iMuo][i] << std::endl;
+        //ETHmuons_out->back().addUserInt(HLTPaths_[i] + "_prescale", prescales[iMuo][i]);
+        //if(triggering_info[iMuo][i]){
+        //  std::cout << "triggering slimmed muon pt " << slimmed_muon.pt() << " eta " << slimmed_muon.eta() << " trigger path: " << triggerTag[i] << " " << triggering_info[iMuo][i] << " " << is_triggering[iMuo] << std::endl;
+        //}
+      }
+
+      if(muonIsTriggerBPark[iMuo]==1){
+        hasPassed.push_back(1);
+      }
+
+      ETHmuons_out->back().addUserInt("is_triggering", is_triggering[iMuo]);
       ETHmuons_out->back().addUserInt("isTriggering", muonIsTrigger[iMuo]);
       ETHmuons_out->back().addUserInt("isTriggeringBPark", muonIsTriggerBPark[iMuo]);
       ETHmuons_out->back().addUserFloat("DR", muonDR[iMuo]);
@@ -472,6 +559,13 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
       ETHmuons_out->back().addUserFloat("dsaToSlimmedMatching_deltadxyRel", -99.);
       ETHmuons_out->back().addUserFloat("dsaToSlimmedMatching_deltadzRel", -99.);
       ETHmuons_out->back().addUserInt("passDSAMuonID", -99);
+    }
+
+    if(hasPassed.size() == 0){
+      std::cout << "has not passed" << std::endl;
+    }
+    else{
+      std::cout << "has passed" << std::endl;
     }
 
     // add the displaced standalone muons to the collection
