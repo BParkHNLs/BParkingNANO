@@ -19,25 +19,25 @@ BToMuMuPi = cms.EDProducer(
     # pre-fitter preselection
     pionSelection = cms.string(' && '.join([
         #'pt > 0.',
-        'pt > 0.7',
+        'pt > 1.',
         'abs(eta)<2.',
         'abs(userFloat("dz")) > 0.005',
         'abs(userFloat("dxy")) > 0.005',
         'abs(userFloat("dzS")) > 1.5',  
-        'abs(userFloat("dxyS")) > 3.',
-        'abs(userFloat("DCASig")) > 5.',
+        ##'abs(userFloat("dxyS")) > 3.',
+        'abs(userFloat("DCASig_corr")) > 5.',
       ])
     ),
     isoTracksSelection = cms.string('pt > 0.7 && abs(eta)<2.'),
     primaryMuonSelection = cms.string(' && '.join([
         #'pt > 0.',
-        'pt > 1.5',
+        'pt > 2.',
         'abs(eta) < 2',
       ])     
     ),
     leptonSelection = cms.string(' && '.join([
         #'pt > 0.',
-        'pt > 1.5',
+        'pt > 2.',
         'abs(eta) < 2.',
         'abs(userFloat("dz")) > 0.0015',
         'abs(userFloat("dxy_BS")) > 0.001',
@@ -59,10 +59,10 @@ BToMuMuPi = cms.EDProducer(
         #'mass < 10',
 
         'userInt("hnl_vtx_OK") == 1',
-        'userFloat("hnl_vtx_prob") > 0.001',
-        'userFloat("hnl_fitted_cos_theta_2D") > 0.995',
+        'userFloat("hnl_vtx_prob") > 0.01',
+        'userFloat("hnl_fitted_cos_theta_2D") > 0.999',
         'userFloat("hnl_ls_xy") > 15',
-        'mass < 8',
+        'mass < 7.', # TODO can safely be lowered to 7, 6.8 would also be fine
         ##'userFloat("hnl_fitted_mass") < 7.',
         ##'abs(userFloat("cos_theta_star_pion")) < 0.9',
         ])
@@ -166,6 +166,7 @@ BToMuMuPiTable = cms.EDProducer(
         pi_dzS                    = ufloat('pion_dzS'                 ), 
         pi_dxyS                   = ufloat('pion_dxyS'                ), 
         pi_DCASig                 = ufloat('pion_DCASig'              ), 
+        pi_DCASig_corr            = ufloat('pion_DCASig_corr'         ), 
         pi_ispacked               = uint('pion_ispacked'              ), 
         pi_islost                 = uint('pion_islost'                ), 
         pi_chi2                   = ufloat('pion_chi2'                ), 

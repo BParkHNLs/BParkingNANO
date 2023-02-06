@@ -14,7 +14,7 @@ tracksBPark = cms.EDProducer('TrackMerger',
                              #gsf2lost=cms.InputTag("lowPtGsfLinks:lostTracks"),
 
                              # keep the cuts as tight as possible without affecting any physics builder
-                             trkPtCut = cms.double(0.6),
+                             trkPtCut = cms.double(0.9),
                              #trkPtCut = cms.double(0.3),
                              trkEtaCut = cms.double(2.1),
                              #trkEtaCut = cms.double(2.8),
