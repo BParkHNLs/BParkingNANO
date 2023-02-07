@@ -491,8 +491,6 @@ public :
    Float_t the_sig_mu0_dxy_bs = -99.;
    Float_t the_sig_mu0_dxysig = -99;
    Float_t the_sig_mu0_dxysig_bs = -99.;
-   Float_t the_sig_mu0_dxysig_bs_linearscale = -99.;
-   Float_t the_sig_mu0_dxysig_bs_scale1p12_smear0p03 = -99.;
    //Float_t the_sig_mu0_dxysig_bs_smeared = -99.;
    Float_t the_sig_mu0_dxysig_bs_rdst = -99.;
    Float_t the_sig_mu0_dz = -99.;
@@ -577,8 +575,6 @@ public :
    Float_t the_sig_mu0_triggering_dxy_bs = -99.;
    Float_t the_sig_mu0_triggering_dxysig = -99;
    Float_t the_sig_mu0_triggering_dxysig_bs = -99.;
-   Float_t the_sig_mu0_triggering_dxysig_bs_linearscale = -99.;
-   Float_t the_sig_mu0_triggering_dxysig_bs_scale1p12_smear0p03 = -99.;
    Float_t the_sig_mu0_triggering_dxysig_bs_rdst = -99.;
    Float_t the_sig_mu0_is_triggering_pt = -99.;
    Float_t the_sig_mu0_is_triggering_eta = -99.;
@@ -596,8 +592,6 @@ public :
    Float_t the_sig_mu_dxy_bs = -99.;
    Float_t the_sig_mu_dxysig = -99.;
    Float_t the_sig_mu_dxysig_bs = -99.;
-   Float_t the_sig_mu_dxysig_bs_linearscale = -99.;
-   Float_t the_sig_mu_dxysig_bs_scale1p12_smear0p03 = -99.;
    Float_t the_sig_mu_dxysig_bs_rdst = -99.;
    Float_t the_sig_mu_dz = -99.;
    Float_t the_sig_mu_dzsig = -99.;
@@ -693,8 +687,6 @@ public :
    Float_t the_sig_mu_triggering_dxy_bs = -99.;
    Float_t the_sig_mu_triggering_dxysig = -99.;
    Float_t the_sig_mu_triggering_dxysig_bs = -99.;
-   Float_t the_sig_mu_triggering_dxysig_bs_linearscale = -99.;
-   Float_t the_sig_mu_triggering_dxysig_bs_scale1p12_smear0p03 = -99.;
    Float_t the_sig_mu_triggering_dxysig_bs_rdst = -99.;
    Float_t the_sig_mu_is_triggering_pt = -99.;
    Float_t the_sig_mu_is_triggering_eta = -99.;
@@ -826,90 +818,9 @@ public :
    //Float_t the_sig_weight_mu0_dxysig_bs = -99.;
    //Float_t the_sig_weight_mu_dxysig_bs = -99.;
 
-   //Float_t the_sig_weight_hlt_A1 = -99.;
-   //Float_t the_sig_weight_hlt_A1_6 = -99.;
-   //Float_t the_sig_weight_hlt_HLT_Mu9_IP6_A1_6 = -99.;
-   //Float_t the_sig_weight_hlt_HLT_Mu9_IP6_A1_6_v2 = -99.;
-   //Float_t the_sig_weight_hlt_A1_6_B1 = -99.;
-   //Float_t the_sig_weight_hlt_D1_pteta_v1 = -99.;
-   //Float_t the_sig_weight_hlt_D1_ptdxysig_v1 = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu12_IP6_pteta_v1 = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6 = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu10p5_IP3p5_or_HLT_Mu8_IP3_or_HLT_Mu12_IP6 = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu10p5_IP3p5_or_HLT_Mu8_IP3_or_HLT_Mu12_IP6_pteta = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu10p5_IP3p5_or_HLT_Mu8_IP3_or_HLT_Mu12_IP6_ptdxysig = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_pteta_v1 = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_ptetadxysig_max5e6 = -99.;
-   //Float_t the_sig_weight_hlt_D1_ptetadxysig_max5e6 = -99.;
-   //Float_t the_sig_weight_hlt_fullA_V06_tag_fired_HLT_Mu9_IP6_pteta_max3e6 = -99.;
-   //Float_t the_sig_weight_hlt_fullA_tag_fired_anyBParkHLT_pteta_max3e6 = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_DST_DoubleMu1_pteta_max3e6 = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2 = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_anyBParkHLT_pteta_max5e6_v2 = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2 = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_tag_fired_anyBParkHLT_pteta_max5e6_v2 = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2_smalltable = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2_smalltable_v2 = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2_smalltable = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_pteta_max5e6_v2_smalltable_v2 = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2 = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2 = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_anyBParkHLT_pteta_max3e6_v3 = -99.;
-   //Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2 = -99.;
-   //Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2 = -99.;
-
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
-
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable_plus_one_sigma = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable_minus_one_sigma = -99.;
-
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable_v2 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable_plus_one_sigma_v2 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable_minus_one_sigma_v2 = -99.;
-
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_mu0 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_mu = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_perevent = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_perevent_smalltable_v1 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_perevent_smalltable_v2 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_unique = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v3 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v4 = -99.;
-
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
-
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
-
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_newcat_max3e6_smalltable_v2 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_bsrdst_inicat_max3e6_smalltable_v2 = -99.;
-
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_softid_max3e6_smalltable_v2 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_looseid_max3e6_smalltable_v2 = -99.;
-
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_linearscale_smalltable_v2 = -99.;
-   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03_smalltable_v2 = -99.;
-
-   Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2 = -99.;
-   Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
-   Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
-
-   Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2 = -99.;
-   Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
-   Float_t the_sig_weight_hlt_fullBPark_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
+   Float_t the_sig_weight_hlt_D1 = -99.;
+   Float_t the_sig_weight_hlt_D1_plus_one_sigma = -99.;
+   Float_t the_sig_weight_hlt_D1_minus_one_sigma = -99.;
 
    Float_t the_sig_weight_pu_qcd_A = -99.;
    Float_t the_sig_weight_pu_qcd_B = -99.;
