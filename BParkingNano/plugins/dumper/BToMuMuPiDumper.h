@@ -270,16 +270,16 @@ public :
    TTreeReaderArray<Int_t> Muon_fired_HLT_Mu9_IP4 = {fReader, "Muon_fired_HLT_Mu9_IP4"};
    TTreeReaderArray<Int_t> Muon_fired_HLT_Mu9_IP5 = {fReader, "Muon_fired_HLT_Mu9_IP5"};
    TTreeReaderArray<Int_t> Muon_fired_HLT_Mu9_IP6 = {fReader, "Muon_fired_HLT_Mu9_IP6"};
-   //TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu10p5_IP3p5 = {fReader, "Muon_prescale_HLT_Mu10p5_IP3p5"};
-   //TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu12_IP6 = {fReader, "Muon_prescale_HLT_Mu12_IP6"};
-   //TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu7_IP4 = {fReader, "Muon_prescale_HLT_Mu7_IP4"};
-   //TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu8_IP3 = {fReader, "Muon_prescale_HLT_Mu8_IP3"};
-   //TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu8_IP5 = {fReader, "Muon_prescale_HLT_Mu8_IP5"};
-   //TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu8_IP6 = {fReader, "Muon_prescale_HLT_Mu8_IP6"};
-   //TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu8p5_IP3p5 = {fReader, "Muon_prescale_HLT_Mu8p5_IP3p5"};
-   //TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu9_IP4 = {fReader, "Muon_prescale_HLT_Mu9_IP4"};
-   //TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu9_IP5 = {fReader, "Muon_prescale_HLT_Mu9_IP5"};
-   //TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu9_IP6 = {fReader, "Muon_prescale_HLT_Mu9_IP6"};
+   TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu10p5_IP3p5 = {fReader, "Muon_prescale_HLT_Mu10p5_IP3p5"};
+   TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu12_IP6 = {fReader, "Muon_prescale_HLT_Mu12_IP6"};
+   TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu7_IP4 = {fReader, "Muon_prescale_HLT_Mu7_IP4"};
+   TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu8_IP3 = {fReader, "Muon_prescale_HLT_Mu8_IP3"};
+   TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu8_IP5 = {fReader, "Muon_prescale_HLT_Mu8_IP5"};
+   TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu8_IP6 = {fReader, "Muon_prescale_HLT_Mu8_IP6"};
+   TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu8p5_IP3p5 = {fReader, "Muon_prescale_HLT_Mu8p5_IP3p5"};
+   TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu9_IP4 = {fReader, "Muon_prescale_HLT_Mu9_IP4"};
+   TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu9_IP5 = {fReader, "Muon_prescale_HLT_Mu9_IP5"};
+   TTreeReaderArray<Int_t> Muon_prescale_HLT_Mu9_IP6 = {fReader, "Muon_prescale_HLT_Mu9_IP6"};
    TTreeReaderArray<Int_t> Muon_isTriggering = {fReader, "Muon_isTriggering"};
    TTreeReaderArray<Int_t> Muon_isTriggeringBPark = {fReader, "Muon_isTriggeringBPark"};
    TTreeReaderArray<Int_t> Muon_looseId = {fReader, "Muon_looseId"};
@@ -448,7 +448,7 @@ public :
    ULong64_t the_event = -99;
    Int_t the_run = -99;
    Int_t the_lumi = -99;
-
+   Int_t the_pu_ntrueint = -99;
    Int_t the_pv_npvs = -99;
 
    //Int_t the_hlt_mu7_ip4 = -99;
@@ -519,6 +519,7 @@ public :
    Int_t the_sig_mu0_trkisoid = -99;
    Int_t the_sig_mu0_triggerlooseid = -99;
    Int_t the_sig_mu0_istriggering = -99;
+   Int_t the_sig_mu0_is_triggering = -99;
    Int_t the_sig_mu0_isPF = -99;
    Int_t the_sig_mu0_isglobalmuon = -99;
    Int_t the_sig_mu0_istrackermuon = -99;
@@ -538,26 +539,36 @@ public :
    //Int_t the_sig_mu0_numberoftrackerlayers = -99;
    //Int_t the_sig_mu0_numberofpixellayers = -99;
    //Int_t the_sig_mu0_numberofstations = -99;
-   //Int_t the_sig_mu0_fired_hlt_mu7_ip4 = -99;
-   //Int_t the_sig_mu0_fired_hlt_mu8_ip6 = -99;
-   //Int_t the_sig_mu0_fired_hlt_mu8_ip5 = -99;
-   //Int_t the_sig_mu0_fired_hlt_mu8_ip3 = -99;
-   //Int_t the_sig_mu0_fired_hlt_mu8p5_ip3p5 = -99;
-   //Int_t the_sig_mu0_fired_hlt_mu9_ip6 = -99;
-   //Int_t the_sig_mu0_fired_hlt_mu9_ip5 = -99;
-   //Int_t the_sig_mu0_fired_hlt_mu9_ip4 = -99;
-   //Int_t the_sig_mu0_fired_hlt_mu10p5_ip3p5 = -99;
-   //Int_t the_sig_mu0_fired_hlt_mu12_ip6 = -99;
-   //Int_t the_sig_mu0_prescale_hlt_mu7_ip4 = -99;
-   //Int_t the_sig_mu0_prescale_hlt_mu8_ip6 = -99;
-   //Int_t the_sig_mu0_prescale_hlt_mu8_ip5 = -99;
-   //Int_t the_sig_mu0_prescale_hlt_mu8_ip3 = -99;
-   //Int_t the_sig_mu0_prescale_hlt_mu8p5_ip3p5 = -99;
-   //Int_t the_sig_mu0_prescale_hlt_mu9_ip6 = -99;
-   //Int_t the_sig_mu0_prescale_hlt_mu9_ip5 = -99;
-   //Int_t the_sig_mu0_prescale_hlt_mu9_ip4 = -99;
-   //Int_t the_sig_mu0_prescale_hlt_mu10p5_ip3p5 = -99;
-   //Int_t the_sig_mu0_prescale_hlt_mu12_ip6 = -99;
+   Int_t the_sig_mu0_triggered_hlt_mu7_ip4 = -99;
+   Int_t the_sig_mu0_triggered_hlt_mu8_ip6 = -99;
+   Int_t the_sig_mu0_triggered_hlt_mu8_ip5 = -99;
+   Int_t the_sig_mu0_triggered_hlt_mu8_ip3 = -99;
+   Int_t the_sig_mu0_triggered_hlt_mu8p5_ip3p5 = -99;
+   Int_t the_sig_mu0_triggered_hlt_mu9_ip6 = -99;
+   Int_t the_sig_mu0_triggered_hlt_mu9_ip5 = -99;
+   Int_t the_sig_mu0_triggered_hlt_mu9_ip4 = -99;
+   Int_t the_sig_mu0_triggered_hlt_mu10p5_ip3p5 = -99;
+   Int_t the_sig_mu0_triggered_hlt_mu12_ip6 = -99;
+   Int_t the_sig_mu0_fired_hlt_mu7_ip4 = -99;
+   Int_t the_sig_mu0_fired_hlt_mu8_ip6 = -99;
+   Int_t the_sig_mu0_fired_hlt_mu8_ip5 = -99;
+   Int_t the_sig_mu0_fired_hlt_mu8_ip3 = -99;
+   Int_t the_sig_mu0_fired_hlt_mu8p5_ip3p5 = -99;
+   Int_t the_sig_mu0_fired_hlt_mu9_ip6 = -99;
+   Int_t the_sig_mu0_fired_hlt_mu9_ip5 = -99;
+   Int_t the_sig_mu0_fired_hlt_mu9_ip4 = -99;
+   Int_t the_sig_mu0_fired_hlt_mu10p5_ip3p5 = -99;
+   Int_t the_sig_mu0_fired_hlt_mu12_ip6 = -99;
+   Int_t the_sig_mu0_prescale_hlt_mu7_ip4 = -99;
+   Int_t the_sig_mu0_prescale_hlt_mu8_ip6 = -99;
+   Int_t the_sig_mu0_prescale_hlt_mu8_ip5 = -99;
+   Int_t the_sig_mu0_prescale_hlt_mu8_ip3 = -99;
+   Int_t the_sig_mu0_prescale_hlt_mu8p5_ip3p5 = -99;
+   Int_t the_sig_mu0_prescale_hlt_mu9_ip6 = -99;
+   Int_t the_sig_mu0_prescale_hlt_mu9_ip5 = -99;
+   Int_t the_sig_mu0_prescale_hlt_mu9_ip4 = -99;
+   Int_t the_sig_mu0_prescale_hlt_mu10p5_ip3p5 = -99;
+   Int_t the_sig_mu0_prescale_hlt_mu12_ip6 = -99;
 
    Float_t the_sig_mu0_triggering_pt = -99.;
    Float_t the_sig_mu0_triggering_eta = -99.;
@@ -569,6 +580,13 @@ public :
    Float_t the_sig_mu0_triggering_dxysig_bs_linearscale = -99.;
    Float_t the_sig_mu0_triggering_dxysig_bs_scale1p12_smear0p03 = -99.;
    Float_t the_sig_mu0_triggering_dxysig_bs_rdst = -99.;
+   Float_t the_sig_mu0_is_triggering_pt = -99.;
+   Float_t the_sig_mu0_is_triggering_eta = -99.;
+   Float_t the_sig_mu0_is_triggering_phi = -99.;
+   Float_t the_sig_mu0_is_triggering_dxy = -99.;
+   Float_t the_sig_mu0_is_triggering_dxy_bs = -99.;
+   Float_t the_sig_mu0_is_triggering_dxysig = -99;
+   Float_t the_sig_mu0_is_triggering_dxysig_bs = -99.;
 
    Float_t the_sig_mu_pt = -99.;
    Float_t the_sig_mu_eta = -99.;
@@ -614,6 +632,7 @@ public :
    Int_t the_sig_mu_whnlid = -99;
    Int_t the_sig_mu_customisedid = -99;
    Int_t the_sig_mu_istriggering = -99;
+   Int_t the_sig_mu_is_triggering = -99;
    Int_t the_sig_mu_isslimmed = -99;
    Int_t the_sig_mu_isdsa = -99;
    Int_t the_sig_mu_isPF = -99;
@@ -635,6 +654,36 @@ public :
    Int_t the_sig_mu_numberoftrackerlayers = -99;
    //Int_t the_sig_mu_numberofpixellayers = -99;
    Int_t the_sig_mu_numberofstations = -99;
+   Int_t the_sig_mu_triggered_hlt_mu7_ip4 = -99;
+   Int_t the_sig_mu_triggered_hlt_mu8_ip6 = -99;
+   Int_t the_sig_mu_triggered_hlt_mu8_ip5 = -99;
+   Int_t the_sig_mu_triggered_hlt_mu8_ip3 = -99;
+   Int_t the_sig_mu_triggered_hlt_mu8p5_ip3p5 = -99;
+   Int_t the_sig_mu_triggered_hlt_mu9_ip6 = -99;
+   Int_t the_sig_mu_triggered_hlt_mu9_ip5 = -99;
+   Int_t the_sig_mu_triggered_hlt_mu9_ip4 = -99;
+   Int_t the_sig_mu_triggered_hlt_mu10p5_ip3p5 = -99;
+   Int_t the_sig_mu_triggered_hlt_mu12_ip6 = -99;
+   Int_t the_sig_mu_fired_hlt_mu7_ip4 = -99;
+   Int_t the_sig_mu_fired_hlt_mu8_ip6 = -99;
+   Int_t the_sig_mu_fired_hlt_mu8_ip5 = -99;
+   Int_t the_sig_mu_fired_hlt_mu8_ip3 = -99;
+   Int_t the_sig_mu_fired_hlt_mu8p5_ip3p5 = -99;
+   Int_t the_sig_mu_fired_hlt_mu9_ip6 = -99;
+   Int_t the_sig_mu_fired_hlt_mu9_ip5 = -99;
+   Int_t the_sig_mu_fired_hlt_mu9_ip4 = -99;
+   Int_t the_sig_mu_fired_hlt_mu10p5_ip3p5 = -99;
+   Int_t the_sig_mu_fired_hlt_mu12_ip6 = -99;
+   Int_t the_sig_mu_prescale_hlt_mu7_ip4 = -99;
+   Int_t the_sig_mu_prescale_hlt_mu8_ip6 = -99;
+   Int_t the_sig_mu_prescale_hlt_mu8_ip5 = -99;
+   Int_t the_sig_mu_prescale_hlt_mu8_ip3 = -99;
+   Int_t the_sig_mu_prescale_hlt_mu8p5_ip3p5 = -99;
+   Int_t the_sig_mu_prescale_hlt_mu9_ip6 = -99;
+   Int_t the_sig_mu_prescale_hlt_mu9_ip5 = -99;
+   Int_t the_sig_mu_prescale_hlt_mu9_ip4 = -99;
+   Int_t the_sig_mu_prescale_hlt_mu10p5_ip3p5 = -99;
+   Int_t the_sig_mu_prescale_hlt_mu12_ip6 = -99;
 
    Float_t the_sig_mu_triggering_pt = -99.;
    Float_t the_sig_mu_triggering_eta = -99.;
@@ -647,6 +696,14 @@ public :
    Float_t the_sig_mu_triggering_dxysig_bs_linearscale = -99.;
    Float_t the_sig_mu_triggering_dxysig_bs_scale1p12_smear0p03 = -99.;
    Float_t the_sig_mu_triggering_dxysig_bs_rdst = -99.;
+   Float_t the_sig_mu_is_triggering_pt = -99.;
+   Float_t the_sig_mu_is_triggering_eta = -99.;
+   Float_t the_sig_mu_is_triggering_phi = -99.;
+   Int_t the_sig_mu_is_triggering_charge = -99;
+   Float_t the_sig_mu_is_triggering_dxy = -99.;
+   Float_t the_sig_mu_is_triggering_dxy_bs = -99.;
+   Float_t the_sig_mu_is_triggering_dxysig = -99.;
+   Float_t the_sig_mu_is_triggering_dxysig_bs = -99.;
 
    Float_t the_sig_pi_pt = -99.;
    Float_t the_sig_pi_eta = -99.;
@@ -758,7 +815,11 @@ public :
 
    // weights
    Float_t the_sig_weight_mu0_softid = -99.;
+   Float_t the_sig_weight_mu0_softid_plus_one_sigma = -99.;
+   Float_t the_sig_weight_mu0_softid_minus_one_sigma = -99.;
    Float_t the_sig_weight_mu_looseid = -99.;
+   Float_t the_sig_weight_mu_looseid_plus_one_sigma = -99.;
+   Float_t the_sig_weight_mu_looseid_minus_one_sigma = -99.;
 
    //Float_t the_sig_weight_mu0_dxy_bs = -99.;
    //Float_t the_sig_weight_mu_dxy_bs = -99.;
@@ -804,9 +865,26 @@ public :
    Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
    Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
 
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable_plus_one_sigma = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable_minus_one_sigma = -99.;
+
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable_v2 = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable_plus_one_sigma_v2 = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_efftable_minus_one_sigma_v2 = -99.;
+
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_mu0 = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_mu = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_perevent = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_perevent_smalltable_v1 = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_perevent_smalltable_v2 = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_unique = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable = -99.;
    Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2 = -99.;
    Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
    Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v2_minus_one_sigma = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v3 = -99.;
+   Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_v2_smalltable_v4 = -99.;
 
    Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2 = -99.;
    Float_t the_sig_weight_hlt_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6_v2_smalltable_v2_plus_one_sigma = -99.;
