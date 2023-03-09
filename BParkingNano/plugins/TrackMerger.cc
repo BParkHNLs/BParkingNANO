@@ -122,7 +122,8 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
   evt.getByToken(eleToken_, pfele);
   edm::Handle<reco::VertexCollection> vertexHandle;
   evt.getByToken(vertexToken_, vertexHandle);
-  //const reco::Vertex & PV = vertexHandle->front();
+  const reco::Vertex & PV = vertexHandle->front();
+  const reco::VertexCollection& vertices = *vertexHandle;
 
   //edm::Handle<pat::ElectronCollection> lowptele;
   //evt.getByToken(lowptele_, lowptele);
@@ -185,12 +186,31 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
     // high purity requirement applied only in packedCands
     if( do_trk_highpurity_ && iTrk < nTracks && !trk.trackHighPurity()) continue;
     const reco::TransientTrack trackTT( (*trk.bestTrack()) , &(*bFieldHandle));
-    //distance closest approach in x,y wrt beam spot
+
+    // distance closest approach in x,y wrt beam spot
     std::pair<double,double> DCA = computeDCA(trackTT, beamSpot);
     float DCABS = DCA.first;
     float DCABSErr = DCA.second;
     float DCASig = (DCABSErr != 0 && float(DCABSErr) == DCABSErr) ? fabs(DCABS/DCABSErr) : -1;
     if (DCASig >  dcaSig_  && dcaSig_ >0) continue;
+    
+    // Compute corrected DCA
+    // By accounting for that the axis of the beamspot can be shifted get the vertex the closest in dz to the muon
+    const reco::Vertex& the_PV = PV; // initialise it to the first primary vertex
+    float dist = -99;
+    for(const reco::Vertex& vertex: vertices){
+      // compute muon dz at this vertex
+      float track_dz = abs(trk.dz(vertex.position()));
+      if(dist == -99 || track_dz < dist){
+        dist = track_dz;
+        auto the_PV = vertex;
+      }
+    }
+
+    std::pair<double,double> DCA_corr = computeDCA(trackTT, beamSpot, the_PV);
+    float DCABS_corr = DCA_corr.first;
+    float DCABSErr_corr = DCA_corr.second;
+    float DCASig_corr = (DCABSErr_corr != 0 && float(DCABSErr_corr) == DCABSErr_corr) ? fabs(DCABS_corr/DCABSErr_corr) : -1;
 
     // clean tracks wrt to all muons
     int matchedToMuon       = 0;
@@ -264,6 +284,7 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
     pcand.addUserFloat("dz", trk.dz()); 
     pcand.addUserFloat("dzS", trk.dz()/trk.dzError());
     pcand.addUserFloat("DCASig", DCASig);
+    pcand.addUserFloat("DCASig_corr", DCASig_corr);
     pcand.addUserFloat("drTrg", drTrg);
     pcand.addUserFloat("dzTrg", dzTrg);
     pcand.addUserFloat("chi2", trk.bestTrack()->chi2()); 

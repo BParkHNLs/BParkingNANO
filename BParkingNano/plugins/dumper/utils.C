@@ -173,7 +173,7 @@ float getPUWeight(TString filename, int var){
 }
 
 
-float getLeptonScaleFactor(TString filename, string ID, float pt, float eta){
+float getLeptonScaleFactor(TString filename, string ID, float pt, float eta, TString flag=""){
   // get file
   TFile* file = TFile::Open(filename);
   file->cd();
@@ -193,7 +193,16 @@ float getLeptonScaleFactor(TString filename, string ID, float pt, float eta){
   int bin_eta = hist->GetYaxis()->FindBin(eta);
 
   // get scale factor
-  Float_t scale_factor = hist->GetBinContent(bin_pt, bin_eta);
+  Float_t scale_factor;
+  if(flag == "plus_one_sigma"){
+    scale_factor = hist->GetBinContent(bin_pt, bin_eta) + hist->GetBinError(bin_pt, bin_eta);
+  }
+  else if(flag == "minus_one_sigma"){
+    scale_factor = hist->GetBinContent(bin_pt, bin_eta) - hist->GetBinError(bin_pt, bin_eta);
+  }
+  else{
+    scale_factor = hist->GetBinContent(bin_pt, bin_eta);
+  }
 
   file->Close();
 
@@ -209,7 +218,7 @@ float getTriggerScaleFactor(TString filename_sf, float pt, float dxysig){
   // get histogram
   TH2D* hist_sf = (TH2D*) file_sf->Get("hist_scale_factor")->Clone("hist_sf");
 
-  pt = std::max(6., std::min(99.9, double(pt)));
+  pt = std::max(0., std::min(99.9, double(pt)));
   dxysig = std::max(0., std::min(499.9, double(dxysig)));
 
   // get bin

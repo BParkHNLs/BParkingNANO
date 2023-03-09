@@ -477,6 +477,7 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
         b_cand.addUserFloat("pion_dzS"                 , pi_ptr->userFloat("dzS")                 );
         b_cand.addUserFloat("pion_dxyS"                , pi_ptr->userFloat("dxyS")                );
         b_cand.addUserFloat("pion_DCASig"              , pi_ptr->userFloat("DCASig")              );
+        b_cand.addUserFloat("pion_DCASig_corr"         , pi_ptr->userFloat("DCASig_corr")         );
         b_cand.addUserInt("pion_ispacked"              , pi_ptr->userInt("isPacked")              );
         b_cand.addUserInt("pion_islost"                , pi_ptr->userInt("isLostTrk")             );
         b_cand.addUserFloat("pion_chi2"                , pi_ptr->userFloat("chi2")                );

@@ -14,7 +14,7 @@ tracksBPark = cms.EDProducer('TrackMerger',
                              #gsf2lost=cms.InputTag("lowPtGsfLinks:lostTracks"),
 
                              # keep the cuts as tight as possible without affecting any physics builder
-                             trkPtCut = cms.double(0.6),
+                             trkPtCut = cms.double(0.9),
                              #trkPtCut = cms.double(0.3),
                              trkEtaCut = cms.double(2.1),
                              #trkEtaCut = cms.double(2.8),
@@ -57,6 +57,7 @@ trackBParkTable = cms.EDProducer(
         dzS = Var("userFloat('dzS')", float, doc="dz/err (with sign) wrt first PV, in cm", precision=10),
         dxyS = Var("userFloat('dxyS')", float, doc="dxy/err (with sign) wrt first PV, in cm", precision=10),
         DCASig=Var("userFloat('DCASig')", float,doc="significance of xy-distance of closest approach wrt beamspot", precision=10),
+        DCASig_corr=Var("userFloat('DCASig_corr')", float,doc="significance of xy-distance of closest approach wrt beamspot", precision=10),
         drTrg = Var("userFloat('drTrg')", float,doc="deltaR between the track and one trigger muon", precision=10),
         dzTrg = Var("userFloat('dzTrg')", float,doc="dz from the corresponding trigger muon, in cm", precision=10),
         isMatchedToMuon = Var("userInt('isMatchedToMuon')",bool,doc="track was used to build a muon", precision=10),

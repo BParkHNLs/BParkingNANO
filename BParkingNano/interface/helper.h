@@ -113,6 +113,21 @@ inline std::pair<double,double> computeDCA(const reco::TransientTrack& trackTT,
   return std::make_pair(DCABS,DCABSErr);
 }
 
+inline std::pair<double,double> computeDCA(const reco::TransientTrack& trackTT, const reco::BeamSpot& beamSpot, const reco::Vertex& PV)
+{
+  double DCABS    = -1.;
+  double DCABSErr = -1.;
+
+  TrajectoryStateClosestToPoint theDCAXBS = 
+    trackTT.trajectoryStateClosestToPoint(GlobalPoint(beamSpot.position(PV.z()).x(),beamSpot.position(PV.z()).y(),beamSpot.position().z()));
+  if (theDCAXBS.isValid()) {
+    DCABS    = theDCAXBS.perigeeParameters().transverseImpactParameter();
+    DCABSErr = theDCAXBS.perigeeError().transverseImpactParameterError();
+  }
+
+  return std::make_pair(DCABS,DCABSErr);
+}
+
 
 inline bool track_to_lepton_match(edm::Ptr<reco::Candidate> l_ptr, auto iso_tracks_id, unsigned int iTrk)
 {

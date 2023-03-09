@@ -611,7 +611,8 @@ void TagProbeFitter::doFitEfficiency(RooWorkspace* w, string pdfName, RooRealVar
   // save everything
   res->Write("fitresults");
   w->saveSnapshot("finalState",w->components());
-  saveFitPlot(w);
+  saveFitPlot(w, false);
+  saveFitPlot(w, true);
   //extract the efficiency parameter from the results
   RooRealVar* e = (RooRealVar*) res->floatParsFinal().find("efficiency");
   //What's wrong with this? and why don't they copy the errors!
@@ -725,8 +726,8 @@ void TagProbeFitter::setInitialValues(RooWorkspace* w){
   w->saveSnapshot("initialState",w->components());
 }
 
-void TagProbeFitter::saveFitPlot(RooWorkspace* w){
-  // save refferences for convenience
+void TagProbeFitter::saveFitPlot(RooWorkspace* w, bool do_log){
+  // save references for convenience
   RooCategory& efficiencyCategory = *w->cat("_efficiencyCategory_");
   RooAbsData* dataAll = (binnedFit ? w->data("data_binned") : w->data("data") );
   RooAbsData* dataPass = dataAll->reduce(Cut("_efficiencyCategory_==_efficiencyCategory_::Passed")); 
@@ -742,11 +743,18 @@ void TagProbeFitter::saveFitPlot(RooWorkspace* w){
   }
   if(!mass) return;
   // make a 2x2 canvas
-  TCanvas canvas("fit_canvas");
+  TString canvasname = "fit_canvas";
+  if(do_log){
+    canvasname += "_log";
+  }
+  TCanvas canvas(canvasname);
   canvas.Divide(2,2);
   vector<RooPlot*> frames;
   // plot the Passing Probes
   canvas.cd(1);
+  if(do_log){
+    canvas.GetPad(1)->SetLogy();
+  }
   if (massBins == 0) {
       frames.push_back(mass->frame(Name("Passing"), Title("Passing Probes")));
       frames.push_back(mass->frame(Name("Failing"), Title("Failing Probes")));
@@ -762,12 +770,18 @@ void TagProbeFitter::saveFitPlot(RooWorkspace* w){
   frames[0]->Draw();
   // plot the Failing Probes
   canvas.cd(2);
+  if(do_log){
+    canvas.GetPad(2)->SetLogy();
+  }
   dataFail->plotOn(frames[1]);
   pdf.plotOn(frames[1], Slice(efficiencyCategory, "Failed"), ProjWData(*dataFail), LineColor(kRed));
   pdf.plotOn(frames[1], Slice(efficiencyCategory, "Failed"), ProjWData(*dataFail), LineColor(kRed), Components("backgroundFail"), LineStyle(kDashed));
   frames[1]->Draw();
   // plot the All Probes
   canvas.cd(3);
+  if(do_log){
+    canvas.GetPad(3)->SetLogy();
+  }
   dataAll->plotOn(frames.back());
   pdf.plotOn(frames.back(), ProjWData(*dataAll), LineColor(kBlue));
   pdf.plotOn(frames.back(), ProjWData(*dataAll), LineColor(kBlue), Components("backgroundPass,backgroundFail"), LineStyle(kDashed));
