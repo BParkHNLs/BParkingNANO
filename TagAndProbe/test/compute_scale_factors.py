@@ -15,7 +15,7 @@ class ScaleFactorComputer(object):
     self.out_label = out_label
     self.categorisation = categorisation
     self.eta_categories = ['0p00_0p50', '0p50_1p00', '1p00_1p50', '1p50_2p00']
-    self.do_plots = True
+    self.do_plots = False
 
     categories = ['pt_eta', 'pt_dxysig', 'pt_eta_dxysig']
     if self.categorisation not in categories:
@@ -44,6 +44,8 @@ class ScaleFactorComputer(object):
     print '\n --> will compute the SF per data chunk\n'
 
     scale_factors_perchunk = []
+    efficiency_data_perchunk = []
+    efficiency_mc_perchunk = []
     n_events_perchunk = []
     for data_file in data_files:
       out_suffix = self.getDataSuffix(data_file) #data_file[data_file.rfind(self.data_label)+len(self.data_label)+1:data_file.rfind('.root')]
@@ -59,7 +61,7 @@ class ScaleFactorComputer(object):
           doplt = self.do_plots,
           )
 
-      print command_sf
+      #print command_sf
       os.system(command_sf)
 
       if self.categorisation == 'pt_eta':
@@ -68,6 +70,8 @@ class ScaleFactorComputer(object):
       elif self.categorisation == 'pt_dxysig':
         #scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_pt_dxysig_fit.txt'.format(self.out_label, out_suffix))
         scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_eff_fit.txt'.format(self.out_label, out_suffix))
+        efficiency_data_perchunk.append('./results/{}/{}/efficiency_data_results_cat_eff_fit.txt'.format(self.out_label, out_suffix))
+        efficiency_mc_perchunk.append('./results/{}/{}/efficiency_mc_results_cat_eff_fit.txt'.format(self.out_label, out_suffix))
       elif self.categorisation == 'pt_eta_dxysig':
         for eta_category in self.eta_categories:
           scale_factors_perchunk.append('./results/{}/{}/scaleFactor_results_cat_eff_fit_eta_{}.txt'.format(self.out_label, out_suffix, eta_category))
@@ -75,7 +79,7 @@ class ScaleFactorComputer(object):
 
       n_events_perchunk.append(self.getNEvents(out_suffix))
 
-    return scale_factors_perchunk, n_events_perchunk
+    return scale_factors_perchunk, efficiency_data_perchunk, efficiency_mc_perchunk, n_events_perchunk
 
 
   def computeAverageScaleFactors(self, scale_factors_perchunk, n_events_perchunk, filename):
@@ -166,6 +170,8 @@ class ScaleFactorComputer(object):
       name += '_plus_one_sigma'
     elif flag == 'minus_one_sigma':
       name += '_minus_one_sigma'
+    elif flag == 'error':
+      name += '_error'
     root_file = ROOT.TFile.Open(name + '.root', "RECREATE")
     canv = ROOT.TCanvas('canv', 'canv', 800, 700)
     
@@ -216,6 +222,9 @@ class ScaleFactorComputer(object):
         elif flag == 'minus_one_sigma':
           hist_scale_factor.SetBinContent(ix+1, iy+1, sf-err)
           hist_scale_factor.SetBinError(ix+1, iy+1, err)
+        elif flag == 'error':
+          hist_scale_factor.SetBinContent(ix+1, iy+1, err)
+          hist_scale_factor.SetBinError(ix+1, iy+1, 0)
 
     hist_scale_factor.SetOption("colztexte")
     hist_scale_factor.SetTitle("")
@@ -365,12 +374,19 @@ class ScaleFactorComputer(object):
       raise RuntimeError('Did not found mc file "/work/anlyon/tag_and_probe/outfiles/{}/results_{}_incl.root". Please check.'.format(self.mc_label))
 
     # compute per chunk scale factors
-    scale_factors_perchunk, n_events_perchunk = self.computePerChunkSF(data_files, mc_file)
+    scale_factors_perchunk, efficiency_data_perchunk, efficiency_mc_perchunk, n_events_perchunk = self.computePerChunkSF(data_files, mc_file)
 
     if self.categorisation != 'pt_eta_dxysig':
       # compute the weighted average of the scale factors
       filename = './results/{}/scale_factors.txt'.format(self.out_label)
       self.computeAverageScaleFactors(scale_factors_perchunk, n_events_perchunk, filename)
+  
+      # compute the weighted average of the efficiencies
+      filename_data = './results/{}/efficiency_data.txt'.format(self.out_label)
+      self.computeAverageScaleFactors(efficiency_data_perchunk, n_events_perchunk, filename_data)
+      filename_mc = './results/{}/efficiency_mc.txt'.format(self.out_label)
+      self.computeAverageScaleFactors(efficiency_mc_perchunk, n_events_perchunk, filename_mc)
+      #print '\n\n\n'
 
       # create 2D histogram
       root_filename = './results/{}/scale_factors'.format(self.out_label)
@@ -378,12 +394,32 @@ class ScaleFactorComputer(object):
       hist_plus_one_sigma = self.createHistogram(filename, root_filename, 'plus_one_sigma')
       hist_minus_one_sigma = self.createHistogram(filename, root_filename, 'minus_one_sigma')
 
+      root_filename_data = './results/{}/efficiency_data'.format(self.out_label)
+      hist_efficiency_data = self.createHistogram(filename_data, root_filename_data)
+      hist_efficiency_data_plus_one_sigma = self.createHistogram(filename_data, root_filename_data, 'plus_one_sigma')
+      hist_efficiency_data_minus_one_sigma = self.createHistogram(filename_data, root_filename_data, 'minus_one_sigma')
+      hist_efficiency_data_error = self.createHistogram(filename_data, root_filename_data, 'error')
+
+      root_filename_mc = './results/{}/efficiency_mc'.format(self.out_label)
+      hist_efficiency_mc = self.createHistogram(filename_mc, root_filename_mc)
+      hist_efficiency_mc_plus_one_sigma = self.createHistogram(filename_mc, root_filename_mc, 'plus_one_sigma')
+      hist_efficiency_mc_minus_one_sigma = self.createHistogram(filename_mc, root_filename_mc, 'minus_one_sigma')
+      hist_efficiency_mc_error = self.createHistogram(filename_mc, root_filename_mc, 'error')
+
       # create plot
       self.createPlot(hist_scale_factor, root_filename)
+      self.createPlot(hist_efficiency_data, root_filename_data)
+      self.createPlot(hist_efficiency_mc, root_filename_mc)
         
       # create relative error plot
       error_name = './results/{}/error'.format(self.out_label)
       self.createErrorPlot(hist_scale_factor, error_name)
+
+      error_name_data = './results/{}/error_efficiency_data'.format(self.out_label)
+      self.createErrorPlot(hist_efficiency_data, error_name_data)
+
+      error_name_mc = './results/{}/error_efficiency_mc'.format(self.out_label)
+      self.createErrorPlot(hist_efficiency_mc, error_name_mc)
 
     else:
       for eta_category in self.eta_categories:
@@ -451,7 +487,6 @@ if __name__ == "__main__":
   #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_pteta'
   #out_label = 'test_fullA_tag_fired_HLT_Mu9_IP6_pteta_max4e6_v2'
 
-
   #data_label = 'test_D1_tag_fired_anyBParkHLT_pteta_max5e6_v2'
   #mc_label = 'test_mc_tag_fired_anyBParkHLT_pteta_v2'
   #out_label = 'test_D1_tag_fired_anyBParkHLT_pteta_max5e6_v2'
@@ -488,9 +523,9 @@ if __name__ == "__main__":
   #mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
   #out_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
 
-  data_label = 'V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6'
-  mc_label = 'V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs'
-  out_label = 'V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6'
+  #data_label = 'V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6'
+  #mc_label = 'V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs'
+  #out_label = 'V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6'
 
   #data_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig_max5e6'
   #mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptetadxysig'
@@ -507,6 +542,14 @@ if __name__ == "__main__":
   #data_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6'
   #mc_label = 'test_V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_scale1p12_smear0p03'
   #out_label = 'test_V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_scale1p12_smear0p03'
+
+  #data_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
+  #mc_label = 'test_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig'
+  #out_label = 'test_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysig_max5e6_v2'
+
+  data_label = 'V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_newbinning'
+  mc_label = 'V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_newbinning' 
+  out_label = 'V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_newbinning'
 
   categorisation = 'pt_dxysig'
 
