@@ -115,7 +115,6 @@ class NanoLauncher(NanoTools):
         self.globaltag = '102X_dataRun2_v11'
     else: # mc
       self.globaltag = '102X_upgrade2018_realistic_v15' 
-    print self.globaltag
 
 
   def compile(self):
@@ -309,10 +308,10 @@ class NanoLauncher(NanoTools):
       ld = logdir,
       pl = label,
       ar = '1-{}'.format(nfiles),
-      hh = 5 if not self.doquick else 1,
+      hh = 2 if not self.doquick else 1,
       )
 
-    command = 'sbatch {slurm_opt} submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 0 {dosig} {doctrl} {dohnl} {dotep} {gt}'.format(
+    command = 'sbatch {slurm_opt} submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 0 {dosig} {doctrl} {dohnl} {dotep} {gt} 0'.format(
       slurm_opt = slurm_options,
       pl        = label,
       outdir    = outputdir,

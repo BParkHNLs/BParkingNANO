@@ -121,9 +121,9 @@ class NanoMerger(NanoTools):
           if iFile%100 == 0:              print '     --> checked {}% of the files'.format(round(float(iFile)/len(nanoFiles)*100, 1))
           elif iFile == len(nanoFiles)-1: print '     --> checked 100% of the files'
 
-          #if not NanoTools.checkFlatFile(self, fileName, True, branch_check=True, branchname='hnl_mass'): 
-          #  print 'file not valid'
-          #  continue
+          if not NanoTools.checkFlatFile(self, fileName, True, branch_check=True, branchname='hnl_mass'): 
+            print 'file not valid'
+            continue
           if cond and not NanoTools.checkLocalFile(self, fileName, cond, branch_check=True, branchname='nMuon'): continue
           elif not cond and not NanoTools.checkLocalFile(self, fileName, cond): continue
           command = command + ' {}'.format(fileName)
@@ -151,9 +151,9 @@ class NanoMerger(NanoTools):
     filesValid = []
     print "\n-> Checking the files"
     for fileName in nanoFiles:
-      #if not NanoTools.checkFlatFile(self, fileName, True, branch_check=True, branchname='hnl_mass'): 
-      #  print 'file not valid'
-      #  continue
+      if not NanoTools.checkFlatFile(self, fileName, True, branch_check=True, branchname='hnl_mass'): 
+        print 'file not valid'
+        continue
       if cond and not NanoTools.checkLocalFile(self, fileName, cond, branch_check=True, branchname='nMuon'): continue
       elif not cond and not NanoTools.checkLocalFile(self, fileName, cond): continue
       filesValid.append(fileName)
