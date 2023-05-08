@@ -24,6 +24,7 @@ def getOptions():
   parser.add_argument('--dofetchtime'         , dest='dofetchtime' , help='add to report time fetch'                        , action='store_true', default=False)
   parser.add_argument('--docheckfile'         , dest='docheckfile' , help='check the content of the nano files'             , action='store_true', default=False)
   parser.add_argument('--doresubmit'          , dest='doresubmit'  , help='resubmit failed jobs'                            , action='store_true', default=False)
+  parser.add_argument('--force'               , dest='force'       , help='force resubmission by copying file locally'      , action='store_true', default=False)
   return parser.parse_args()
 
 
@@ -92,6 +93,15 @@ class NanoProdManager(NanoTools):
     self.dofetchtime  = vars(opt)['dofetchtime'] 
     self.docheckfile  = vars(opt)['docheckfile'] 
     self.doresubmit   = vars(opt)['doresubmit'] 
+    self.force   = vars(opt)['force'] 
+
+    if self.data:
+      if self.ds in ['D1', 'D2', 'D3', 'D4', 'D5']:
+        self.globaltag = '102X_dataRun2_Prompt_v12'
+      else:
+        self.globaltag = '102X_dataRun2_v11'
+    else: # mc
+      self.globaltag = '102X_upgrade2018_realistic_v15' 
 
 
   def isJobFinished(self, logfile):
@@ -197,7 +207,7 @@ class NanoProdManager(NanoTools):
     outputdir = failed_files[0][0:failed_files[0].find('bparknano')]
     filelist  = self.writeFileList(chunk, failed_files, label) 
 
-    command = 'sbatch -p standard --account=t3 -o {ld}/nanostep_nj%a.log -e {ld}/nanostep_nj%a.log --job-name=nanostep_nj%a_{pl} --array {ar} --time=03:00:00 submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 1 {dosig} {doctrl} {dohnl} {dotep}'.format(
+    command = 'sbatch -p standard --account=t3 -o {ld}/nanostep_nj%a.log -e {ld}/nanostep_nj%a.log --job-name=nanostep_nj%a_{pl} --array {ar} --time=02:00:00 submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 1 {dosig} {doctrl} {dohnl} {dotep} {gt} {force}'.format(
     #command = 'sbatch -p short --account=t3 -o {ld}/nanostep_nj%a.log -e {ld}/nanostep_nj%a.log --job-name=nanostep_nj%a_{pl} --array {ar} submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 1 {dosig} {doctrl} {dohnl} {dotep}'.format(
       ld      = logdir,
       pl      = label,
@@ -212,6 +222,8 @@ class NanoProdManager(NanoTools):
       doctrl    = 1 if self.docontrol else 0, 
       dohnl     = 1 if self.dohnl else 0, 
       dotep     = 1 if self.dotageprobe else 0, 
+      gt        = self.globaltag,
+      force   = 1 if self.force else 0, 
     )
 
     os.system(command)
@@ -277,6 +289,7 @@ class NanoProdManager(NanoTools):
       chunks = [f for f in glob.glob('{}/Chunk*'.format(dir_))]
 
       for chunk_ in chunks:
+        #if 'Chunk0_n500' not in chunk_: continue
         if self.dofullreport: print '\n -- {} --'.format(chunk_[chunk_.rfind('/')+1:len(chunk_)])
 
         failed_files = []

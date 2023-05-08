@@ -15,6 +15,7 @@
 # ${11}: dohnl
 # ${12}: doTagAndProbe
 # ${13}: globalTag
+# ${14}: force
 #--------------------
 
 workdir="/scratch/"${2}"/"${3}"/job_nj"${SLURM_JOB_ID}"_"${SLURM_ARRAY_TASK_ID}
@@ -32,8 +33,8 @@ else # different treatment in case of resubmission
   # copy filelist to pnfs
   #xrdcp -r ${7}*$SLURM_ARRAY_TASK_ID* root://t3dcachedb.psi.ch:1094/${1}
   #rm ${7}*$SLURM_ARRAY_TASK_ID*
-  xrdcp -r ${7}"_"$SLURM_ARRAY_TASK_ID".txt" root://t3dcachedb.psi.ch:1094/${1}
-  rm ${7}"_"$SLURM_ARRAY_TASK_ID".txt"
+  xrdcp -r ${7}"_nj"$SLURM_ARRAY_TASK_ID".txt" root://t3dcachedb.psi.ch:1094/${1}
+  rm ${7}"_nj"$SLURM_ARRAY_TASK_ID".txt"
 fi
 
 cd $workdir
@@ -42,7 +43,15 @@ inputFilename=''
 if [ ${8} == 0 ] ; then
   inputFilename=$(sed $SLURM_ARRAY_TASK_ID'!d' filelist.txt)
 else # different treatment in case of resubmission
-  inputFilename=$(sed '1!d' *nj$SLURM_ARRAY_TASK_ID.txt)
+  if [ ${14} == 0 ] ; then
+    inputFilename=$(sed '1!d' *nj$SLURM_ARRAY_TASK_ID.txt)
+  else
+    inputFilename=$(sed '1!d' *nj$SLURM_ARRAY_TASK_ID.txt)
+    echo "inputFilename= "$inputFilename
+    echo "xrdcp root://xrootd-cms.infn.it/$inputFilename miniaod.root"
+    xrdcp root://xrootd-cms.infn.it/$inputFilename miniaod.root
+    inputFilename="miniaod.root"
+  fi
 fi
 echo "inputfilename: "$inputFilename
 
