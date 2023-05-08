@@ -821,6 +821,7 @@ public :
    Float_t the_sig_weight_hlt_D1 = -99.;
    Float_t the_sig_weight_hlt_D1_plus_one_sigma = -99.;
    Float_t the_sig_weight_hlt_D1_minus_one_sigma = -99.;
+   Float_t the_sig_weight_hlt_fullBpark = -99.;
 
    Float_t the_sig_weight_pu_qcd_A = -99.;
    Float_t the_sig_weight_pu_qcd_B = -99.;

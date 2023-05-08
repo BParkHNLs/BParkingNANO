@@ -434,6 +434,7 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
     signal_tree->Branch("weight_mu_looseid_minus_one_sigma", &the_sig_weight_mu_looseid_minus_one_sigma);
 
     signal_tree->Branch("weight_hlt_D1", &the_sig_weight_hlt_D1);
+    signal_tree->Branch("weight_hlt_fullBpark", &the_sig_weight_hlt_fullBpark);
 
     signal_tree->Branch("weight_pu_qcd_A", &the_sig_weight_pu_qcd_A);
     signal_tree->Branch("weight_pu_qcd_B", &the_sig_weight_pu_qcd_B);
@@ -1099,46 +1100,72 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
         the_sig_weight_hlt_D1_plus_one_sigma = -99.;
         the_sig_weight_hlt_D1_minus_one_sigma = -99.;
 
-        float eff_mu0_data = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_data.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
-        float eff_mu_data = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_data.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
-        float eff_mu0_mc = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_mc.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
-        float eff_mu_mc = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_mc.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
+        //float eff_mu0_data = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_data.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
+        //float eff_mu_data = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_data.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
+        //float eff_mu0_mc = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_mc.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
+        //float eff_mu_mc = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_mc.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
 
-        float eff_mu0_data_error = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_data_error.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
-        float eff_mu_data_error = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_data_error.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
-        float eff_mu0_mc_error = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_mc_error.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
-        float eff_mu_mc_error = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6/efficiency_mc_error.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
+        float eff_mu0_data_D1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_D1_ptdxysig_max5e6/efficiency_data.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
+        float eff_mu_data_D1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_D1_ptdxysig_max5e6/efficiency_data.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
+        float eff_mu0_mc_D1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_D1_ptdxysig_max5e6/efficiency_mc.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
+        float eff_mu_mc_D1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_D1_ptdxysig_max5e6/efficiency_mc.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
 
-        float eff_error  = 0.;
-        if(eff_mu0_data != 0){
-          eff_error += (eff_mu0_data_error / eff_mu0_data) * (eff_mu0_data_error / eff_mu0_data);
+        float eff_mu0_data_error_D1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_D1_ptdxysig_max5e6/efficiency_data_error.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
+        float eff_mu_data_error_D1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_D1_ptdxysig_max5e6/efficiency_data_error.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
+        float eff_mu0_mc_error_D1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_D1_ptdxysig_max5e6/efficiency_mc_error.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
+        float eff_mu_mc_error_D1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_D1_ptdxysig_max5e6/efficiency_mc_error.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
+
+        float eff_error_D1 = 0.;
+        if(eff_mu0_data_D1 != 0){
+          eff_error_D1 += (eff_mu0_data_error_D1 / eff_mu0_data_D1) * (eff_mu0_data_error_D1 / eff_mu0_data_D1);
         }
-        if(eff_mu_data != 0){
-          eff_error += (eff_mu_data_error / eff_mu_data) * (eff_mu_data_error / eff_mu_data);
+        if(eff_mu_data_D1 != 0){
+          eff_error_D1 += (eff_mu_data_error_D1 / eff_mu_data_D1) * (eff_mu_data_error_D1 / eff_mu_data_D1);
         }
-        if(eff_mu0_mc != 0){
-          eff_error += (eff_mu0_mc_error / eff_mu0_mc) * (eff_mu0_mc_error / eff_mu0_mc);
+        if(eff_mu0_mc_D1 != 0){
+          eff_error_D1 += (eff_mu0_mc_error_D1 / eff_mu0_mc_D1) * (eff_mu0_mc_error_D1 / eff_mu0_mc_D1);
         }
-        if(eff_mu_mc != 0){
-          eff_error += (eff_mu_mc_error / eff_mu_mc) * (eff_mu_mc_error / eff_mu_mc);
+        if(eff_mu_mc_D1 != 0){
+          eff_error_D1 += (eff_mu_mc_error_D1 / eff_mu_mc_D1) * (eff_mu_mc_error_D1 / eff_mu_mc_D1);
         }
-        eff_error = sqrt(eff_error);
+        eff_error_D1 = sqrt(eff_error_D1);
  
         if(the_sig_mu0_istriggering && the_sig_mu_istriggering){
-          the_sig_weight_hlt_D1 = eff_mu0_data * eff_mu_data / (eff_mu0_mc * eff_mu_mc);
+          the_sig_weight_hlt_D1 = eff_mu0_data_D1 * eff_mu_data_D1 / (eff_mu0_mc_D1 * eff_mu_mc_D1);
         }
         else if(the_sig_mu0_istriggering && !the_sig_mu_istriggering){
-          the_sig_weight_hlt_D1 = eff_mu0_data * (1-eff_mu_data) / (eff_mu0_mc * (1-eff_mu_mc));
+          the_sig_weight_hlt_D1 = eff_mu0_data_D1 * (1-eff_mu_data_D1) / (eff_mu0_mc_D1 * (1-eff_mu_mc_D1));
         }
         else if(!the_sig_mu0_istriggering && the_sig_mu_istriggering){
-          the_sig_weight_hlt_D1 = (1-eff_mu0_data) * eff_mu_data / ((1-eff_mu0_mc) * eff_mu_mc);
+          the_sig_weight_hlt_D1 = (1-eff_mu0_data_D1) * eff_mu_data_D1 / ((1-eff_mu0_mc_D1) * eff_mu_mc_D1);
         }
         else if(!the_sig_mu0_istriggering && !the_sig_mu_istriggering){
-          the_sig_weight_hlt_D1 = (1-eff_mu0_data) * (1-eff_mu_data) / ((1-eff_mu0_mc) * (1-eff_mu_mc));
+          the_sig_weight_hlt_D1 = (1-eff_mu0_data_D1) * (1-eff_mu_data_D1) / ((1-eff_mu0_mc_D1) * (1-eff_mu_mc_D1));
         }
 
-        the_sig_weight_hlt_D1_plus_one_sigma = the_sig_weight_hlt_D1 + the_sig_weight_hlt_D1 * eff_error;
-        the_sig_weight_hlt_D1_minus_one_sigma = the_sig_weight_hlt_D1 - the_sig_weight_hlt_D1 * eff_error;
+        the_sig_weight_hlt_D1_plus_one_sigma = the_sig_weight_hlt_D1 + the_sig_weight_hlt_D1 * eff_error_D1;
+        the_sig_weight_hlt_D1_minus_one_sigma = the_sig_weight_hlt_D1 - the_sig_weight_hlt_D1 * eff_error_D1;
+
+
+        the_sig_weight_hlt_fullBpark = -99.;
+
+        float eff_mu0_data_fullBpark = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_fullBpark_ptdxysig_max5e6/efficiency_data.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
+        float eff_mu_data_fullBpark = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_fullBpark_ptdxysig_max5e6/efficiency_data.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
+        float eff_mu0_mc_fullBpark = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_fullBpark_ptdxysig_max5e6/efficiency_mc.root", the_sig_mu0_pt, fabs(the_sig_mu0_dxysig_bs));
+        float eff_mu_mc_fullBpark = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/V13_06Feb23_fullBpark_ptdxysig_max5e6/efficiency_mc.root", the_sig_mu_pt, fabs(the_sig_mu_dxysig_bs));
+
+        if(the_sig_mu0_istriggering && the_sig_mu_istriggering){
+          the_sig_weight_hlt_fullBpark = eff_mu0_data_fullBpark * eff_mu_data_fullBpark / (eff_mu0_mc_fullBpark * eff_mu_mc_fullBpark);
+        }
+        else if(the_sig_mu0_istriggering && !the_sig_mu_istriggering){
+          the_sig_weight_hlt_fullBpark = eff_mu0_data_fullBpark * (1-eff_mu_data_fullBpark) / (eff_mu0_mc_fullBpark * (1-eff_mu_mc_fullBpark));
+        }
+        else if(!the_sig_mu0_istriggering && the_sig_mu_istriggering){
+          the_sig_weight_hlt_fullBpark = (1-eff_mu0_data_fullBpark) * eff_mu_data_fullBpark / ((1-eff_mu0_mc_fullBpark) * eff_mu_mc_fullBpark);
+        }
+        else if(!the_sig_mu0_istriggering && !the_sig_mu_istriggering){
+          the_sig_weight_hlt_fullBpark = (1-eff_mu0_data_fullBpark) * (1-eff_mu_data_fullBpark) / ((1-eff_mu0_mc_fullBpark) * (1-eff_mu_mc_fullBpark));
+        }
 
         // pile-up weight
         the_sig_weight_pu_qcd_A = isMC ? getPUWeight("pileup_weight_dataA_mcAutumn18.root", *Pileup_nTrueInt) : 1.;
