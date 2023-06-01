@@ -57,15 +57,16 @@ echo "inputfilename: "$inputFilename
 
 # index of the output file
 if [ ${5} == 1 ] ; then #isMC
-  if [ ${6} == 0 ] ; then  #private MC
-    search='step4_'
-    start=$inputFilename
-    end=${start##*$search}
-    outIdx=$((${#start} - ${#end}))
-    outSuffix=${inputFilename:outIdx}
-  else
-    outSuffix=$SLURM_ARRAY_TASK_ID".root" 
-  fi
+  outSuffix=$SLURM_ARRAY_TASK_ID".root" 
+  #if [ ${6} == 0 ] ; then  #private MC
+  #  search='step4_'
+  #  start=$inputFilename
+  #  end=${start##*$search}
+  #  outIdx=$((${#start} - ${#end}))
+  #  outSuffix=${inputFilename:outIdx}
+  #else
+  #  outSuffix=$SLURM_ARRAY_TASK_ID".root" 
+  #fi
 else # isData
   outSuffix=$SLURM_ARRAY_TASK_ID".root" 
 fi

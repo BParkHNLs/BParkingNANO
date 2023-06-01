@@ -171,8 +171,8 @@ class NanoLauncher(NanoTools):
     event_chain = []
     event_chain.append('TChain* c = new TChain("Events");')
     for iFile in range(1, nfiles+1):
-      file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
-      #file_step = iFile
+      #file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
+      file_step = iFile
       event_chain.append('  c->Add("{}/{}_nj{}.root");'.format(outputdir, nanoname, file_step))
     if self.dosignal:                    event_chain.append('  c->Process("BToMuMuPiDumper.C+", outFileName);')
     if self.docontrol:                   event_chain.append('  c->Process("BToKMuMuDumper.C+", outFileName);')
@@ -184,8 +184,8 @@ class NanoLauncher(NanoTools):
     run_chain = []
     run_chain.append('TChain* c_run = new TChain("Runs");')
     for iFile in range(1, nfiles+1):
-      file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
-      #file_step = iFile
+      #file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
+      file_step = iFile
       run_chain.append('  c_run->Add("{}/{}_nj{}.root");'.format(outputdir, nanoname, file_step))
     run_chain.append('  c_run->Process("NanoRunDumper.C+", outFileName);')
     run_chain = '\n'.join(run_chain)
@@ -217,7 +217,8 @@ class NanoLauncher(NanoTools):
       dumper_starter.close()
     else:
       for iFile in range(1, nfiles+1):
-        file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
+        #file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
+        file_step = iFile
 
         event_chain = []
         event_chain.append('TChain* c = new TChain("Events");')
