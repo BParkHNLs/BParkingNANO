@@ -188,6 +188,9 @@ public :
    TTreeReaderArray<Int_t> BToMuMuPi_pi_isMatched = {fReader, "BToMuMuPi_pi_isMatched"};
    TTreeReaderArray<Int_t> BToMuMuPi_mu_isMatched = {fReader, "BToMuMuPi_mu_isMatched"};
    TTreeReaderArray<Int_t> BToMuMuPi_mu0_isMatched = {fReader, "BToMuMuPi_mu0_isMatched"};
+   TTreeReaderArray<Int_t> BToMuMuPi_isBu = {fReader, "BToMuMuPi_isBu"};
+   TTreeReaderArray<Int_t> BToMuMuPi_isBd = {fReader, "BToMuMuPi_isBd"};
+   TTreeReaderArray<Int_t> BToMuMuPi_isBs = {fReader, "BToMuMuPi_isBs"};
    //TTreeReaderArray<Int_t> BToMuMuPi_matching_pi_genIdx = {fReader, "BToMuMuPi_matching_pi_genIdx"};
    //TTreeReaderArray<Int_t> BToMuMuPi_matching_pi_motherPdgId = {fReader, "BToMuMuPi_matching_pi_motherPdgId"};
    //TTreeReaderArray<Int_t> BToMuMuPi_matching_mu_genIdx = {fReader, "BToMuMuPi_matching_mu_genIdx"};
@@ -804,6 +807,11 @@ public :
    Int_t the_sig_pi_ismatched = -99;
    Float_t the_sig_mupi_mass_reco_gen_reldiff = -99.;
    Float_t the_sig_lxy_reco_gen_reldiff = -99.;
+
+   // get B species
+   Int_t the_sig_isbu = -99;
+   Int_t the_sig_isbd = -99;
+   Int_t the_sig_isbs = -99;
 
    // weights
    Float_t the_sig_weight_mu0_softid = -99.;

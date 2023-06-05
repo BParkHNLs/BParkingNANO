@@ -424,6 +424,10 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("mupi_mass_reco_gen_reldiff", &the_sig_mupi_mass_reco_gen_reldiff);
   signal_tree->Branch("lxy_reco_gen_reldiff", &the_sig_lxy_reco_gen_reldiff);
 
+  signal_tree->Branch("isbu", &the_sig_isbu);
+  signal_tree->Branch("isbd", &the_sig_isbd);
+  signal_tree->Branch("isbs", &the_sig_isbs);
+
   if(isMC){
     signal_tree->Branch("weight_mu0_softid", &the_sig_weight_mu0_softid);
     signal_tree->Branch("weight_mu0_softid_plus_one_sigma", &the_sig_weight_mu0_softid_plus_one_sigma);
@@ -1000,6 +1004,10 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       the_sig_pi_ismatched = BToMuMuPi_pi_isMatched[selectedCandIdx_sig];
       the_sig_mupi_mass_reco_gen_reldiff = BToMuMuPi_mupi_mass_reco_gen_reldiff[selectedCandIdx_sig];
       the_sig_lxy_reco_gen_reldiff = BToMuMuPi_lxy_reco_gen_reldiff[selectedCandIdx_sig];
+
+      the_sig_isbu = BToMuMuPi_isBu[selectedCandIdx_sig];
+      the_sig_isbd = BToMuMuPi_isBd[selectedCandIdx_sig];
+      the_sig_isbs = BToMuMuPi_isBs[selectedCandIdx_sig];
 
       // additionnal displacement quantities
       //float dist_sv_pv_xy = sqrt((BToMuMuPi_sv_x[selectedCandIdx_sig] - *PV_x) * (BToMuMuPi_sv_x[selectedCandIdx_sig] - *PV_x) + (BToMuMuPi_sv_y[selectedCandIdx_sig] - *PV_y) * (BToMuMuPi_sv_y[selectedCandIdx_sig] - *PV_y));
