@@ -13,6 +13,7 @@ options.register('doSignal'                , True            , VarParsing.multip
 options.register('doControl'               , False           , VarParsing.multiplicity.singleton, VarParsing.varType.bool  , "Run the BToKMuMuBuilder"                )
 options.register('doHNL'                   , False           , VarParsing.multiplicity.singleton, VarParsing.varType.bool  , "Run the HNLToMuPiBuilder"               )
 options.register('doTagAndProbe'           , False           , VarParsing.multiplicity.singleton, VarParsing.varType.bool  , "Run the TagAndProbeJpsiToMuMu"          )
+options.register('doGeneral'               , False           , VarParsing.multiplicity.singleton, VarParsing.varType.bool  , "Run without builder"                    )
 options.register('addTriggerMuonCollection', False           , VarParsing.multiplicity.singleton, VarParsing.varType.bool  , "Add the TriggerMuon_* branches"         )
 options.register('addProbeTracksCollection', False           , VarParsing.multiplicity.singleton, VarParsing.varType.bool  , "Add the ProbeTracks_* branches"         )
 options.register('skipDuplicated'          , True            , VarParsing.multiplicity.singleton, VarParsing.varType.bool  , "Skip duplicated events. True by default")
@@ -137,7 +138,7 @@ process = nanoAOD_customizeTagAndProbeJPsiToMuMu (process, isMC=options.isMC)
 process = nanoAOD_customizeTriggerBitsBPark      (process)
 
 # Path and EndPath definitions
-#process.nanoAOD_general_step = cms.Path(process.nanoSequence)
+process.nanoAOD_general_step = cms.Path(process.nanoSequence)
 process.nanoAOD_MuMuPi_step = cms.Path(process.nanoSequence + process.nanoBMuMuPiSequence + CountBToMuMuPi )
 process.nanoAOD_KMuMu_step  = cms.Path(process.nanoSequence + process.nanoBKMuMuSequence + CountBToKmumu ) 
 process.nanoAOD_HNLToMuPi_step = cms.Path(process.nanoSequence + process.nanoHNLToMuPiSequence + CountHNLToMuPi )
@@ -160,9 +161,12 @@ process.NANOAODoutput_step = cms.EndPath(process.NANOAODoutput)
 # Schedule definition
 process.schedule = cms.Schedule(
 )
+if options.doGeneral:
+  process.schedule += cms.Schedule(
+      process.nanoAOD_general_step,
+  )
 if options.doSignal:
   process.schedule += cms.Schedule(
-      #process.nanoAOD_general_step,
       process.nanoAOD_MuMuPi_step,
   )
 if options.doControl:
@@ -186,7 +190,7 @@ from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
 process_string = cms.vstring()
-#process_string.append('nanoAOD_general_step')
+if options.doGeneral: process_string.append('nanoAOD_general_step')
 if options.doSignal: process_string.append('nanoAOD_MuMuPi_step')
 if options.doControl: process_string.append('nanoAOD_KMuMu_step')
 if options.doHNL: process_string.append('nanoAOD_HNLToMuPi_step')
