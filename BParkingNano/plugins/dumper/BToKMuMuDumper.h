@@ -88,6 +88,7 @@ public :
    TTreeReaderArray<Int_t> BToKMuMu_l1Idx = {fReader, "BToKMuMu_l1Idx"};
    TTreeReaderArray<Int_t> BToKMuMu_l2Idx = {fReader, "BToKMuMu_l2Idx"};
    TTreeReaderArray<Float_t> BToKMuMu_k_DCASig = {fReader, "BToKMuMu_k_DCASig"};
+   TTreeReaderArray<Float_t> BToKMuMu_k_DCASig_corr = {fReader, "BToKMuMu_k_DCASig_corr"};
    TTreeReaderArray<Float_t> BToKMuMu_k_dxy = {fReader, "BToKMuMu_k_dxy"};
    TTreeReaderArray<Float_t> BToKMuMu_k_dxyS = {fReader, "BToKMuMu_k_dxyS"};
    TTreeReaderArray<Float_t> BToKMuMu_k_dz = {fReader, "BToKMuMu_k_dz"};
@@ -103,6 +104,11 @@ public :
    TTreeReaderArray<Int_t> BToKMuMu_k_highPurityFlag = {fReader, "BToKMuMu_k_highPurityFlag"};
    TTreeReaderArray<Int_t> BToKMuMu_k_ispacked = {fReader, "BToKMuMu_k_ispacked"};
    TTreeReaderArray<Int_t> BToKMuMu_k_islost = {fReader, "BToKMuMu_k_islost"};
+   TTreeReaderArray<Int_t> BToKMuMu_k_numberOfValidHits = {fReader, "BToKMuMu_k_numberOfValidHits"};
+   TTreeReaderArray<Int_t> BToKMuMu_k_numberOfLostHits = {fReader, "BToKMuMu_k_numberOfLostHits"};
+   TTreeReaderArray<Int_t> BToKMuMu_k_numberOfValidPixelHits = {fReader, "BToKMuMu_k_numberOfValidPixelHits"};
+   TTreeReaderArray<Int_t> BToKMuMu_k_numberOfTrackerLayers = {fReader, "BToKMuMu_k_numberOfTrackerLayers"};
+   TTreeReaderArray<Int_t> BToKMuMu_k_numberOfPixelLayers = {fReader, "BToKMuMu_k_numberOfPixelLayers"};
    TTreeReaderArray<Int_t> BToKMuMu_matching_k_genIdx = {fReader, "BToKMuMu_matching_k_genIdx"};
    TTreeReaderArray<Int_t> BToKMuMu_matching_k_motherPdgId = {fReader, "BToKMuMu_matching_k_motherPdgId"};
    TTreeReaderArray<Int_t> BToKMuMu_matching_l1_genIdx = {fReader, "BToKMuMu_matching_l1_genIdx"};
@@ -135,6 +141,7 @@ public :
    TTreeReaderArray<Float_t> Muon_caloCompatibility = {fReader, "Muon_caloCompatibility"};
    TTreeReaderArray<Float_t> Muon_dxy = {fReader, "Muon_dxy"};
    TTreeReaderArray<Float_t> Muon_dxyS = {fReader, "Muon_dxyS"};
+   TTreeReaderArray<Float_t> Muon_dxyS_BS = {fReader, "Muon_dxyS_BS"};
    TTreeReaderArray<Float_t> Muon_dz = {fReader, "Muon_dz"};
    TTreeReaderArray<Float_t> Muon_dzS = {fReader, "Muon_dzS"};
    TTreeReaderArray<Float_t> Muon_eta = {fReader, "Muon_eta"};
@@ -360,6 +367,13 @@ public :
    Float_t the_ctrl_k_iso03_close = -99.;
    Float_t the_ctrl_k_iso04 = -99.;
    Float_t the_ctrl_k_iso04_close = -99.;
+   Float_t the_ctrl_k_dcasig = -99.;
+   Float_t the_ctrl_k_dcasig_corr = -99.;
+   Int_t the_ctrl_k_numberOfValidHits = -99;
+   Int_t the_ctrl_k_numberOfLostHits = -99;
+   Int_t the_ctrl_k_numberOfValidPixelHits = -99;
+   Int_t the_ctrl_k_numberOfTrackerLayers = -99;
+   Int_t the_ctrl_k_numberOfPixelLayers = -99;
 
    Float_t the_ctrl_l1_pt = -99.;
    Float_t the_ctrl_l1_eta = -99.;
@@ -367,6 +381,7 @@ public :
    Int_t the_ctrl_l1_charge = -99;
    Float_t the_ctrl_l1_dxy = -99.;
    Float_t the_ctrl_l1_dxysig = -99.;
+   Float_t the_ctrl_l1_dxysig_bs = -99.;
    Float_t the_ctrl_l1_dz = -99.;
    Float_t the_ctrl_l1_dzsig = -99.;
    Float_t the_ctrl_l1_iso03= -99.;
@@ -391,6 +406,11 @@ public :
    Int_t the_ctrl_l1_fired_hlt_mu9_ip4 = -99;
    Int_t the_ctrl_l1_fired_hlt_mu10p5_ip3p5 = -99;
    Int_t the_ctrl_l1_fired_hlt_mu12_ip6 = -99;
+   Int_t the_ctrl_l1_numberofvalidmuonhits = -99;;
+   Int_t the_ctrl_l1_numberofvalidpixelhits = -99;
+   Int_t the_ctrl_l1_numberoftrackerlayers = -99;
+   Int_t the_ctrl_l1_numberofpixellayers = -99;
+   Int_t the_ctrl_l1_numberofstations = -99;
 
    Float_t the_ctrl_l2_pt = -99.;
    Float_t the_ctrl_l2_eta = -99.;
@@ -398,6 +418,7 @@ public :
    Int_t the_ctrl_l2_charge = -99;
    Float_t the_ctrl_l2_dxy = -99.;
    Float_t the_ctrl_l2_dxysig = -99.;
+   Float_t the_ctrl_l2_dxysig_bs = -99.;
    Float_t the_ctrl_l2_dz = -99.;
    Float_t the_ctrl_l2_dzsig = -99.;
    Float_t the_ctrl_l2_iso03 = -99.;
@@ -412,6 +433,11 @@ public :
    Int_t the_ctrl_l2_trkisoid = -99;
    Int_t the_ctrl_l2_triggerlooseid = -99;
    Float_t the_ctrl_l2_istriggering = -99.;
+   Int_t the_ctrl_l2_numberofvalidmuonhits = -99;;
+   Int_t the_ctrl_l2_numberofvalidpixelhits = -99;
+   Int_t the_ctrl_l2_numberoftrackerlayers = -99;
+   Int_t the_ctrl_l2_numberofpixellayers = -99;
+   Int_t the_ctrl_l2_numberofstations = -99;
 
    Float_t the_ctrl_dimu_mass = -99.;
    Float_t the_ctrl_dimu_sv_prob = -99.;
