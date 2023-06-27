@@ -207,7 +207,7 @@ class NanoProdManager(NanoTools):
     outputdir = failed_files[0][0:failed_files[0].find('bparknano')]
     filelist  = self.writeFileList(chunk, failed_files, label) 
 
-    command = 'sbatch -p standard --account=t3 -o {ld}/nanostep_nj%a.log -e {ld}/nanostep_nj%a.log --job-name=nanostep_nj%a_{pl} --array {ar} --time=02:00:00 submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 1 {dosig} {doctrl} {dohnl} {dotep} {gt} {force}'.format(
+    command = 'sbatch -p standard --account=t3 -o {ld}/nanostep_nj%a.log -e {ld}/nanostep_nj%a.log --job-name=nanostep_nj%a_{pl} --array {ar} --time=02:00:00 submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 1 {dosig} {doctrl} {dohnl} {dotep} {gt} {force} {gen}'.format(
     #command = 'sbatch -p short --account=t3 -o {ld}/nanostep_nj%a.log -e {ld}/nanostep_nj%a.log --job-name=nanostep_nj%a_{pl} --array {ar} submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 1 {dosig} {doctrl} {dohnl} {dotep}'.format(
       ld      = logdir,
       pl      = label,
@@ -224,6 +224,7 @@ class NanoProdManager(NanoTools):
       dotep     = 1 if self.dotageprobe else 0, 
       gt        = self.globaltag,
       force   = 1 if self.force else 0, 
+      gen     = 0,   
     )
 
     os.system(command)
