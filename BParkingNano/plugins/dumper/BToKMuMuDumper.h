@@ -466,6 +466,8 @@ public :
    Float_t the_ctrl_weight_pu_sig_D = -99.;
    Float_t the_ctrl_weight_pu_sig_tot = -99.;
 
+   Float_t the_ctrl_weight_l1_softid = -99.;
+
    // histograms
    TH1F* ctrlhist_ncand_perevent;
    TH1F* ctrlhist_ncand_matched_perevent;

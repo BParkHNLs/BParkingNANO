@@ -208,6 +208,8 @@ void BToKMuMuDumper::SlaveBegin(TTree * /*tree*/)
   control_tree->Branch("weight_pu_sig_D", &the_ctrl_weight_pu_sig_D);
   control_tree->Branch("weight_pu_sig_tot", &the_ctrl_weight_pu_sig_tot);
 
+  control_tree->Branch("weight_l1_softid", &the_ctrl_weight_l1_softid);
+
   control_tree->Branch("hlt_mu7_ip4", &the_hlt_mu7_ip4);
   control_tree->Branch("hlt_mu8_ip6", &the_hlt_mu8_ip6);
   control_tree->Branch("hlt_mu8_ip5", &the_hlt_mu8_ip5);
@@ -309,7 +311,10 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
     UInt_t selectedCandIdx_ctrl = pair_candIdx_desc_bpt_matched_ctrl[0].first;
 
     // we ask l1 (leading) to be the triggering muon
-    if(Muon_isTriggeringBPark[BToKMuMu_l1Idx[selectedCandIdx_ctrl]] == 1){
+    //if(Muon_isTriggeringBPark[BToKMuMu_l1Idx[selectedCandIdx_ctrl]] == 1){
+    if(Muon_isTriggeringBPark[BToKMuMu_l1Idx[selectedCandIdx_ctrl]] == 0 && Muon_isTriggeringBPark[BToKMuMu_l2Idx[selectedCandIdx_ctrl]] == 0){
+      return false;
+    }
 
       ncand_istriggering = 1; 
 
@@ -478,8 +483,11 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
       the_ctrl_weight_pu_sig_D = isMC ? getPUWeight("pileup_weight_dataD_sigAug21.root", *Pileup_nTrueInt) : 1.;
       the_ctrl_weight_pu_sig_tot = isMC ? getPUWeight("pileup_weight_datatot_sigAug21.root", *Pileup_nTrueInt) : 1.;
 
+      // lepton ID scale factor
+      the_ctrl_weight_l1_softid = isMC ? getLeptonScaleFactor("RunABCD_SF_MuonID_2018.root", "softid", the_ctrl_l1_pt, abs(the_ctrl_l1_eta)) : 1.;
+
       control_tree->Fill();
-    } // l1 is triggering
+    //} // l1 is triggering
   }// end at least one candidate in the event
 
 
