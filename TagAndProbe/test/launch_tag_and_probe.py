@@ -164,7 +164,7 @@ class TagAndProbeLauncher(object):
           continue
 
       if self.do_submit_batch:
-        submit_command = 'sbatch -p {queue} --account t3 --mem 3500 -o ./logs/{out}/log_{sufx}.txt -e ./logs/{out}/log_{sufx}.txt --job-name=tag_and_probe_{out}_{sufx} submitter.sh {infile} {out} {sufx} {cat}'.format(
+        submit_command = 'sbatch -p {queue} --account t3 --mem 7000 -o ./logs/{out}/log_{sufx}.txt -e ./logs/{out}/log_{sufx}.txt --job-name=tag_and_probe_{out}_{sufx} submitter.sh {infile} {out} {sufx} {cat}'.format(
             #queue = 'standard' if not self.do_short else 'short --time 01:00:00',
             queue = 'long' if not self.do_short else 'short --time 01:00:00',
             infile = filelist,
@@ -323,13 +323,13 @@ if __name__ == "__main__":
   #tagnano = '08Aug22'
   #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
 
-  is_data = True
-  out_label = 'V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6'
-  version_label = 'V12_08Aug22'
-  datasets = ['D1']
-  categorisation = 'pt_dxysig'
-  tagnano = '08Aug22'
-  tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
+  #is_data = True
+  #out_label = 'V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6'
+  #version_label = 'V12_08Aug22'
+  #datasets = ['D1']
+  #categorisation = 'pt_dxysig'
+  #tagnano = '08Aug22'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
 
   #is_data = False
   #out_label = 'V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs'
@@ -354,6 +354,62 @@ if __name__ == "__main__":
   #categorisation = 'pt_dxysig'
   #tagnano = '08Aug22'
   #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_scale1p12_smear0p03'
+
+  #is_data = True
+  #out_label = 'V12_08Aug22_D1_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_max5e6_newbinning_v2'
+  #version_label = 'V12_08Aug22'
+  #datasets = ['D1']
+  #categorisation = 'pt_dxysig'
+  #tagnano = '08Aug22'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
+
+  #is_data = False
+  #out_label = 'V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs_newbinning_v2'
+  #version_label = 'BToJPsiKstar_V12_08Aug22'
+  #datasets = []
+  #categorisation = 'pt_dxysig'
+  #tagnano = '08Aug22'
+  #tagflat = 'tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6'
+
+  #is_data = True
+  #out_label = 'V13_06Feb23_D1_ptdxysig_max5e6'
+  #version_label = 'V13_06Feb23'
+  #datasets = ['D1']
+  #categorisation = 'pt_dxysig'
+  #tagnano = '06Feb23'
+  #tagflat = 'partial'
+
+  #is_data = True
+  #out_label = 'V13_06Feb23_fullBpark_ptdxysig_max5e6'
+  #version_label = 'V13_06Feb23'
+  #datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
+  #categorisation = 'pt_dxysig'
+  #tagnano = '06Feb23'
+  #tagflat = 'partial'
+
+  #is_data = True
+  #out_label = 'V13_06Feb23_fullBpark_ptdxysig_max5e6_v2'
+  #version_label = 'V13_06Feb23'
+  #datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'D1', 'D2', 'D3', 'D4', 'D5']
+  #categorisation = 'pt_dxysig'
+  #tagnano = '06Feb23'
+  #tagflat = 'tag_and_probe'
+
+  #is_data = True
+  #out_label = 'V13_06Feb23_A1_6_ptdxysig_max5e6'
+  #version_label = 'V13_06Feb23'
+  #datasets = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6']
+  #categorisation = 'pt_dxysig'
+  #tagnano = '06Feb23'
+  #tagflat = 'tag_and_probe'
+
+  is_data = True
+  out_label = 'V13_06Feb23_A1_ptdxysig_max5e6'
+  version_label = 'V13_06Feb23'
+  datasets = ['A1']
+  categorisation = 'pt_dxysig'
+  tagnano = '06Feb23'
+  tagflat = 'tag_and_probe'
 
   TagAndProbeLauncher(is_data=is_data, out_label=out_label, version_label=version_label, ds=datasets, tagnano=tagnano, tagflat=tagflat, categorisation=categorisation).process()
 
