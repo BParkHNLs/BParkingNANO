@@ -194,9 +194,9 @@ class NanoLauncher(NanoTools):
 
     if self.data:
       addMC = ''
-    elif self.mcprivate or self.sigcentral or self.sigcrab:
+    elif (self.mcprivate and not self.docontrol) or self.sigcentral or self.sigcrab:
       addMC = 'outFileName += "_isSignalMC";'
-    elif self.mccentral:
+    elif self.mccentral or (self.mcprivate and self.docontrol):
       addMC = 'outFileName += "_isMC";'
 
     content = [
@@ -377,7 +377,8 @@ class NanoLauncher(NanoTools):
   def launchMerger(self, logdir, label, jobIds, filetype, point=None):
     self.writeMergerSubmitter(label, filetype, point)
 
-    slurm_options = '-p {part} --account=t3 -o {ld}/merger{ft}step.log -e {ld}/merger{ft}step.log --job-name=mergerstep_{pl} --time={hh}:00:00 --dependency=afterany:{jobid}'.format(
+    #slurm_options = '-p {part} --account=t3 -o {ld}/merger{ft}step.log -e {ld}/merger{ft}step.log --job-name=mergerstep_{pl}'.format(
+    slurm_options = '-p {part} --account=t3 -o {ld}/merger{ft}step.log -e {ld}/merger{ft}step.log --job-name=mergerstep_{pl} --dependency=afterany:{jobid}'.format(
       part    = 'standard',# if not self.doquick else 'short', 
       ld    = logdir,
       ft    = filetype,
