@@ -103,6 +103,11 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
     Pileup_nPU = {fReader, "Pileup_nPU"};
     Pileup_nTrueInt = {fReader, "Pileup_nTrueInt"};
   }
+  //if(isSignalMC){
+  //  BToMuMuPi_isBu = {fReader, "BToMuMuPi_isBu"};
+  //  BToMuMuPi_isBd = {fReader, "BToMuMuPi_isBd"};
+  //  BToMuMuPi_isBs = {fReader, "BToMuMuPi_isBs"};
+  //}
 
   // getting the signal tree ready
   signal_tree = new TTree("signal_tree", "signal_tree");
@@ -172,7 +177,7 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("mu0_isglobalortrackermuon", &the_sig_mu0_isglobalortrackermuon);
   signal_tree->Branch("mu0_isglobalnottrackermuon", &the_sig_mu0_isglobalnottrackermuon);
   signal_tree->Branch("mu0_istrackernotglobalmuon", &the_sig_mu0_istrackernotglobalmuon);
-  signal_tree->Branch("mu0_intimemuon", &the_sig_mu0_intimemuon);
+  //signal_tree->Branch("mu0_intimemuon", &the_sig_mu0_intimemuon);
   //signal_tree->Branch("mu0_segmentcompatibility", &the_sig_mu0_segmentcompatibility);
   //signal_tree->Branch("mu0_calocompatibility", &the_sig_mu0_calocompatibility);
   //signal_tree->Branch("mu0_validhitfraction", &the_sig_mu0_validhitfraction);
@@ -180,11 +185,11 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   //signal_tree->Branch("mu0_globalnormalisedchi2", &the_sig_mu0_globalnormalisedchi2);
   //signal_tree->Branch("mu0_localpositionchi2", &the_sig_mu0_localpositionchi2);
   //signal_tree->Branch("mu0_trackerhighpurityflag", &the_sig_mu0_trackerhighpurityflag);
-  //signal_tree->Branch("mu0_numberofvalidmuonhits", &the_sig_mu0_numberofvalidmuonhits);
-  //signal_tree->Branch("mu0_numberofvalidpixelhits", &the_sig_mu0_numberofvalidpixelhits);
-  //signal_tree->Branch("mu0_numberoftrackerlayers", &the_sig_mu0_numberoftrackerlayers);
-  //signal_tree->Branch("mu0_numberofpixellayers", &the_sig_mu0_numberofpixellayers);
-  //signal_tree->Branch("mu0_numberofstations", &the_sig_mu0_numberofstations);
+  signal_tree->Branch("mu0_numberofvalidmuonhits", &the_sig_mu0_numberofvalidmuonhits);
+  signal_tree->Branch("mu0_numberofvalidpixelhits", &the_sig_mu0_numberofvalidpixelhits);
+  signal_tree->Branch("mu0_numberoftrackerlayers", &the_sig_mu0_numberoftrackerlayers);
+  signal_tree->Branch("mu0_numberofpixellayers", &the_sig_mu0_numberofpixellayers);
+  signal_tree->Branch("mu0_numberofstations", &the_sig_mu0_numberofstations);
   signal_tree->Branch("mu0_fired_hlt_mu7_ip4", &the_sig_mu0_fired_hlt_mu7_ip4);
   signal_tree->Branch("mu0_fired_hlt_mu8_ip3", &the_sig_mu0_fired_hlt_mu8_ip3);
   signal_tree->Branch("mu0_fired_hlt_mu8_ip5", &the_sig_mu0_fired_hlt_mu8_ip5);
@@ -271,17 +276,17 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   //signal_tree->Branch("mu_isglobalnottrackermuon", &the_sig_mu_isglobalnottrackermuon);
   //signal_tree->Branch("mu_istrackernotglobalmuon", &the_sig_mu_istrackernotglobalmuon);
   //signal_tree->Branch("mu_intimemuon", &the_sig_mu_intimemuon);
-  signal_tree->Branch("mu_segmentcompatibility", &the_sig_mu_segmentcompatibility);
-  signal_tree->Branch("mu_calocompatibility", &the_sig_mu_calocompatibility);
-  signal_tree->Branch("mu_validhitfraction", &the_sig_mu_validhitfraction);
-  signal_tree->Branch("mu_kinkfinderchi2", &the_sig_mu_kinkfinderchi2);
+  //signal_tree->Branch("mu_segmentcompatibility", &the_sig_mu_segmentcompatibility);
+  //signal_tree->Branch("mu_calocompatibility", &the_sig_mu_calocompatibility);
+  //signal_tree->Branch("mu_validhitfraction", &the_sig_mu_validhitfraction);
+  //signal_tree->Branch("mu_kinkfinderchi2", &the_sig_mu_kinkfinderchi2);
   //signal_tree->Branch("mu_globalnormalisedchi2", &the_sig_mu_globalnormalisedchi2);
-  signal_tree->Branch("mu_localpositionchi2", &the_sig_mu_localpositionchi2);
-  signal_tree->Branch("mu_trackerhighpurityflag", &the_sig_mu_trackerhighpurityflag);
-  //signal_tree->Branch("mu_numberofvalidmuonhits", &the_sig_mu_numberofvalidmuonhits);
+  //signal_tree->Branch("mu_localpositionchi2", &the_sig_mu_localpositionchi2);
+  //signal_tree->Branch("mu_trackerhighpurityflag", &the_sig_mu_trackerhighpurityflag);
+  signal_tree->Branch("mu_numberofvalidmuonhits", &the_sig_mu_numberofvalidmuonhits);
   signal_tree->Branch("mu_numberofvalidpixelhits", &the_sig_mu_numberofvalidpixelhits);
   signal_tree->Branch("mu_numberoftrackerlayers", &the_sig_mu_numberoftrackerlayers);
-  //signal_tree->Branch("mu_numberofpixellayers", &the_sig_mu_numberofpixellayers);
+  signal_tree->Branch("mu_numberofpixellayers", &the_sig_mu_numberofpixellayers);
   signal_tree->Branch("mu_numberofstations", &the_sig_mu_numberofstations);
   signal_tree->Branch("mu_fired_hlt_mu7_ip4", &the_sig_mu_fired_hlt_mu7_ip4);
   signal_tree->Branch("mu_fired_hlt_mu8_ip3", &the_sig_mu_fired_hlt_mu8_ip3);
@@ -331,13 +336,13 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   //signal_tree->Branch("pi_normalisedchi2", &the_sig_pi_normalisedChi2);
   //signal_tree->Branch("pi_validfraction", &the_sig_pi_validFraction);
   //signal_tree->Branch("pi_ndof", &the_sig_pi_ndof);
-  //signal_tree->Branch("pi_numberofvalidhits", &the_sig_pi_numberOfValidHits);
-  //signal_tree->Branch("pi_numberoflosthits", &the_sig_pi_numberOfLostHits);
-  //signal_tree->Branch("pi_numberofvalidpixelhits", &the_sig_pi_numberOfValidPixelHits);
-  //signal_tree->Branch("pi_numberoftrackerlayers", &the_sig_pi_numberOfTrackerLayers);
-  //signal_tree->Branch("pi_numberofpixellayers", &the_sig_pi_numberOfPixelLayers);
+  signal_tree->Branch("pi_numberofvalidhits", &the_sig_pi_numberOfValidHits);
+  signal_tree->Branch("pi_numberoflosthits", &the_sig_pi_numberOfLostHits);
+  signal_tree->Branch("pi_numberofvalidpixelhits", &the_sig_pi_numberOfValidPixelHits);
+  signal_tree->Branch("pi_numberoftrackerlayers", &the_sig_pi_numberOfTrackerLayers);
+  signal_tree->Branch("pi_numberofpixellayers", &the_sig_pi_numberOfPixelLayers);
   //signal_tree->Branch("pi_qualityindex", &the_sig_pi_qualityIndex);
-  signal_tree->Branch("pi_highpurityflag", &the_sig_pi_highPurityFlag);
+  //signal_tree->Branch("pi_highpurityflag", &the_sig_pi_highPurityFlag);
   signal_tree->Branch("pi_packedcandhashighpurity", &the_sig_pi_packedcandhashighpurity);
   //signal_tree->Branch("pi_matchedtomuon_loose", &the_sig_pi_matchedtomuon_loose);
   //signal_tree->Branch("pi_matchedtomuon_medium", &the_sig_pi_matchedtomuon_medium);
@@ -699,7 +704,7 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       //the_sig_mu0_isglobalortrackermuon = Muon_isGlobalOrTrackerMuon[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       //the_sig_mu0_isglobalnottrackermuon = Muon_isGlobalNotTrackerMuon[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       //the_sig_mu0_istrackernotglobalmuon = Muon_isTrackerNotGlobalMuon[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
-      the_sig_mu0_intimemuon = Muon_inTimeMuon[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
+      //the_sig_mu0_intimemuon = Muon_inTimeMuon[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       //the_sig_mu0_segmentcompatibility = Muon_segmentCompatibility[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       //the_sig_mu0_calocompatibility = Muon_caloCompatibility[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       //the_sig_mu0_validhitfraction = Muon_validHitFraction[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
@@ -707,11 +712,11 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       //the_sig_mu0_globalnormalisedchi2 = Muon_globalNormalisedChi2[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       //the_sig_mu0_localpositionchi2 = Muon_localPositionChi2[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       //the_sig_mu0_trackerhighpurityflag = Muon_trackerHighPurityFlag[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
-      //the_sig_mu0_numberofvalidmuonhits = Muon_numberOfValidMuonHits[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
-      //the_sig_mu0_numberofvalidpixelhits = Muon_numberOfValidPixelHits[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
-      //the_sig_mu0_numberoftrackerlayers = Muon_numberOfTrackerLayers[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
-      //the_sig_mu0_numberofpixellayers = Muon_numberOfPixelLayers[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
-      //the_sig_mu0_numberofstations = Muon_numberOfStations[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
+      the_sig_mu0_numberofvalidmuonhits = Muon_numberOfValidMuonHits[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
+      the_sig_mu0_numberofvalidpixelhits = Muon_numberOfValidPixelHits[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
+      the_sig_mu0_numberoftrackerlayers = Muon_numberOfTrackerLayers[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
+      the_sig_mu0_numberofpixellayers = Muon_numberOfPixelLayers[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
+      the_sig_mu0_numberofstations = Muon_numberOfStations[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_fired_hlt_mu7_ip4 = Muon_fired_HLT_Mu7_IP4[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_fired_hlt_mu8_ip3 = Muon_fired_HLT_Mu8_IP3[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
       the_sig_mu0_fired_hlt_mu8_ip5 = Muon_fired_HLT_Mu8_IP5[BToMuMuPi_mu0_idx[selectedCandIdx_sig]];
@@ -799,35 +804,35 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       //the_sig_mu_isglobalortrackermuon = Muon_isGlobalOrTrackerMuon[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       //the_sig_mu_isglobalnottrackermuon = Muon_isGlobalNotTrackerMuon[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       //the_sig_mu_istrackernotglobalmuon = Muon_isTrackerNotGlobalMuon[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      the_sig_mu_intimemuon = Muon_inTimeMuon[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      the_sig_mu_segmentcompatibility = Muon_segmentCompatibility[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      the_sig_mu_calocompatibility = Muon_caloCompatibility[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      //the_sig_mu_intimemuon = Muon_inTimeMuon[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      //the_sig_mu_segmentcompatibility = Muon_segmentCompatibility[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      //the_sig_mu_calocompatibility = Muon_caloCompatibility[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       //the_sig_mu_validhitfraction = Muon_validHitFraction[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      the_sig_mu_kinkfinderchi2 = Muon_kinkFinderChi2[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      //the_sig_mu_kinkfinderchi2 = Muon_kinkFinderChi2[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       //the_sig_mu_globalnormalisedchi2 = Muon_globalNormalisedChi2[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      the_sig_mu_localpositionchi2 = Muon_localPositionChi2[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      the_sig_mu_trackerhighpurityflag = Muon_trackerHighPurityFlag[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      //the_sig_mu_numberofvalidmuonhits = Muon_numberOfValidMuonHits[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      //the_sig_mu_localpositionchi2 = Muon_localPositionChi2[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      //the_sig_mu_trackerhighpurityflag = Muon_trackerHighPurityFlag[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      the_sig_mu_numberofvalidmuonhits = Muon_numberOfValidMuonHits[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_numberofvalidpixelhits = Muon_numberOfValidPixelHits[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_numberoftrackerlayers = Muon_numberOfTrackerLayers[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
-      //the_sig_mu_numberofpixellayers = Muon_numberOfPixelLayers[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
+      the_sig_mu_numberofpixellayers = Muon_numberOfPixelLayers[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_numberofstations = Muon_numberOfStations[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       // add customised muon ids
       Bool_t isgoodGlobalMuon = 0;
-      if(the_sig_mu_isglobalmuon==1 && the_sig_mu_localpositionchi2<12 && the_sig_mu_kinkfinderchi2<20) isgoodGlobalMuon = 1;
-      if(the_sig_mu_looseid==1 && ((isgoodGlobalMuon==1 && the_sig_mu_segmentcompatibility>0.303) || (isgoodGlobalMuon==0 && the_sig_mu_segmentcompatibility>0.451))){
-        the_sig_mu_whnlid = 1;
-      }
-      else{
-        the_sig_mu_whnlid = 0;
-      }
+      //if(the_sig_mu_isglobalmuon==1 && the_sig_mu_localpositionchi2<12 && the_sig_mu_kinkfinderchi2<20) isgoodGlobalMuon = 1;
+      //if(the_sig_mu_looseid==1 && ((isgoodGlobalMuon==1 && the_sig_mu_segmentcompatibility>0.303) || (isgoodGlobalMuon==0 && the_sig_mu_segmentcompatibility>0.451))){
+      //  the_sig_mu_whnlid = 1;
+      //}
+      //else{
+      //  the_sig_mu_whnlid = 0;
+      //}
 
-      if(the_sig_mu_looseid==1 && the_sig_mu_intimemuon==1 && the_sig_mu_trackerhighpurityflag==1 && ((the_sig_mu_isglobalmuon==1 && the_sig_mu_numberofstations>0 && the_sig_mu_numberoftrackerlayers<18) || (the_sig_mu_isglobalmuon!=1 && the_sig_mu_calocompatibility>0.05 && the_sig_mu_numberoftrackerlayers>6 && the_sig_mu_numberoftrackerlayers<16 && the_sig_mu_numberofvalidpixelhits<6))){
-        the_sig_mu_customisedid = 1;
-      }
-      else{
-        the_sig_mu_customisedid = 0;
-      }
+      //if(the_sig_mu_looseid==1 && the_sig_mu_intimemuon==1 && the_sig_mu_trackerhighpurityflag==1 && ((the_sig_mu_isglobalmuon==1 && the_sig_mu_numberofstations>0 && the_sig_mu_numberoftrackerlayers<18) || (the_sig_mu_isglobalmuon!=1 && the_sig_mu_calocompatibility>0.05 && the_sig_mu_numberoftrackerlayers>6 && the_sig_mu_numberoftrackerlayers<16 && the_sig_mu_numberofvalidpixelhits<6))){
+      //  the_sig_mu_customisedid = 1;
+      //}
+      //else{
+      //  the_sig_mu_customisedid = 0;
+      //}
       the_sig_mu_fired_hlt_mu7_ip4 = Muon_fired_HLT_Mu7_IP4[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_fired_hlt_mu8_ip3 = Muon_fired_HLT_Mu8_IP3[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
       the_sig_mu_fired_hlt_mu8_ip5 = Muon_fired_HLT_Mu8_IP5[BToMuMuPi_mu_idx[selectedCandIdx_sig]];
@@ -887,13 +892,13 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       //the_sig_pi_normalisedChi2 = BToMuMuPi_pi_normalisedChi2[selectedCandIdx_sig];
       //the_sig_pi_validFraction = BToMuMuPi_pi_validFraction[selectedCandIdx_sig];
       //the_sig_pi_ndof = BToMuMuPi_pi_ndof[selectedCandIdx_sig];
-      //the_sig_pi_numberOfValidHits = BToMuMuPi_pi_numberOfValidHits[selectedCandIdx_sig];
-      //the_sig_pi_numberOfLostHits = BToMuMuPi_pi_numberOfLostHits[selectedCandIdx_sig];
-      //the_sig_pi_numberOfValidPixelHits = BToMuMuPi_pi_numberOfValidPixelHits[selectedCandIdx_sig];
-      //the_sig_pi_numberOfTrackerLayers = BToMuMuPi_pi_numberOfTrackerLayers[selectedCandIdx_sig];
-      //the_sig_pi_numberOfPixelLayers = BToMuMuPi_pi_numberOfPixelLayers[selectedCandIdx_sig];
+      the_sig_pi_numberOfValidHits = BToMuMuPi_pi_numberOfValidHits[selectedCandIdx_sig];
+      the_sig_pi_numberOfLostHits = BToMuMuPi_pi_numberOfLostHits[selectedCandIdx_sig];
+      the_sig_pi_numberOfValidPixelHits = BToMuMuPi_pi_numberOfValidPixelHits[selectedCandIdx_sig];
+      the_sig_pi_numberOfTrackerLayers = BToMuMuPi_pi_numberOfTrackerLayers[selectedCandIdx_sig];
+      the_sig_pi_numberOfPixelLayers = BToMuMuPi_pi_numberOfPixelLayers[selectedCandIdx_sig];
       //the_sig_pi_qualityIndex = BToMuMuPi_pi_qualityIndex[selectedCandIdx_sig];
-      the_sig_pi_highPurityFlag = BToMuMuPi_pi_highPurityFlag[selectedCandIdx_sig];
+      //the_sig_pi_highPurityFlag = BToMuMuPi_pi_highPurityFlag[selectedCandIdx_sig];
       if(the_sig_pi_ispacked && the_sig_pi_highPurityFlag){
         the_sig_pi_packedcandhashighpurity = 1;
       }
@@ -1005,9 +1010,6 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       the_sig_mupi_mass_reco_gen_reldiff = BToMuMuPi_mupi_mass_reco_gen_reldiff[selectedCandIdx_sig];
       the_sig_lxy_reco_gen_reldiff = BToMuMuPi_lxy_reco_gen_reldiff[selectedCandIdx_sig];
 
-      the_sig_isbu = BToMuMuPi_isBu[selectedCandIdx_sig];
-      the_sig_isbd = BToMuMuPi_isBd[selectedCandIdx_sig];
-      the_sig_isbs = BToMuMuPi_isBs[selectedCandIdx_sig];
 
       // additionnal displacement quantities
       //float dist_sv_pv_xy = sqrt((BToMuMuPi_sv_x[selectedCandIdx_sig] - *PV_x) * (BToMuMuPi_sv_x[selectedCandIdx_sig] - *PV_x) + (BToMuMuPi_sv_y[selectedCandIdx_sig] - *PV_y) * (BToMuMuPi_sv_y[selectedCandIdx_sig] - *PV_y));
@@ -1019,6 +1021,10 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
 
       // getting the displacement at gen level
       if(isSignalMC){
+        //the_sig_isbu = BToMuMuPi_isBu[selectedCandIdx_sig];
+        //the_sig_isbd = BToMuMuPi_isBd[selectedCandIdx_sig];
+        //the_sig_isbs = BToMuMuPi_isBs[selectedCandIdx_sig];
+
         UInt_t nGen = *nGenPart;
 
         float hnl_vx(0.), hnl_vy(0.), hnl_vz(0.);
@@ -1063,6 +1069,13 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
           if(abs(GenPart_pdgId[iGen])==211 && GenPart_genPartIdxMother[iGen]==gen_hnl_idx)
             gen_pi_idx = iGen;
         }
+
+        the_sig_isbu = 0;
+        the_sig_isbd = 0;
+        the_sig_isbs = 0;
+        if(fabs(GenPart_pdgId[gen_b_idx])==521) the_sig_isbu = 1;
+        else if(fabs(GenPart_pdgId[gen_b_idx])==511) the_sig_isbd = 1;
+        else if(fabs(GenPart_pdgId[gen_b_idx])==531) the_sig_isbs = 1;
 
         // get quantities that need more than one object
         if(gen_hnl_idx!=-99 && gen_mu_idx!=-99){
