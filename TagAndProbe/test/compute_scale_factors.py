@@ -273,8 +273,8 @@ class ScaleFactorComputer(object):
       x_label = 'probe p_{T} [GeV]'
       y_label = 'probe |#eta|'
     elif categorisation == 'pt_eta_dxysig' or categorisation == 'pt_dxysig':
-      x_label = 'probe p_{T} [GeV]'
-      y_label = 'probe |d_{xy}/#sigma_{xy}|'
+      x_label = '#it{p}_{T}(#it{#mu}) (GeV)'
+      y_label = '#it{d}_{#it{xy}}/#sigma_{#it{d}_{#it{xy}}} (#it{#mu})'
 
     if eta_category != None:
       cat = eta_category.replace('_', ',')
@@ -291,7 +291,8 @@ class ScaleFactorComputer(object):
     hist_scale_factor.GetYaxis().SetLabelSize(0.04)
     hist_scale_factor.GetYaxis().SetTitleSize(0.042)
     hist_scale_factor.GetYaxis().SetTitleOffset(1.9)
-    hist_scale_factor.GetZaxis().SetTitle("Scale Factor")
+    hist_scale_factor.GetZaxis().SetTitle("#varepsilon^{data}/#varepsilon^{MC}")
+    hist_scale_factor.GetZaxis().SetTitleSize(0.042)
     hist_scale_factor.GetZaxis().SetRangeUser(-1e-3, 1)
     hist_scale_factor.SetOption("colztexte");
     hist_scale_factor.SetTitle("")
@@ -559,13 +560,13 @@ if __name__ == "__main__":
   #mc_label = 'V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs'
   #out_label = 'V13_06Feb23_fullBpark_ptdxysig_max5e6'
 
-  #data_label = 'V13_06Feb23_fullBpark_ptdxysig_max5e6_v2'
-  #mc_label = 'V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs'
-  #out_label = 'V13_06Feb23_fullBpark_ptdxysig_max5e6_v2'
-
-  data_label = 'V13_06Feb23_A1_ptdxysig_max5e6'
+  data_label = 'V13_06Feb23_fullBpark_ptdxysig_max5e6_v2'
   mc_label = 'V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs'
-  out_label = 'V13_06Feb23_A1_ptdxysig_max5e6'
+  out_label = 'V13_06Feb23_fullBpark_ptdxysig_max5e6_v2'
+
+  #data_label = 'V13_06Feb23_A1_ptdxysig_max5e6'
+  #mc_label = 'V12_08Aug22_mc_tag_fired_HLT_Mu9_IP6_or_HLT_Mu12_IP6_ptdxysigbs'
+  #out_label = 'V13_06Feb23_A1_ptdxysig_max5e6'
 
   categorisation = 'pt_dxysig'
 
