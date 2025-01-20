@@ -324,6 +324,7 @@ void BToMuMuPiDumper::SlaveBegin(TTree * /*tree*/)
   signal_tree->Branch("pi_phi", &the_sig_pi_phi);
   signal_tree->Branch("pi_charge", &the_sig_pi_charge);
   signal_tree->Branch("pi_dcasig", &the_sig_pi_dcasig);
+  signal_tree->Branch("pi_dcasig_corr", &the_sig_pi_dcasig_corr);
   signal_tree->Branch("pi_dxy", &the_sig_pi_dxy);
   signal_tree->Branch("pi_dz", &the_sig_pi_dz);
   signal_tree->Branch("pi_dxysig", &the_sig_pi_dxysig);
@@ -880,6 +881,7 @@ Bool_t BToMuMuPiDumper::Process(Long64_t entry)
       the_sig_pi_phi = BToMuMuPi_fit_pi_phi[selectedCandIdx_sig]; 
       the_sig_pi_charge = BToMuMuPi_pi_charge[selectedCandIdx_sig];
       the_sig_pi_dcasig = BToMuMuPi_pi_DCASig[selectedCandIdx_sig];
+      the_sig_pi_dcasig_corr = BToMuMuPi_pi_DCASig_corr[selectedCandIdx_sig];
       the_sig_pi_dxy = BToMuMuPi_pi_dxy[selectedCandIdx_sig];
       the_sig_pi_dz = BToMuMuPi_pi_dz[selectedCandIdx_sig];
       the_sig_pi_dxysig = BToMuMuPi_pi_dxyS[selectedCandIdx_sig];

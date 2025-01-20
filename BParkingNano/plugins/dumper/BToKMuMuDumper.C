@@ -33,6 +33,7 @@
 #include <TSystem.h>
 #include "Math/Vector4D.h"
 #include "Math/Vector4Dfwd.h"
+#include "DataFormats/Math/interface/deltaR.h"
 #include "utils.C"
 
 
@@ -220,6 +221,34 @@ void BToKMuMuDumper::SlaveBegin(TTree * /*tree*/)
   control_tree->Branch("hlt_mu9_ip4", &the_hlt_mu9_ip4);
   control_tree->Branch("hlt_mu10p5_ip3p5", &the_hlt_mu10p5_ip3p5);
   control_tree->Branch("hlt_mu12_ip6", &the_hlt_mu12_ip6);
+
+  // add branches used for the pNN training
+  // nomenclature adapted to signal channel
+  control_tree->Branch("pi_pt", &the_ctrl_k_pt);
+  control_tree->Branch("mu_pt", &the_ctrl_l1_pt); // assigning largest pt to mu
+  control_tree->Branch("mu0_pt", &the_ctrl_l2_pt);
+  control_tree->Branch("mu_charge", &the_ctrl_l1_charge); // assigning largest pt to mu
+  control_tree->Branch("mu0_charge", &the_ctrl_l2_charge);
+  control_tree->Branch("hnl_cos2d", &the_ctrl_b_cos2d); // here cos of B vertex (in signal, of hnl vertex)
+  control_tree->Branch("pi_dcasig", &the_ctrl_k_dcasig_corr);
+  control_tree->Branch("sv_prob", &the_ctrl_dimu_sv_prob); // prob of dimuon vertex
+  //control_tree->Branch("sv_chi2", &the_ctrl_sv_chi2); // missing on control nano
+  control_tree->Branch("mu0_mu_mass", &the_ctrl_dimu_mass);
+  control_tree->Branch("mu0_pi_mass", &the_ctrl_mu0_pi_mass);
+  control_tree->Branch("mu_pi_mass", &the_ctrl_mu_pi_mass);
+  control_tree->Branch("deltar_mu0_mu", &the_ctrl_deltar_mu0_mu);
+  control_tree->Branch("deltar_mu0_pi", &the_ctrl_deltar_mu0_pi);
+  control_tree->Branch("mu0_pfiso03_rel", &the_ctrl_mu0_pfiso03_rel);
+  control_tree->Branch("mu_pfiso03_rel", &the_ctrl_mu_pfiso03_rel);
+  control_tree->Branch("pi_numberofvalidpixelhits", &the_ctrl_k_numberOfValidPixelHits);
+  control_tree->Branch("pi_numberofpixellayers", &the_ctrl_k_numberOfPixelLayers);
+  control_tree->Branch("pi_numberoftrackerlayers", &the_ctrl_k_numberOfTrackerLayers);
+  control_tree->Branch("mu_numberofvalidpixelhits", &the_ctrl_l1_numberofvalidpixelhits);
+  control_tree->Branch("mu_numberofpixellayers", &the_ctrl_l1_numberofpixellayers);
+  control_tree->Branch("mu_numberoftrackerlayers", &the_ctrl_l1_numberoftrackerlayers);
+  control_tree->Branch("mu0_numberofvalidpixelhits", &the_ctrl_l2_numberofvalidpixelhits);
+  control_tree->Branch("mu0_numberofpixellayers", &the_ctrl_l2_numberofpixellayers);
+  control_tree->Branch("mu0_numberoftrackerlayers", &the_ctrl_l2_numberoftrackerlayers);
 
 
   // defining histograms
@@ -433,6 +462,18 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
       the_ctrl_sv_lxysig = BToKMuMu_l_xy[selectedCandIdx_ctrl]/BToKMuMu_l_xy_unc[selectedCandIdx_ctrl];
       the_ctrl_sv_prob = BToKMuMu_svprob[selectedCandIdx_ctrl];
 
+      // information used in pNN training
+      the_ctrl_deltar_mu0_mu = reco::deltaR(the_ctrl_l2_eta, the_ctrl_l2_phi, the_ctrl_l1_eta, the_ctrl_l1_phi);
+      the_ctrl_deltar_mu0_pi = reco::deltaR(the_ctrl_l2_eta, the_ctrl_l2_phi, the_ctrl_k_eta, the_ctrl_k_phi);
+      the_ctrl_mu0_pfiso03_rel = Muon_pfiso03Rel_all[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
+      the_ctrl_mu_pfiso03_rel = Muon_pfiso03Rel_all[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
+
+      ROOT::Math::PtEtaPhiMVector mu0_p4(the_ctrl_l2_pt, the_ctrl_l2_eta, the_ctrl_l2_phi, 0.1057);
+      ROOT::Math::PtEtaPhiMVector mu_p4(the_ctrl_l1_pt, the_ctrl_l1_eta, the_ctrl_l1_phi, 0.1057);
+      ROOT::Math::PtEtaPhiMVector pi_p4(the_ctrl_k_pt, the_ctrl_k_eta, the_ctrl_k_phi, 0.1396); // assign pion mass (kaon mass ~494 MeV)
+      the_ctrl_mu0_pi_mass = (mu0_p4 + pi_p4).mass();
+      the_ctrl_mu_pi_mass = (mu_p4 + pi_p4).mass();
+          
       // gen-matching information
       the_ctrl_ismatched = BToKMuMu_isMatched[selectedCandIdx_ctrl];
       the_ctrl_matched_b_pt = BToKMuMu_matched_b_pt[selectedCandIdx_ctrl];

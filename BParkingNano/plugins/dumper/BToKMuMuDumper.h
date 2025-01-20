@@ -468,6 +468,13 @@ public :
 
    Float_t the_ctrl_weight_l1_softid = -99.;
 
+   Float_t the_ctrl_mu0_pi_mass = -99.;
+   Float_t the_ctrl_mu_pi_mass = -99.;
+   Float_t the_ctrl_deltar_mu0_mu = -99.;
+   Float_t the_ctrl_deltar_mu0_pi = -99.;
+   Float_t the_ctrl_mu0_pfiso03_rel = -99.;
+   Float_t the_ctrl_mu_pfiso03_rel = -99.;
+
    // histograms
    TH1F* ctrlhist_ncand_perevent;
    TH1F* ctrlhist_ncand_matched_perevent;

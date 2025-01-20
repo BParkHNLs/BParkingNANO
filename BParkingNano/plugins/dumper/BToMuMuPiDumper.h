@@ -109,6 +109,7 @@ public :
    //TTreeReaderArray<Float_t> BToMuMuPi_py_diff_prefithnl_daughters_lab = {fReader, "BToMuMuPi_py_diff_prefithnl_daughters_lab"};
    //TTreeReaderArray<Float_t> BToMuMuPi_pz_diff_prefithnl_daughters_lab = {fReader, "BToMuMuPi_pz_diff_prefithnl_daughters_lab"};
    TTreeReaderArray<Float_t> BToMuMuPi_pi_DCASig = {fReader, "BToMuMuPi_pi_DCASig"};
+   TTreeReaderArray<Float_t> BToMuMuPi_pi_DCASig_corr = {fReader, "BToMuMuPi_pi_DCASig_corr"};
    TTreeReaderArray<Float_t> BToMuMuPi_pi_dxy = {fReader, "BToMuMuPi_pi_dxy"};
    TTreeReaderArray<Float_t> BToMuMuPi_pi_dxyS = {fReader, "BToMuMuPi_pi_dxyS"};
    TTreeReaderArray<Float_t> BToMuMuPi_pi_dz = {fReader, "BToMuMuPi_pi_dz"};
@@ -705,6 +706,7 @@ public :
    Float_t the_sig_pi_phi = -99.;
    Int_t the_sig_pi_charge = -99;
    Float_t the_sig_pi_dcasig = -99.;
+   Float_t the_sig_pi_dcasig_corr = -99.;
    Float_t the_sig_pi_dxy = -99.;
    Float_t the_sig_pi_dz = -99.;
    Float_t the_sig_pi_dxysig = -99.;
