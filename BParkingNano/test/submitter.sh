@@ -15,6 +15,8 @@
 # ${11}: dohnl
 # ${12}: doTagAndProbe
 # ${13}: globalTag
+# ${14}: force
+# ${15}: dogeneral
 #--------------------
 
 workdir="/scratch/"${2}"/"${3}"/job_nj"${SLURM_JOB_ID}"_"${SLURM_ARRAY_TASK_ID}
@@ -32,8 +34,8 @@ else # different treatment in case of resubmission
   # copy filelist to pnfs
   #xrdcp -r ${7}*$SLURM_ARRAY_TASK_ID* root://t3dcachedb.psi.ch:1094/${1}
   #rm ${7}*$SLURM_ARRAY_TASK_ID*
-  xrdcp -r ${7}"_"$SLURM_ARRAY_TASK_ID".txt" root://t3dcachedb.psi.ch:1094/${1}
-  rm ${7}"_"$SLURM_ARRAY_TASK_ID".txt"
+  xrdcp -r ${7}"_nj"$SLURM_ARRAY_TASK_ID".txt" root://t3dcachedb.psi.ch:1094/${1}
+  rm ${7}"_nj"$SLURM_ARRAY_TASK_ID".txt"
 fi
 
 cd $workdir
@@ -42,21 +44,30 @@ inputFilename=''
 if [ ${8} == 0 ] ; then
   inputFilename=$(sed $SLURM_ARRAY_TASK_ID'!d' filelist.txt)
 else # different treatment in case of resubmission
-  inputFilename=$(sed '1!d' *nj$SLURM_ARRAY_TASK_ID.txt)
+  if [ ${14} == 0 ] ; then
+    inputFilename=$(sed '1!d' *nj$SLURM_ARRAY_TASK_ID.txt)
+  else
+    inputFilename=$(sed '1!d' *nj$SLURM_ARRAY_TASK_ID.txt)
+    echo "inputFilename= "$inputFilename
+    echo "xrdcp root://xrootd-cms.infn.it/$inputFilename miniaod.root"
+    xrdcp root://xrootd-cms.infn.it/$inputFilename miniaod.root
+    inputFilename="miniaod.root"
+  fi
 fi
 echo "inputfilename: "$inputFilename
 
 # index of the output file
 if [ ${5} == 1 ] ; then #isMC
-  if [ ${6} == 0 ] ; then  #private MC
-    search='step4_'
-    start=$inputFilename
-    end=${start##*$search}
-    outIdx=$((${#start} - ${#end}))
-    outSuffix=${inputFilename:outIdx}
-  else
-    outSuffix=$SLURM_ARRAY_TASK_ID".root" 
-  fi
+  outSuffix=$SLURM_ARRAY_TASK_ID".root" 
+  #if [ ${6} == 0 ] ; then  #private MC
+  #  search='step4_'
+  #  start=$inputFilename
+  #  end=${start##*$search}
+  #  outIdx=$((${#start} - ${#end}))
+  #  outSuffix=${inputFilename:outIdx}
+  #else
+  #  outSuffix=$SLURM_ARRAY_TASK_ID".root" 
+  #fi
 else # isData
   outSuffix=$SLURM_ARRAY_TASK_ID".root" 
 fi
@@ -68,13 +79,13 @@ if [ ${5} == 1 ] ; then #isMC
   if [ ${6} == 0 ] ; then  #private MC
     echo "going to run nano step on "$inputFilename 
     DATE_START=`date +%s`
-    cmsRun run_nano_hnl_cfg.py inputFile=$inputFilename outputFile="bparknano.root" isMC=True doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} globalTag=${13}
+    cmsRun run_nano_hnl_cfg.py inputFile=$inputFilename outputFile="bparknano.root" isMC=True doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} doGeneral=${15} globalTag=${13}
     DATE_END=`date +%s`
     echo "finished running nano step"
   else # central MC
     echo "going to run nano step on "$inputFilename
     DATE_START=`date +%s`
-    cmsRun run_nano_hnl_cfg.py inputFiles=$inputFilename outputFile="bparknano.root" isMC=True doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} globalTag=${13}
+    cmsRun run_nano_hnl_cfg.py inputFiles=$inputFilename outputFile="bparknano.root" isMC=True doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} doGeneral=${15} globalTag=${13}
     DATE_END=`date +%s`
     echo "finished running nano step"
   fi
@@ -83,7 +94,7 @@ else #isData
 
   echo "going to run nano step on "$inputFilename
   DATE_START=`date +%s`
-  cmsRun run_nano_hnl_cfg.py inputFiles=$inputFilename outputFile="bparknano.root" isMC=False doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} globalTag=${13}
+  cmsRun run_nano_hnl_cfg.py inputFiles=$inputFilename outputFile="bparknano.root" isMC=False doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} doGeneral=${15} globalTag=${13}
   DATE_END=`date +%s`
   echo "finished running nano step"
 

@@ -655,6 +655,10 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
         int primaryMuonMother_genIdx(-1), hnlMother_genIdx(-1);
         float pilep_mass_reldiff(99.), lxy_reldiff(99.);
         float gen_lxy(-1.);
+        // species of the B mother
+        int BMother_isBu = 0;
+        int BMother_isBd = 0;
+        int BMother_isBs = 0;
 
         // for MC only
         if(isMC_ == true){
@@ -696,6 +700,16 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
             if(fabs(mu0_genPdgId) == 13 && (fabs(genPrimaryMuonMother_genPdgId) == 511 || fabs(genPrimaryMuonMother_genPdgId) == 521 
                   || fabs(genPrimaryMuonMother_genPdgId) == 531 || fabs(genPrimaryMuonMother_genPdgId) == 541)){
               mu0_isMatched = 1;
+            }
+
+            if(fabs(genPrimaryMuonMother_genPdgId) == 521){
+              BMother_isBu = 1;
+            }
+            else if(fabs(genPrimaryMuonMother_genPdgId) == 511){
+              BMother_isBd = 1;
+            }
+            else if(fabs(genPrimaryMuonMother_genPdgId) == 531){
+              BMother_isBs = 1;
             }
           }
 
@@ -769,6 +783,9 @@ void BToMuLPiBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
         b_cand.addUserInt("mu0_isMatched", mu0_isMatched);
         b_cand.addUserInt("lep_isMatched", lep_isMatched);
         b_cand.addUserInt("pi_isMatched", pi_isMatched);
+        b_cand.addUserInt("BMother_isBu", BMother_isBu);
+        b_cand.addUserInt("BMother_isBd", BMother_isBd);
+        b_cand.addUserInt("BMother_isBs", BMother_isBs);
         b_cand.addUserInt("matching_mu0_genIdx", mu0_genIdx);
         b_cand.addUserInt("matching_lep_genIdx", lep_genIdx);
         b_cand.addUserInt("matching_pi_genIdx", pi_genIdx);

@@ -34,6 +34,7 @@ def getOptions():
   parser.add_argument('--docontrol'         , dest='docontrol'   , help='run the BToKMuMu process'                                       , action='store_true', default=False)
   parser.add_argument('--dohnl'             , dest='dohnl'       , help='run the HNLToMuMuPi process'                                    , action='store_true', default=False)
   parser.add_argument('--dotageprobe'       , dest='dotageprobe' , help='run the JpsiToMuMu process (tag and probe study)'               , action='store_true', default=False)
+  parser.add_argument('--dogeneral'         , dest='dogeneral'   , help='run without process'                                            , action='store_true', default=False)
   parser.add_argument('--doquick'           , dest='doquick'     , help='[optional] run the jobs on the quick partition (t/job<1h)'      , action='store_true', default=False)
   parser.add_argument('--dolong'            , dest='dolong'      , help='[optional] run the jobs on the long  partition (t/job<7days)'   , action='store_true', default=False)
   parser.add_argument('--dosplitflat'       , dest='dosplitflat' , help='[optional] run the dumper with one job per nano file'           , action='store_true', default=False)
@@ -60,8 +61,8 @@ def checkParser(opt):
   if opt.donano==False and opt.doflat==False:
     raise RuntimeError('Please indicate if you want to run the nano tool (--donano) and/or the ntupliser (--doflat)')
 
-  if opt.dosignal==False and opt.docontrol==False and opt.dohnl==False and opt.dotageprobe==False:
-    raise RuntimeError('Please indicate the process you want to run (--dosignal and/or --docontrol and/or --dohnl and/or --dotageprobe)')
+  if opt.dosignal==False and opt.docontrol==False and opt.dohnl==False and opt.dotageprobe==False and opt.dogeneral==False:
+    raise RuntimeError('Please indicate the process you want to run (--dosignal and/or --docontrol and/or --dohnl and/or --dotageprobe and/or --dogeneral)')
 
   if opt.mcprivate==False and opt.mccentral==False and opt.sigcentral==False and opt.sigcrab==False and opt.data==False:
     raise RuntimeError('Please indicate if you want to run on data or MC by adding either --data or --mcprivate or --mccentral or --sigcentral or --sigcrab to the command line')
@@ -87,6 +88,7 @@ class NanoLauncher(NanoTools):
     self.doflat      = vars(opt)["doflat"]
     self.domergenano = vars(opt)["domergenano"]
     self.dosignal    = vars(opt)["dosignal"]
+    self.dogeneral   = vars(opt)["dogeneral"]
     self.docontrol   = vars(opt)["docontrol"]
     self.dohnl       = vars(opt)["dohnl"]
     self.dotageprobe = vars(opt)["dotageprobe"]
@@ -115,7 +117,6 @@ class NanoLauncher(NanoTools):
         self.globaltag = '102X_dataRun2_v11'
     else: # mc
       self.globaltag = '102X_upgrade2018_realistic_v15' 
-    print self.globaltag
 
 
   def compile(self):
@@ -172,8 +173,8 @@ class NanoLauncher(NanoTools):
     event_chain = []
     event_chain.append('TChain* c = new TChain("Events");')
     for iFile in range(1, nfiles+1):
-      file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
-      #file_step = iFile
+      #file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
+      file_step = iFile
       event_chain.append('  c->Add("{}/{}_nj{}.root");'.format(outputdir, nanoname, file_step))
     if self.dosignal:                    event_chain.append('  c->Process("BToMuMuPiDumper.C+", outFileName);')
     if self.docontrol:                   event_chain.append('  c->Process("BToKMuMuDumper.C+", outFileName);')
@@ -185,17 +186,17 @@ class NanoLauncher(NanoTools):
     run_chain = []
     run_chain.append('TChain* c_run = new TChain("Runs");')
     for iFile in range(1, nfiles+1):
-      file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
-      #file_step = iFile
+      #file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
+      file_step = iFile
       run_chain.append('  c_run->Add("{}/{}_nj{}.root");'.format(outputdir, nanoname, file_step))
     run_chain.append('  c_run->Process("NanoRunDumper.C+", outFileName);')
     run_chain = '\n'.join(run_chain)
 
     if self.data:
       addMC = ''
-    elif self.mcprivate or self.sigcentral or self.sigcrab:
+    elif (self.mcprivate and not self.docontrol) or self.sigcentral or self.sigcrab:
       addMC = 'outFileName += "_isSignalMC";'
-    elif self.mccentral:
+    elif self.mccentral or (self.mcprivate and self.docontrol):
       addMC = 'outFileName += "_isMC";'
 
     content = [
@@ -218,7 +219,8 @@ class NanoLauncher(NanoTools):
       dumper_starter.close()
     else:
       for iFile in range(1, nfiles+1):
-        file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
+        #file_step = NanoTools.getStep(self, lines[iFile-1], iscrab=True if self.sigcrab else False) if (self.mcprivate or self.sigcrab) else iFile
+        file_step = iFile
 
         event_chain = []
         event_chain.append('TChain* c = new TChain("Events");')
@@ -309,10 +311,10 @@ class NanoLauncher(NanoTools):
       ld = logdir,
       pl = label,
       ar = '1-{}'.format(nfiles),
-      hh = 5 if not self.doquick else 1,
+      hh = 2 if not self.doquick else 1,
       )
 
-    command = 'sbatch {slurm_opt} submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 0 {dosig} {doctrl} {dohnl} {dotep} {gt}'.format(
+    command = 'sbatch {slurm_opt} submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 0 {dosig} {doctrl} {dohnl} {dotep} {gt} 0 {dogen}'.format(
       slurm_opt = slurm_options,
       pl        = label,
       outdir    = outputdir,
@@ -326,6 +328,7 @@ class NanoLauncher(NanoTools):
       dohnl     = 1 if self.dohnl else 0, 
       dotep     = 1 if self.dotageprobe else 0, 
       gt        = self.globaltag,
+      dogen     = 1 if self.dogeneral else 0, 
       )
 
     job = subprocess.check_output(command, shell=True)
@@ -374,12 +377,13 @@ class NanoLauncher(NanoTools):
   def launchMerger(self, logdir, label, jobIds, filetype, point=None):
     self.writeMergerSubmitter(label, filetype, point)
 
-    slurm_options = '-p {part} --account=t3 -o {ld}/merger{ft}step.log -e {ld}/merger{ft}step.log --job-name=mergerstep_{pl} --time={hh}:00:00 --dependency=afterany:{jobid}'.format(
-      part    = 'standard' if not self.doquick else 'short', 
+    #slurm_options = '-p {part} --account=t3 -o {ld}/merger{ft}step.log -e {ld}/merger{ft}step.log --job-name=mergerstep_{pl}'.format(
+    slurm_options = '-p {part} --account=t3 -o {ld}/merger{ft}step.log -e {ld}/merger{ft}step.log --job-name=mergerstep_{pl} --dependency=afterany:{jobid}'.format(
+      part    = 'standard',# if not self.doquick else 'short', 
       ld    = logdir,
       ft    = filetype,
       pl    = label,
-      hh    = 10 if not self.doquick else 1,
+      hh    = 10,# if not self.doquick else 1,
       jobid = NanoTools.getJobIdsList(self, jobIds),
       )
 
@@ -464,7 +468,10 @@ class NanoLauncher(NanoTools):
           nano_jobIds.append(nano_jobId)
 
           if merge_cond:
-            self.launchMerger(logdir, label, nano_jobIds, 'nano')
+            if point == None:
+              self.launchMerger(logdir, label, nano_jobIds, 'nano')
+            else:
+              self.launchMerger(logdir, label, nano_jobIds, 'nano', point)
 
       if self.doflat:
         flat_outputdir = outputdir + '/flat'

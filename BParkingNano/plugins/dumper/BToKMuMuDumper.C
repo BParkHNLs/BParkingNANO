@@ -33,6 +33,7 @@
 #include <TSystem.h>
 #include "Math/Vector4D.h"
 #include "Math/Vector4Dfwd.h"
+#include "DataFormats/Math/interface/deltaR.h"
 #include "utils.C"
 
 
@@ -109,6 +110,13 @@ void BToKMuMuDumper::SlaveBegin(TTree * /*tree*/)
   control_tree->Branch("k_iso03_close", &the_ctrl_k_iso03_close);
   control_tree->Branch("k_iso04", &the_ctrl_k_iso04);
   control_tree->Branch("k_iso04_close", &the_ctrl_k_iso04_close);
+  control_tree->Branch("k_dcasig", &the_ctrl_k_dcasig);
+  control_tree->Branch("k_dcasig_corr", &the_ctrl_k_dcasig_corr);
+  control_tree->Branch("k_numberofvalidhits", &the_ctrl_k_numberOfValidHits);
+  control_tree->Branch("k_numberoflosthits", &the_ctrl_k_numberOfLostHits);
+  control_tree->Branch("k_numberofvalidpixelhits", &the_ctrl_k_numberOfValidPixelHits);
+  control_tree->Branch("k_numberoftrackerlayers", &the_ctrl_k_numberOfTrackerLayers);
+  control_tree->Branch("k_numberofpixellayers", &the_ctrl_k_numberOfPixelLayers);
 
   control_tree->Branch("l1_pt", &the_ctrl_l1_pt);
   control_tree->Branch("l1_eta", &the_ctrl_l1_eta);
@@ -116,6 +124,7 @@ void BToKMuMuDumper::SlaveBegin(TTree * /*tree*/)
   control_tree->Branch("l1_charge", &the_ctrl_l1_charge);
   control_tree->Branch("l1_dxy", &the_ctrl_l1_dxy);
   control_tree->Branch("l1_dxysig", &the_ctrl_l1_dxysig);
+  control_tree->Branch("l1_dxysig_bs", &the_ctrl_l1_dxysig_bs);
   control_tree->Branch("l1_dz", &the_ctrl_l1_dz);
   control_tree->Branch("l1_dzsig", &the_ctrl_l1_dzsig);
   control_tree->Branch("l1_iso03", &the_ctrl_l1_iso03);
@@ -139,7 +148,11 @@ void BToKMuMuDumper::SlaveBegin(TTree * /*tree*/)
   control_tree->Branch("l1_fired_hlt_mu9_ip6", &the_ctrl_l1_fired_hlt_mu9_ip6);
   control_tree->Branch("l1_fired_hlt_mu10p5_ip3p5", &the_ctrl_l1_fired_hlt_mu10p5_ip3p5);
   control_tree->Branch("l1_fired_hlt_mu12_ip6", &the_ctrl_l1_fired_hlt_mu12_ip6);
-
+  control_tree->Branch("l1_numberofvalidmuonhits", &the_ctrl_l1_numberofvalidmuonhits);
+  control_tree->Branch("l1_numberofvalidpixelhits", &the_ctrl_l1_numberofvalidpixelhits);
+  control_tree->Branch("l1_numberoftrackerlayers", &the_ctrl_l1_numberoftrackerlayers);
+  control_tree->Branch("l1_numberofpixellayers", &the_ctrl_l1_numberofpixellayers);
+  control_tree->Branch("l1_numberofstations", &the_ctrl_l1_numberofstations);
 
   control_tree->Branch("l2_pt", &the_ctrl_l2_pt);
   control_tree->Branch("l2_eta", &the_ctrl_l2_eta);
@@ -147,6 +160,7 @@ void BToKMuMuDumper::SlaveBegin(TTree * /*tree*/)
   control_tree->Branch("l2_charge", &the_ctrl_l2_charge);
   control_tree->Branch("l2_dxy", &the_ctrl_l2_dxy);
   control_tree->Branch("l2_dxysig", &the_ctrl_l2_dxysig);
+  control_tree->Branch("l2_dxysig_bs", &the_ctrl_l2_dxysig_bs);
   control_tree->Branch("l2_dz", &the_ctrl_l2_dz);
   control_tree->Branch("l2_dzsig", &the_ctrl_l2_dzsig);
   control_tree->Branch("l2_iso03", &the_ctrl_l2_iso03);
@@ -160,6 +174,11 @@ void BToKMuMuDumper::SlaveBegin(TTree * /*tree*/)
   control_tree->Branch("l2_pfisoid", &the_ctrl_l2_pfisoid);
   control_tree->Branch("l2_trkisoid", &the_ctrl_l2_trkisoid);
   control_tree->Branch("l2_istriggering", &the_ctrl_l2_istriggering);
+  control_tree->Branch("l2_numberofvalidmuonhits", &the_ctrl_l2_numberofvalidmuonhits);
+  control_tree->Branch("l2_numberofvalidpixelhits", &the_ctrl_l2_numberofvalidpixelhits);
+  control_tree->Branch("l2_numberoftrackerlayers", &the_ctrl_l2_numberoftrackerlayers);
+  control_tree->Branch("l2_numberofpixellayers", &the_ctrl_l2_numberofpixellayers);
+  control_tree->Branch("l2_numberofstations", &the_ctrl_l2_numberofstations);
 
   control_tree->Branch("dimu_mass", &the_ctrl_dimu_mass);
   control_tree->Branch("dimu_sv_prob", &the_ctrl_dimu_sv_prob);
@@ -190,6 +209,8 @@ void BToKMuMuDumper::SlaveBegin(TTree * /*tree*/)
   control_tree->Branch("weight_pu_sig_D", &the_ctrl_weight_pu_sig_D);
   control_tree->Branch("weight_pu_sig_tot", &the_ctrl_weight_pu_sig_tot);
 
+  control_tree->Branch("weight_l1_softid", &the_ctrl_weight_l1_softid);
+
   control_tree->Branch("hlt_mu7_ip4", &the_hlt_mu7_ip4);
   control_tree->Branch("hlt_mu8_ip6", &the_hlt_mu8_ip6);
   control_tree->Branch("hlt_mu8_ip5", &the_hlt_mu8_ip5);
@@ -200,6 +221,34 @@ void BToKMuMuDumper::SlaveBegin(TTree * /*tree*/)
   control_tree->Branch("hlt_mu9_ip4", &the_hlt_mu9_ip4);
   control_tree->Branch("hlt_mu10p5_ip3p5", &the_hlt_mu10p5_ip3p5);
   control_tree->Branch("hlt_mu12_ip6", &the_hlt_mu12_ip6);
+
+  // add branches used for the pNN training
+  // nomenclature adapted to signal channel
+  control_tree->Branch("pi_pt", &the_ctrl_k_pt);
+  control_tree->Branch("mu_pt", &the_ctrl_l1_pt); // assigning largest pt to mu
+  control_tree->Branch("mu0_pt", &the_ctrl_l2_pt);
+  control_tree->Branch("mu_charge", &the_ctrl_l1_charge); // assigning largest pt to mu
+  control_tree->Branch("mu0_charge", &the_ctrl_l2_charge);
+  control_tree->Branch("hnl_cos2d", &the_ctrl_b_cos2d); // here cos of B vertex (in signal, of hnl vertex)
+  control_tree->Branch("pi_dcasig", &the_ctrl_k_dcasig_corr);
+  control_tree->Branch("sv_prob", &the_ctrl_dimu_sv_prob); // prob of dimuon vertex
+  //control_tree->Branch("sv_chi2", &the_ctrl_sv_chi2); // missing on control nano
+  control_tree->Branch("mu0_mu_mass", &the_ctrl_dimu_mass);
+  control_tree->Branch("mu0_pi_mass", &the_ctrl_mu0_pi_mass);
+  control_tree->Branch("mu_pi_mass", &the_ctrl_mu_pi_mass);
+  control_tree->Branch("deltar_mu0_mu", &the_ctrl_deltar_mu0_mu);
+  control_tree->Branch("deltar_mu0_pi", &the_ctrl_deltar_mu0_pi);
+  control_tree->Branch("mu0_pfiso03_rel", &the_ctrl_mu0_pfiso03_rel);
+  control_tree->Branch("mu_pfiso03_rel", &the_ctrl_mu_pfiso03_rel);
+  control_tree->Branch("pi_numberofvalidpixelhits", &the_ctrl_k_numberOfValidPixelHits);
+  control_tree->Branch("pi_numberofpixellayers", &the_ctrl_k_numberOfPixelLayers);
+  control_tree->Branch("pi_numberoftrackerlayers", &the_ctrl_k_numberOfTrackerLayers);
+  control_tree->Branch("mu_numberofvalidpixelhits", &the_ctrl_l1_numberofvalidpixelhits);
+  control_tree->Branch("mu_numberofpixellayers", &the_ctrl_l1_numberofpixellayers);
+  control_tree->Branch("mu_numberoftrackerlayers", &the_ctrl_l1_numberoftrackerlayers);
+  control_tree->Branch("mu0_numberofvalidpixelhits", &the_ctrl_l2_numberofvalidpixelhits);
+  control_tree->Branch("mu0_numberofpixellayers", &the_ctrl_l2_numberofpixellayers);
+  control_tree->Branch("mu0_numberoftrackerlayers", &the_ctrl_l2_numberoftrackerlayers);
 
 
   // defining histograms
@@ -291,7 +340,10 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
     UInt_t selectedCandIdx_ctrl = pair_candIdx_desc_bpt_matched_ctrl[0].first;
 
     // we ask l1 (leading) to be the triggering muon
-    if(Muon_isTriggeringBPark[BToKMuMu_l1Idx[selectedCandIdx_ctrl]] == 1){
+    //if(Muon_isTriggeringBPark[BToKMuMu_l1Idx[selectedCandIdx_ctrl]] == 1){
+    if(Muon_isTriggeringBPark[BToKMuMu_l1Idx[selectedCandIdx_ctrl]] == 0 && Muon_isTriggeringBPark[BToKMuMu_l2Idx[selectedCandIdx_ctrl]] == 0){
+      return false;
+    }
 
       ncand_istriggering = 1; 
 
@@ -303,7 +355,6 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
         BToKMuMu_fit_mass[selectedCandIdx_ctrl]
       );
       the_ctrl_b_y = (b_p4.E()-b_p4.Pz())!=0 ? 0.5 * TMath::Log( (b_p4.E()+b_p4.Pz()) / (b_p4.E()-b_p4.Pz()) ) : -99;
-      
 
       // fill the control_tree
       the_ctrl_b_pt = BToKMuMu_fit_pt[selectedCandIdx_ctrl];
@@ -326,6 +377,13 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
       the_ctrl_k_iso03_close = BToKMuMu_k_iso03_close[selectedCandIdx_ctrl];
       the_ctrl_k_iso04 = BToKMuMu_k_iso04[selectedCandIdx_ctrl];
       the_ctrl_k_iso04_close = BToKMuMu_k_iso04_close[selectedCandIdx_ctrl];
+      the_ctrl_k_dcasig = BToKMuMu_k_DCASig[selectedCandIdx_ctrl];
+      the_ctrl_k_dcasig_corr = BToKMuMu_k_DCASig_corr[selectedCandIdx_ctrl];
+      the_ctrl_k_numberOfValidHits = BToKMuMu_k_numberOfValidHits[selectedCandIdx_ctrl];
+      the_ctrl_k_numberOfLostHits = BToKMuMu_k_numberOfLostHits[selectedCandIdx_ctrl];
+      the_ctrl_k_numberOfValidPixelHits = BToKMuMu_k_numberOfValidPixelHits[selectedCandIdx_ctrl];
+      the_ctrl_k_numberOfTrackerLayers = BToKMuMu_k_numberOfTrackerLayers[selectedCandIdx_ctrl];
+      the_ctrl_k_numberOfPixelLayers = BToKMuMu_k_numberOfPixelLayers[selectedCandIdx_ctrl];
 
       the_ctrl_l1_pt = BToKMuMu_fit_l1_pt[selectedCandIdx_ctrl];
       the_ctrl_l1_eta = BToKMuMu_fit_l1_eta[selectedCandIdx_ctrl];
@@ -333,6 +391,7 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
       the_ctrl_l1_charge = Muon_charge[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
       the_ctrl_l1_dxy = Muon_dxy[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
       the_ctrl_l1_dxysig = Muon_dxyS[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l1_dxysig_bs = Muon_dxyS_BS[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
       the_ctrl_l1_dz = Muon_dz[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
       the_ctrl_l1_dzsig = Muon_dzS[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
       the_ctrl_l1_iso03 = BToKMuMu_l1_iso03[selectedCandIdx_ctrl];
@@ -357,6 +416,11 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
       the_ctrl_l1_fired_hlt_mu9_ip6 = Muon_fired_HLT_Mu9_IP6[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
       the_ctrl_l1_fired_hlt_mu10p5_ip3p5 = Muon_fired_HLT_Mu10p5_IP3p5[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
       the_ctrl_l1_fired_hlt_mu12_ip6 = Muon_fired_HLT_Mu12_IP6[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l1_numberofvalidmuonhits = Muon_numberOfValidMuonHits[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l1_numberofvalidpixelhits = Muon_numberOfValidPixelHits[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l1_numberoftrackerlayers = Muon_numberOfTrackerLayers[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l1_numberofpixellayers = Muon_numberOfPixelLayers[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l1_numberofstations = Muon_numberOfStations[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
 
       the_ctrl_l2_pt = BToKMuMu_fit_l2_pt[selectedCandIdx_ctrl];
       the_ctrl_l2_eta = BToKMuMu_fit_l2_eta[selectedCandIdx_ctrl];
@@ -364,6 +428,7 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
       the_ctrl_l2_charge = Muon_charge[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
       the_ctrl_l2_dxy = Muon_dxy[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
       the_ctrl_l2_dxysig = Muon_dxyS[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l2_dxysig_bs = Muon_dxyS_BS[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
       the_ctrl_l2_dz = Muon_dz[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
       the_ctrl_l2_dzsig = Muon_dzS[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
       the_ctrl_l2_iso03 = BToKMuMu_l2_iso03[selectedCandIdx_ctrl];
@@ -378,6 +443,11 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
       the_ctrl_l2_trkisoid = Muon_tkIsoId[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
       the_ctrl_l2_triggerlooseid = Muon_triggerIdLoose[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
       the_ctrl_l2_istriggering = Muon_isTriggeringBPark[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l2_numberofvalidmuonhits = Muon_numberOfValidMuonHits[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l2_numberofvalidpixelhits = Muon_numberOfValidPixelHits[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l2_numberoftrackerlayers = Muon_numberOfTrackerLayers[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l2_numberofpixellayers = Muon_numberOfPixelLayers[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
+      the_ctrl_l2_numberofstations = Muon_numberOfStations[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
 
       the_ctrl_dimu_mass = BToKMuMu_mll_fullfit[selectedCandIdx_ctrl];
       the_ctrl_dimu_sv_prob = BToKMuMu_ll_sv_prob[selectedCandIdx_ctrl];
@@ -392,6 +462,18 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
       the_ctrl_sv_lxysig = BToKMuMu_l_xy[selectedCandIdx_ctrl]/BToKMuMu_l_xy_unc[selectedCandIdx_ctrl];
       the_ctrl_sv_prob = BToKMuMu_svprob[selectedCandIdx_ctrl];
 
+      // information used in pNN training
+      the_ctrl_deltar_mu0_mu = reco::deltaR(the_ctrl_l2_eta, the_ctrl_l2_phi, the_ctrl_l1_eta, the_ctrl_l1_phi);
+      the_ctrl_deltar_mu0_pi = reco::deltaR(the_ctrl_l2_eta, the_ctrl_l2_phi, the_ctrl_k_eta, the_ctrl_k_phi);
+      the_ctrl_mu0_pfiso03_rel = Muon_pfiso03Rel_all[BToKMuMu_l2Idx[selectedCandIdx_ctrl]];
+      the_ctrl_mu_pfiso03_rel = Muon_pfiso03Rel_all[BToKMuMu_l1Idx[selectedCandIdx_ctrl]];
+
+      ROOT::Math::PtEtaPhiMVector mu0_p4(the_ctrl_l2_pt, the_ctrl_l2_eta, the_ctrl_l2_phi, 0.1057);
+      ROOT::Math::PtEtaPhiMVector mu_p4(the_ctrl_l1_pt, the_ctrl_l1_eta, the_ctrl_l1_phi, 0.1057);
+      ROOT::Math::PtEtaPhiMVector pi_p4(the_ctrl_k_pt, the_ctrl_k_eta, the_ctrl_k_phi, 0.1396); // assign pion mass (kaon mass ~494 MeV)
+      the_ctrl_mu0_pi_mass = (mu0_p4 + pi_p4).mass();
+      the_ctrl_mu_pi_mass = (mu_p4 + pi_p4).mass();
+          
       // gen-matching information
       the_ctrl_ismatched = BToKMuMu_isMatched[selectedCandIdx_ctrl];
       the_ctrl_matched_b_pt = BToKMuMu_matched_b_pt[selectedCandIdx_ctrl];
@@ -408,8 +490,32 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
             : -99;
 
       // trigger scale factor
-      the_ctrl_weight_hlt_A1 = isMC ? getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v1/scaleFactor_results_cat_pt_eta_fit.root", the_ctrl_l1_pt, fabs(the_ctrl_l1_eta)) : 1.;
-      the_ctrl_weight_hlt_A1_6 = isMC ? getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_6_v1/scaleFactor_results_cat_pt_eta_fit.root", the_ctrl_l1_pt, fabs(the_ctrl_l1_eta)) : 1.;
+      float eff_mu1_data_A1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/efficiency_A1_data.root", the_ctrl_l1_pt, fabs(the_ctrl_l1_dxysig_bs));
+      float eff_mu2_data_A1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/efficiency_A1_data.root", the_ctrl_l2_pt, fabs(the_ctrl_l2_dxysig_bs));
+      float eff_mu1_mc_A1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/efficiency_A1_mc.root", the_ctrl_l1_pt, fabs(the_ctrl_l1_dxysig_bs));
+      float eff_mu2_mc_A1 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/efficiency_A1_mc.root", the_ctrl_l2_pt, fabs(the_ctrl_l2_dxysig_bs));
+      float eff_mu1_data_A1_6 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/efficiency_A1_6_data.root", the_ctrl_l1_pt, fabs(the_ctrl_l1_dxysig_bs));
+      float eff_mu2_data_A1_6 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/efficiency_A1_6_data.root", the_ctrl_l2_pt, fabs(the_ctrl_l2_dxysig_bs));
+      float eff_mu1_mc_A1_6 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/efficiency_A1_6_mc.root", the_ctrl_l1_pt, fabs(the_ctrl_l1_dxysig_bs));
+      float eff_mu2_mc_A1_6 = getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/data/trigger_scale_factors/efficiency_A1_6_mc.root", the_ctrl_l2_pt, fabs(the_ctrl_l2_dxysig_bs));
+      if(the_ctrl_l1_istriggering && the_ctrl_l2_istriggering){
+        the_ctrl_weight_hlt_A1 = eff_mu1_data_A1 * eff_mu2_data_A1 / (eff_mu1_mc_A1 * eff_mu2_mc_A1);
+        the_ctrl_weight_hlt_A1_6 = eff_mu1_data_A1_6 * eff_mu2_data_A1_6 / (eff_mu1_mc_A1_6 * eff_mu2_mc_A1_6);
+      }
+      else if(the_ctrl_l1_istriggering && !the_ctrl_l2_istriggering){
+        the_ctrl_weight_hlt_A1 = eff_mu1_data_A1 * (1-eff_mu2_data_A1) / (eff_mu1_mc_A1 * (1-eff_mu2_mc_A1));
+        the_ctrl_weight_hlt_A1_6 = eff_mu1_data_A1_6 * (1-eff_mu2_data_A1_6) / (eff_mu1_mc_A1_6 * (1-eff_mu2_mc_A1_6));
+      }
+      else if(!the_ctrl_l1_istriggering && the_ctrl_l2_istriggering){
+        the_ctrl_weight_hlt_A1 = (1-eff_mu1_data_A1) * eff_mu2_data_A1 / ((1-eff_mu1_mc_A1) * eff_mu2_mc_A1);
+        the_ctrl_weight_hlt_A1_6 = (1-eff_mu1_data_A1_6) * eff_mu2_data_A1_6 / ((1-eff_mu1_mc_A1_6) * eff_mu2_mc_A1_6);
+      }
+      else if(!the_ctrl_l1_istriggering && !the_ctrl_l2_istriggering){
+        the_ctrl_weight_hlt_A1 = (1-eff_mu1_data_A1) * (1-eff_mu2_data_A1) / ((1-eff_mu1_mc_A1) * (1-eff_mu2_mc_A1));
+        the_ctrl_weight_hlt_A1_6 = (1-eff_mu1_data_A1_6) * (1-eff_mu2_data_A1_6) / ((1-eff_mu1_mc_A1_6) * (1-eff_mu2_mc_A1_6));
+      }
+      //the_ctrl_weight_hlt_A1 = isMC ? getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_v1/scaleFactor_results_cat_pt_eta_fit.root", the_ctrl_l1_pt, fabs(the_ctrl_l1_eta)) : 1.;
+      //the_ctrl_weight_hlt_A1_6 = isMC ? getTriggerScaleFactor("/t3home/anlyon/BHNL/BHNLNano/CMSSW_10_2_15/src/PhysicsTools/TagAndProbe/test/results/tag_and_probe_v2_BToJPsiKstar_V0_tag_fired_DST_DoubleMu1_A1_6_v1/scaleFactor_results_cat_pt_eta_fit.root", the_ctrl_l1_pt, fabs(the_ctrl_l1_eta)) : 1.;
 
       // pile-up weights
       the_ctrl_weight_pu_sig_A = isMC ? getPUWeight("pileup_weight_dataA_sigAug21.root", *Pileup_nTrueInt) : 1.;
@@ -418,8 +524,11 @@ Bool_t BToKMuMuDumper::Process(Long64_t entry)
       the_ctrl_weight_pu_sig_D = isMC ? getPUWeight("pileup_weight_dataD_sigAug21.root", *Pileup_nTrueInt) : 1.;
       the_ctrl_weight_pu_sig_tot = isMC ? getPUWeight("pileup_weight_datatot_sigAug21.root", *Pileup_nTrueInt) : 1.;
 
+      // lepton ID scale factor
+      the_ctrl_weight_l1_softid = isMC ? getLeptonScaleFactor("RunABCD_SF_MuonID_2018.root", "softid", the_ctrl_l1_pt, abs(the_ctrl_l1_eta)) : 1.;
+
       control_tree->Fill();
-    } // l1 is triggering
+    //} // l1 is triggering
   }// end at least one candidate in the event
 
 

@@ -109,6 +109,7 @@ public :
    //TTreeReaderArray<Float_t> BToMuMuPi_py_diff_prefithnl_daughters_lab = {fReader, "BToMuMuPi_py_diff_prefithnl_daughters_lab"};
    //TTreeReaderArray<Float_t> BToMuMuPi_pz_diff_prefithnl_daughters_lab = {fReader, "BToMuMuPi_pz_diff_prefithnl_daughters_lab"};
    TTreeReaderArray<Float_t> BToMuMuPi_pi_DCASig = {fReader, "BToMuMuPi_pi_DCASig"};
+   TTreeReaderArray<Float_t> BToMuMuPi_pi_DCASig_corr = {fReader, "BToMuMuPi_pi_DCASig_corr"};
    TTreeReaderArray<Float_t> BToMuMuPi_pi_dxy = {fReader, "BToMuMuPi_pi_dxy"};
    TTreeReaderArray<Float_t> BToMuMuPi_pi_dxyS = {fReader, "BToMuMuPi_pi_dxyS"};
    TTreeReaderArray<Float_t> BToMuMuPi_pi_dz = {fReader, "BToMuMuPi_pi_dz"};
@@ -117,20 +118,20 @@ public :
    TTreeReaderArray<Float_t> BToMuMuPi_pi_mass = {fReader, "BToMuMuPi_pi_mass"};
    TTreeReaderArray<Float_t> BToMuMuPi_pi_phi = {fReader, "BToMuMuPi_pi_phi"};
    TTreeReaderArray<Float_t> BToMuMuPi_pi_pt = {fReader, "BToMuMuPi_pi_pt"};
-   //TTreeReaderArray<Float_t> BToMuMuPi_pi_vx = {fReader, "BToMuMuPi_pi_vx"};
-   //TTreeReaderArray<Float_t> BToMuMuPi_pi_vy = {fReader, "BToMuMuPi_pi_vy"};
-   //TTreeReaderArray<Float_t> BToMuMuPi_pi_vz = {fReader, "BToMuMuPi_pi_vz"};
+   TTreeReaderArray<Float_t> BToMuMuPi_pi_vx = {fReader, "BToMuMuPi_pi_vx"};
+   TTreeReaderArray<Float_t> BToMuMuPi_pi_vy = {fReader, "BToMuMuPi_pi_vy"};
+   TTreeReaderArray<Float_t> BToMuMuPi_pi_vz = {fReader, "BToMuMuPi_pi_vz"};
    //TTreeReaderArray<Float_t> BToMuMuPi_pi_chi2 = {fReader, "BToMuMuPi_pi_chi2"};
    //TTreeReaderArray<Float_t> BToMuMuPi_pi_normalisedChi2 = {fReader, "BToMuMuPi_pi_normalisedChi2"};
    //TTreeReaderArray<Float_t> BToMuMuPi_pi_validFraction = {fReader, "BToMuMuPi_pi_validFraction"};
    //TTreeReaderArray<Int_t> BToMuMuPi_pi_ndof = {fReader, "BToMuMuPi_pi_ndof"};
-   //TTreeReaderArray<Int_t> BToMuMuPi_pi_numberOfValidHits = {fReader, "BToMuMuPi_pi_numberOfValidHits"};
-   //TTreeReaderArray<Int_t> BToMuMuPi_pi_numberOfLostHits = {fReader, "BToMuMuPi_pi_numberOfLostHits"};
+   TTreeReaderArray<Int_t> BToMuMuPi_pi_numberOfValidHits = {fReader, "BToMuMuPi_pi_numberOfValidHits"};
+   TTreeReaderArray<Int_t> BToMuMuPi_pi_numberOfLostHits = {fReader, "BToMuMuPi_pi_numberOfLostHits"};
    TTreeReaderArray<Int_t> BToMuMuPi_pi_numberOfValidPixelHits = {fReader, "BToMuMuPi_pi_numberOfValidPixelHits"};
    TTreeReaderArray<Int_t> BToMuMuPi_pi_numberOfTrackerLayers = {fReader, "BToMuMuPi_pi_numberOfTrackerLayers"};
-   //TTreeReaderArray<Int_t> BToMuMuPi_pi_numberOfPixelLayers = {fReader, "BToMuMuPi_pi_numberOfPixelLayers"};
+   TTreeReaderArray<Int_t> BToMuMuPi_pi_numberOfPixelLayers = {fReader, "BToMuMuPi_pi_numberOfPixelLayers"};
    //TTreeReaderArray<Int_t> BToMuMuPi_pi_qualityIndex = {fReader, "BToMuMuPi_pi_qualityIndex"};
-   TTreeReaderArray<Int_t> BToMuMuPi_pi_highPurityFlag = {fReader, "BToMuMuPi_pi_highPurityFlag"};
+   //TTreeReaderArray<Int_t> BToMuMuPi_pi_highPurityFlag = {fReader, "BToMuMuPi_pi_highPurityFlag"};
    TTreeReaderArray<Int_t> BToMuMuPi_pi_charge = {fReader, "BToMuMuPi_pi_charge"};
    TTreeReaderArray<Int_t> BToMuMuPi_pi_ispacked = {fReader, "BToMuMuPi_pi_ispacked"};
    TTreeReaderArray<Int_t> BToMuMuPi_pi_islost = {fReader, "BToMuMuPi_pi_islost"};
@@ -210,7 +211,7 @@ public :
    //TTreeReaderArray<Float_t> Muon_dsaToSlimmedMatching_deltaPtRel = {fReader, "Muon_dsaToSlimmedMatching_deltaPtRel"};
    //TTreeReaderArray<Float_t> Muon_dsaToSlimmedMatching_deltadxyRel = {fReader, "Muon_dsaToSlimmedMatching_deltadxyRel"};
    //TTreeReaderArray<Float_t> Muon_dsaToSlimmedMatching_deltadzRel = {fReader, "Muon_dsaToSlimmedMatching_deltadzRel"};
-   TTreeReaderArray<Float_t> Muon_caloCompatibility = {fReader, "Muon_caloCompatibility"};
+   //TTreeReaderArray<Float_t> Muon_caloCompatibility = {fReader, "Muon_caloCompatibility"};
    TTreeReaderArray<Float_t> Muon_dxy = {fReader, "Muon_dxy"};
    TTreeReaderArray<Float_t> Muon_dxy_BS = {fReader, "Muon_dxy_BS"};
    TTreeReaderArray<Float_t> Muon_dxyS = {fReader, "Muon_dxyS"};
@@ -219,10 +220,10 @@ public :
    TTreeReaderArray<Float_t> Muon_dz = {fReader, "Muon_dz"};
    TTreeReaderArray<Float_t> Muon_dzS = {fReader, "Muon_dzS"};
    TTreeReaderArray<Float_t> Muon_eta = {fReader, "Muon_eta"};
-   TTreeReaderArray<Float_t> Muon_globalNormalisedChi2 = {fReader, "Muon_globalNormalisedChi2"};
+   //TTreeReaderArray<Float_t> Muon_globalNormalisedChi2 = {fReader, "Muon_globalNormalisedChi2"};
    //TTreeReaderArray<Float_t> Muon_ip3d = {fReader, "Muon_ip3d"};
-   TTreeReaderArray<Float_t> Muon_kinkFinderChi2 = {fReader, "Muon_kinkFinderChi2"};
-   TTreeReaderArray<Float_t> Muon_localPositionChi2 = {fReader, "Muon_localPositionChi2"};
+   //TTreeReaderArray<Float_t> Muon_kinkFinderChi2 = {fReader, "Muon_kinkFinderChi2"};
+   //TTreeReaderArray<Float_t> Muon_localPositionChi2 = {fReader, "Muon_localPositionChi2"};
    TTreeReaderArray<Float_t> Muon_mass = {fReader, "Muon_mass"};
    TTreeReaderArray<Float_t> Muon_matched_dpt = {fReader, "Muon_matched_dpt"};
    TTreeReaderArray<Float_t> Muon_matched_dr = {fReader, "Muon_matched_dr"};
@@ -253,7 +254,7 @@ public :
    TTreeReaderArray<Float_t> Muon_phi = {fReader, "Muon_phi"};
    TTreeReaderArray<Float_t> Muon_pt = {fReader, "Muon_pt"};
    //TTreeReaderArray<Float_t> Muon_ptErr = {fReader, "Muon_ptErr"};
-   TTreeReaderArray<Float_t> Muon_segmentCompatibility = {fReader, "Muon_segmentCompatibility"};
+   //TTreeReaderArray<Float_t> Muon_segmentCompatibility = {fReader, "Muon_segmentCompatibility"};
    //TTreeReaderArray<Float_t> Muon_sip3d = {fReader, "Muon_sip3d"};
    TTreeReaderArray<Float_t> Muon_validHitFraction = {fReader, "Muon_validHitFraction"};
    TTreeReaderArray<Float_t> Muon_vx = {fReader, "Muon_vx"};
@@ -283,13 +284,13 @@ public :
    TTreeReaderArray<Int_t> Muon_isTriggering = {fReader, "Muon_isTriggering"};
    TTreeReaderArray<Int_t> Muon_isTriggeringBPark = {fReader, "Muon_isTriggeringBPark"};
    TTreeReaderArray<Int_t> Muon_looseId = {fReader, "Muon_looseId"};
-   //TTreeReaderArray<Int_t> Muon_numberOfPixelLayers = {fReader, "Muon_numberOfPixelLayers"};
+   TTreeReaderArray<Int_t> Muon_numberOfPixelLayers = {fReader, "Muon_numberOfPixelLayers"};
    TTreeReaderArray<Int_t> Muon_numberOfStations = {fReader, "Muon_numberOfStations"};
    TTreeReaderArray<Int_t> Muon_numberOfTrackerLayers = {fReader, "Muon_numberOfTrackerLayers"};
-   //TTreeReaderArray<Int_t> Muon_numberOfValidMuonHits = {fReader, "Muon_numberOfValidMuonHits"};
+   TTreeReaderArray<Int_t> Muon_numberOfValidMuonHits = {fReader, "Muon_numberOfValidMuonHits"};
    TTreeReaderArray<Int_t> Muon_numberOfValidPixelHits = {fReader, "Muon_numberOfValidPixelHits"};
    //TTreeReaderArray<Int_t> Muon_pdgId = {fReader, "Muon_pdgId"};
-   TTreeReaderArray<Int_t> Muon_trackerHighPurityFlag = {fReader, "Muon_trackerHighPurityFlag"};
+   //TTreeReaderArray<Int_t> Muon_trackerHighPurityFlag = {fReader, "Muon_trackerHighPurityFlag"};
    TTreeReaderArray<Int_t> Muon_inTimeMuon = {fReader, "Muon_inTimeMuon"};
    TTreeReaderArray<Int_t> Muon_isGlobalMuon = {fReader, "Muon_isGlobalMuon"};
    //TTreeReaderArray<Int_t> Muon_isGlobalNotTrackerMuon = {fReader, "Muon_isGlobalNotTrackerMuon"};
@@ -411,6 +412,9 @@ public :
    // the correct value will be filled for MC only
    TTreeReaderValue<Int_t> Pileup_nPU = {fReader, "PV_npvs"};
    TTreeReaderValue<Float_t> Pileup_nTrueInt = {fReader, "PV_ndof"};
+   TTreeReaderArray<Int_t> BToMuMuPi_isBu = {fReader, "PV_npvs"};
+   TTreeReaderArray<Int_t> BToMuMuPi_isBd = {fReader, "PV_npvs"};
+   TTreeReaderArray<Int_t> BToMuMuPi_isBs = {fReader, "PV_npvs"};
 
 
    BToMuMuPiDumper(TTree * /*tree*/ =0) { }
@@ -524,7 +528,7 @@ public :
    Int_t the_sig_mu0_isglobalortrackermuon = -99;
    Int_t the_sig_mu0_isglobalnottrackermuon = -99;
    Int_t the_sig_mu0_istrackernotglobalmuon = -99;
-   Int_t the_sig_mu0_intimemuon = -99;
+   //Int_t the_sig_mu0_intimemuon = -99;
    //Float_t the_sig_mu0_segmentcompatibility = -99.;
    //Float_t the_sig_mu0_calocompatibility = -99.;
    //Float_t the_sig_mu0_validhitfraction = -99.;
@@ -532,11 +536,11 @@ public :
    //Float_t the_sig_mu0_globalnormalisedchi2 = -99.;
    //Float_t the_sig_mu0_localpositionchi2 = -99.;
    //Int_t the_sig_mu0_trackerhighpurityflag = -99;
-   //Int_t the_sig_mu0_numberofvalidmuonhits = -99;
-   //Int_t the_sig_mu0_numberofvalidpixelhits = -99;
-   //Int_t the_sig_mu0_numberoftrackerlayers = -99;
-   //Int_t the_sig_mu0_numberofpixellayers = -99;
-   //Int_t the_sig_mu0_numberofstations = -99;
+   Int_t the_sig_mu0_numberofvalidmuonhits = -99;
+   Int_t the_sig_mu0_numberofvalidpixelhits = -99;
+   Int_t the_sig_mu0_numberoftrackerlayers = -99;
+   Int_t the_sig_mu0_numberofpixellayers = -99;
+   Int_t the_sig_mu0_numberofstations = -99;
    Int_t the_sig_mu0_triggered_hlt_mu7_ip4 = -99;
    Int_t the_sig_mu0_triggered_hlt_mu8_ip6 = -99;
    Int_t the_sig_mu0_triggered_hlt_mu8_ip5 = -99;
@@ -635,18 +639,18 @@ public :
    //Int_t the_sig_mu_isglobalortrackermuon = -99;
    //Int_t the_sig_mu_isglobalnottrackermuon = -99;
    //Int_t the_sig_mu_istrackernotglobalmuon = -99;
-   Int_t the_sig_mu_intimemuon = -99;
-   Float_t the_sig_mu_segmentcompatibility = -99.;
-   Float_t the_sig_mu_calocompatibility = -99.;
-   Float_t the_sig_mu_validhitfraction = -99.;
-   Float_t the_sig_mu_kinkfinderchi2 = -99.;
+   //Int_t the_sig_mu_intimemuon = -99;
+   //Float_t the_sig_mu_segmentcompatibility = -99.;
+   //Float_t the_sig_mu_calocompatibility = -99.;
+   //Float_t the_sig_mu_validhitfraction = -99.;
+   //Float_t the_sig_mu_kinkfinderchi2 = -99.;
    //Float_t the_sig_mu_globalnormalisedchi2 = -99.;
-   Float_t the_sig_mu_localpositionchi2 = -99.;
-   Int_t the_sig_mu_trackerhighpurityflag = -99;
-   //Int_t the_sig_mu_numberofvalidmuonhits = -99;
+   //Float_t the_sig_mu_localpositionchi2 = -99.;
+   //Int_t the_sig_mu_trackerhighpurityflag = -99;
+   Int_t the_sig_mu_numberofvalidmuonhits = -99;
    Int_t the_sig_mu_numberofvalidpixelhits = -99;
    Int_t the_sig_mu_numberoftrackerlayers = -99;
-   //Int_t the_sig_mu_numberofpixellayers = -99;
+   Int_t the_sig_mu_numberofpixellayers = -99;
    Int_t the_sig_mu_numberofstations = -99;
    Int_t the_sig_mu_triggered_hlt_mu7_ip4 = -99;
    Int_t the_sig_mu_triggered_hlt_mu8_ip6 = -99;
@@ -702,24 +706,25 @@ public :
    Float_t the_sig_pi_phi = -99.;
    Int_t the_sig_pi_charge = -99;
    Float_t the_sig_pi_dcasig = -99.;
+   Float_t the_sig_pi_dcasig_corr = -99.;
    Float_t the_sig_pi_dxy = -99.;
    Float_t the_sig_pi_dz = -99.;
    Float_t the_sig_pi_dxysig = -99.;
    Float_t the_sig_pi_dzsig = -99.;
    Int_t the_sig_pi_ispacked = -99;
    Int_t the_sig_pi_islost = -99;
-   //Float_t the_sig_pi_trgmu_dr = -99.;
-   //Int_t the_sig_pi_ismatchedtomuon = -99.;
-   //Float_t the_sig_pi_chi2 = -99.;
-   //Float_t the_sig_pi_normalisedChi2 = -99.;
-   //Float_t the_sig_pi_validFraction = -99.;
-   //Int_t the_sig_pi_ndof = -99;
-   //Int_t the_sig_pi_numberOfValidHits = -99;
-   //Int_t the_sig_pi_numberOfLostHits = -99;
-   //Int_t the_sig_pi_numberOfValidPixelHits = -99;
-   //Int_t the_sig_pi_numberOfTrackerLayers = -99;
-   //Int_t the_sig_pi_numberOfPixelLayers = -99;
-   //Int_t the_sig_pi_qualityIndex = -99;
+   Float_t the_sig_pi_trgmu_dr = -99.;
+   Int_t the_sig_pi_ismatchedtomuon = -99.;
+   Float_t the_sig_pi_chi2 = -99.;
+   Float_t the_sig_pi_normalisedChi2 = -99.;
+   Float_t the_sig_pi_validFraction = -99.;
+   Int_t the_sig_pi_ndof = -99;
+   Int_t the_sig_pi_numberOfValidHits = -99;
+   Int_t the_sig_pi_numberOfLostHits = -99;
+   Int_t the_sig_pi_numberOfValidPixelHits = -99;
+   Int_t the_sig_pi_numberOfTrackerLayers = -99;
+   Int_t the_sig_pi_numberOfPixelLayers = -99;
+   Int_t the_sig_pi_qualityIndex = -99;
    Int_t the_sig_pi_highPurityFlag = -99;
    Int_t the_sig_pi_packedcandhashighpurity = -99;
    //Int_t the_sig_pi_matchedtomuon_loose = -99;
@@ -805,6 +810,11 @@ public :
    Float_t the_sig_mupi_mass_reco_gen_reldiff = -99.;
    Float_t the_sig_lxy_reco_gen_reldiff = -99.;
 
+   // get B species
+   Int_t the_sig_isbu = -99;
+   Int_t the_sig_isbd = -99;
+   Int_t the_sig_isbs = -99;
+
    // weights
    Float_t the_sig_weight_mu0_softid = -99.;
    Float_t the_sig_weight_mu0_softid_plus_one_sigma = -99.;
@@ -821,6 +831,7 @@ public :
    Float_t the_sig_weight_hlt_D1 = -99.;
    Float_t the_sig_weight_hlt_D1_plus_one_sigma = -99.;
    Float_t the_sig_weight_hlt_D1_minus_one_sigma = -99.;
+   Float_t the_sig_weight_hlt_fullBpark = -99.;
 
    Float_t the_sig_weight_pu_qcd_A = -99.;
    Float_t the_sig_weight_pu_qcd_B = -99.;

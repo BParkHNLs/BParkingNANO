@@ -223,9 +223,21 @@ void BToKLLBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserFloat("kaon_dxy"                 , k_ptr->userFloat("dxy")                 );
       cand.addUserFloat("kaon_dzS"                 , k_ptr->userFloat("dzS")                 );
       cand.addUserFloat("kaon_dxyS"                , k_ptr->userFloat("dxyS")                );
+      // additionnal quantities
       cand.addUserFloat("kaon_DCASig"              , k_ptr->userFloat("DCASig")              );
+      cand.addUserFloat("kaon_DCASig_corr"         , k_ptr->userFloat("DCASig_corr")         );
       cand.addUserInt("kaon_ispacked"              , k_ptr->userInt("isPacked")              );
       cand.addUserInt("kaon_islost"                , k_ptr->userInt("isLostTrk")             );
+      cand.addUserFloat("kaon_chi2"                , k_ptr->userFloat("chi2")                );
+      cand.addUserFloat("kaon_normalisedChi2"      , k_ptr->userFloat("normalisedChi2")      );
+      cand.addUserFloat("kaon_validFraction"       , k_ptr->userFloat("validFraction")       );
+      cand.addUserInt("kaon_ndof"                  , k_ptr->userInt("ndof")                  );
+      cand.addUserInt("kaon_numberOfValidHits"     , k_ptr->userInt("nValidHits")            );
+      cand.addUserInt("kaon_numberOfLostHits"      , k_ptr->userInt("numberOfLostHits")      );
+      cand.addUserInt("kaon_numberOfValidPixelHits", k_ptr->userInt("numberOfValidPixelHits"));
+      cand.addUserInt("kaon_numberOfTrackerLayers" , k_ptr->userInt("numberOfTrackerLayers") );
+      cand.addUserInt("kaon_numberOfPixelLayers"   , k_ptr->userInt("numberOfPixelLayers")   );
+      cand.addUserInt("kaon_qualityIndex"          , k_ptr->userInt("qualityIndex")          );
       cand.addUserInt("kaon_highPurityFlag"        , k_ptr->userInt("highPurityFlag")        );
 
       //compute isolation

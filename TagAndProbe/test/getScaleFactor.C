@@ -140,22 +140,55 @@ void process(string dir, string subdir, string outdir, string method, TFile* fDa
   std::cout << results_dir << std::endl;
   fData->cd(results_dir);
 
+  // data
   c = (TCanvas*) gDirectory->Get(canvasname);
   TH2F* hData2D = 0;
   TH1F* hData1D = 0;
   if(dim == "2D" || dim == "3D") hData2D = (TH2F*) c->FindObject(canvasname);
   else if(dim == "1D") hData1D = (TH1F*) c->FindObject(canvasname);
+  hData2D->SetDefaultSumw2();
 
+  string name_data = outdir + "efficiency_data_" + dir + "_" + subdir + "_" + method;
+  if(dim == "3D") name_data += "_" + extraname;
+  if(dim == "2D" || dim == "3D"){
+    write2DScaleFactor(hData2D, name_data);
+    produce2DPlot(hData2D, name_data);
+  }
+  else if(dim == "1D"){
+    write1DScaleFactor(hData1D, name_data);
+  }
+
+  std::cout << name_data << ".txt created " << std::endl;
+  std::cout << name_data << ".root created " << std::endl;
+  std::cout << name_data << ".png created " << std::endl;
+
+  // mc
   fMC->cd(results_dir);
   c = (TCanvas*) gDirectory->Get(canvasname);
   TH2F* hMC2D = 0;
   TH1F* hMC1D = 0;
   if(dim == "2D" || dim == "3D") hMC2D = (TH2F*) c->FindObject(canvasname);
   else if(dim == "1D") hMC1D = (TH1F*) c->FindObject(canvasname);
-
-  hData2D->SetDefaultSumw2();
   hMC2D->SetDefaultSumw2();
 
+  string name_mc = outdir + "efficiency_mc_" + dir + "_" + subdir + "_" + method;
+  if(dim == "3D") name_mc += "_" + extraname;
+  if(dim == "2D" || dim == "3D"){
+    write2DScaleFactor(hMC2D, name_mc);
+    produce2DPlot(hMC2D, name_mc);
+  }
+  else if(dim == "1D"){
+    write1DScaleFactor(hMC1D, name_mc);
+  }
+
+  std::cout << name_mc << ".txt created " << std::endl;
+  std::cout << name_mc << ".root created " << std::endl;
+  std::cout << name_mc << ".png created " << std::endl;
+
+  //hData2D->SetDefaultSumw2();
+  //hMC2D->SetDefaultSumw2();
+
+  // ratio
   string name = outdir + "scaleFactor_" + dir + "_" + subdir + "_" + method;
   if(dim == "3D") name += "_" + extraname;
   if(dim == "2D" || dim == "3D") hData2D->Divide(hMC2D);
