@@ -213,7 +213,8 @@ class NanoLauncher(NanoTools):
     content = '\n'.join(content)
           
     if not self.dosplitflat:
-      starter_name = './files/starter_{}.C'.format(label)
+      #starter_name = './files/starter_{}.C'.format(label)
+      starter_name = '/work/anlyon/files/starter_{}.C'.format(label)
       dumper_starter = open(starter_name, 'w+')
       dumper_starter.write(content)
       dumper_starter.close()
@@ -250,7 +251,8 @@ class NanoLauncher(NanoTools):
         ]
         content = '\n'.join(content)
 
-        starter_name = './files/starter_{}_nj{}.C'.format(label, iFile)
+        #starter_name = './files/starter_{}_nj{}.C'.format(label, iFile)
+        starter_name = '/work/anlyon/files/starter_{}_nj{}.C'.format(label, iFile)
         dumper_starter = open(starter_name, 'w+')
         dumper_starter.write(content)
         dumper_starter.close()
@@ -347,6 +349,7 @@ class NanoLauncher(NanoTools):
       ld      = logdir,
       pl      = label if not self.dosplitflat else label+'%a',
       hh      = 10 if not self.doquick and not self.dolong else (1 if self.doquick else '7-00'),
+      #hh      = 1 if not self.doquick and not self.dolong else (1 if self.doquick else '7-00'),
       dp      = ('--dependency=afterany:{}'.format(jobId) if jobId != -99 else '') if not self.dosplitflat else '--array 1-{}'.format(nfiles),
       )
 
@@ -412,6 +415,9 @@ class NanoLauncher(NanoTools):
     
     print '\n  --> Fetching the files'
     filelistname = self.writeFileList(maxfiles_perchunk, point)
+
+    #filelistname = './files/filelist_data_copy_AM_part1'
+    filelistname = './files/filelist_data_copy_AM_D4'
 
     # loop on the files (containing at most 500 samples) 
     for iFile, filelist in enumerate(glob.glob('{}*.txt'.format(filelistname))):
@@ -510,6 +516,10 @@ class NanoLauncher(NanoTools):
       # looping over the signal points
       for point in points:
         print '\n-> Processing mass/ctau point: {}'.format(point)
+        if point == 'mass3p55_ctau1p0' or point == 'mass3p75_ctau1p0' or point == 'mass4p0_ctau0p1' or point == 'mass4p4_ctau0p1' or point == 'mass3p85_ctau1p0' or point == 'mass4p5_ctau0p1' or point == 'mass4p7_ctau0p1' or point == 'mass4p2_ctau0p1' or point == 'mass3p95_ctau1p0' or point == 'mass4p9_ctau0p1' or point == 'mass3p45_ctau1p0' or point == 'mass3p6_ctau1p0' or point == 'mass3p65_ctau1p0' or point == 'mass3p8_ctau1p0' or point == 'mass3p3_ctau1p0' or point == 'mass3p1_ctau1p0' or point == 'mass3p5_ctau1p0' or point == 'mass6p0_ctau0p1' or point == 'mass5p8_ctau0p1' or point == 'mass5p1_ctau0p1' or point == 'mass5p3_ctau0p1' or point == 'mass5p4_ctau0p1' or point == 'mass5p6_ctau0p1': continue
+
+
+        #os.system('sleep 1m')
 
         #if point != 'mass3.0_ctau184.256851021': continue
 

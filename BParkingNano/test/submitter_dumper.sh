@@ -25,9 +25,11 @@ echo "creating workdir "$workdir
 mkdir -p $workdir
 
 if [ ${10} == 0 ] ; then
-  starter=./files/starter_${3}
+  #starter=./files/starter_${3}
+  starter=/work/anlyon/files/starter_${3}
 else
-  starter=./files/starter_${3}_nj$SLURM_ARRAY_TASK_ID
+  #starter=./files/starter_${3}_nj$SLURM_ARRAY_TASK_ID
+  starter=/work/anlyon/files/starter_${3}_nj$SLURM_ARRAY_TASK_ID
 fi
 
 echo "copying ntupliser to workdir"
