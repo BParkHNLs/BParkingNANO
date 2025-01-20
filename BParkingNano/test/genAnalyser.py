@@ -81,7 +81,7 @@ def getChannelRate():
 def getEventsPerBspecies():
 
   #inputfile = '/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/V44_Bu/mass2p0_ctau10p0/nanoFiles/merged/flat_bparknano_06Feb23.root'
-  inputfile = '/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/V42/mass4p5_ctau0p1/nanoFiles//merged/bparknano_generalstep.root'
+  inputfile = '/pnfs/psi.ch/cms/trivcat/store/user/anlyon/BHNLsGen/V42/mass4p0_ctau0p1/nanoFiles//merged/bparknano_generalstep.root'
   #inputfile = opt.f
   f = ROOT.TFile.Open(inputfile)
   tree = f.Get('Events')
