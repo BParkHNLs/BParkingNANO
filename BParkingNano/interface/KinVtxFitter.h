@@ -19,7 +19,9 @@ public:
 
   KinVtxFitter(const std::vector<reco::TransientTrack> tracks, 
                const std::vector<double> masses, 
-               std::vector<float> sigmas);
+               std::vector<float> sigmas,
+               float mass_constraint = -99.
+               );
 
   ~KinVtxFitter() {};
 

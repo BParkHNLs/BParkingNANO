@@ -1,11 +1,14 @@
 #include "../interface/KinVtxFitter.h"
 #include "RecoVertex/KinematicFitPrimitives/interface/KinematicParticleFactoryFromTransientTrack.h"
 #include "RecoVertex/KinematicFit/interface/KinematicParticleVertexFitter.h"
+#include "RecoVertex/KinematicFit/interface/KinematicConstrainedVertexFitter.h"
 #include "RecoVertex/KinematicFit/interface/TwoTrackMassKinematicConstraint.h" // MIGHT be useful for Phi->KK?
+#include "RecoVertex/KinematicFit/interface/MultiTrackMassKinematicConstraint.h"
 
 KinVtxFitter::KinVtxFitter(const std::vector<reco::TransientTrack> tracks, 
                            const std::vector<double> masses, 
-                           std::vector<float> sigmas):
+                           std::vector<float> sigmas,
+                           float mass_constraint):
   n_particles_{masses.size()} {
   
   KinematicParticleFactoryFromTransientTrack factory;
@@ -19,8 +22,32 @@ KinVtxFitter::KinVtxFitter(const std::vector<reco::TransientTrack> tracks,
       );
   }
 
-  KinematicParticleVertexFitter kcv_fitter;    
-  RefCountedKinematicTree vtx_tree = kcv_fitter.fit(particles);
+  RefCountedKinematicTree vtx_tree;
+
+  if(mass_constraint != -99.){
+    // perform constrained fit
+
+    //creating the multitrack mass constraint
+    ParticleMass the_mass_constraint = mass_constraint; 
+    MultiTrackKinematicConstraint * kinematic_constraint;
+    int number_of_tracks = masses.size();
+    //std::cout << "number of tracks: " << number_of_tracks << std::endl;
+    if(number_of_tracks == 2){
+      kinematic_constraint = new TwoTrackMassKinematicConstraint(the_mass_constraint);
+    }
+    else{
+      kinematic_constraint = new MultiTrackMassKinematicConstraint(the_mass_constraint, number_of_tracks);
+    }
+
+    KinematicConstrainedVertexFitter kcv_fitter;
+    vtx_tree = kcv_fitter.fit(particles, kinematic_constraint);
+  }
+  else{
+    // perform unconstrained fit
+
+    KinematicParticleVertexFitter kcv_fitter;    
+    vtx_tree = kcv_fitter.fit(particles);
+  }
 
   if (vtx_tree->isEmpty() || !vtx_tree->isValid() || !vtx_tree->isConsistent()) {
     success_ = false; 
