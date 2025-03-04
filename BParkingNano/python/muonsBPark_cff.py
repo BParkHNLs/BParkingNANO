@@ -29,9 +29,9 @@ muonTrgSelector = cms.EDProducer("MuonTriggerSelector",
                                  max_deltaPtRel_dsaToSlimmed_matching = cms.double(0.2),
                                  
                                  # selection for the selected muon
-                                 selmu_ptMin = cms.double(1.),
+                                 selmu_ptMin = cms.double(1.), #TODO raise to 6.8?
                                  #selmu_ptMin = cms.double(0.3),
-                                 selmu_absEtaMax = cms.double(2.3),
+                                 selmu_absEtaMax = cms.double(2.3), #TODO lower to 1.55?
                                  #selmu_absEtaMax = cms.double(2.8),
                                  HLTPaths=cms.vstring(Path),
                                  #L1seeds=cms.vstring(Seed),
@@ -261,10 +261,17 @@ triggerMuonsMCMatchEmbedded = cms.EDProducer(
     matching = cms.InputTag('muonsTriggerBParkMCMatchForTable')
 )
 
-#muonBParkSequence = cms.Sequence(muonTrgSelector * countTrgMuons)
-muonBParkSequence = cms.Sequence(muonTrgSelector)
 
+# saving events with trigger muon only
+#muonBParkSequence = cms.Sequence(muonTrgSelector * countTrgMuons)
+#muonBParkMC = cms.Sequence(muonTrgSelector + muonsBParkMCMatchForTable + selectedMuonsMCMatchEmbedded + muonBParkMCTable * countTrgMuons)
+#muonBParkMCWithTriggerMuon = cms.Sequence(muonBParkMC + muonsTriggerBParkMCMatchForTable + triggerMuonsMCMatchEmbedded + muonTriggerBParkMCTable * countTrgMuons)
+
+# saving events with or without trigger muon
+muonBParkSequence = cms.Sequence(muonTrgSelector)
 muonBParkMC = cms.Sequence(muonTrgSelector + muonsBParkMCMatchForTable + selectedMuonsMCMatchEmbedded + muonBParkMCTable)
 muonBParkMCWithTriggerMuon = cms.Sequence(muonBParkMC + muonsTriggerBParkMCMatchForTable + triggerMuonsMCMatchEmbedded + muonTriggerBParkMCTable)
+
+# saving table
 muonBParkTables = cms.Sequence(muonBParkTable)
 muonTriggerMatchedTables = cms.Sequence(muonTriggerBParkTable)

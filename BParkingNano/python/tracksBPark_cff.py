@@ -14,10 +14,16 @@ tracksBPark = cms.EDProducer('TrackMerger',
                              #gsf2lost=cms.InputTag("lowPtGsfLinks:lostTracks"),
 
                              # keep the cuts as tight as possible without affecting any physics builder
-                             trkPtCut = cms.double(0.9),
-                             #trkPtCut = cms.double(0.3),
-                             trkEtaCut = cms.double(2.1),
-                             #trkEtaCut = cms.double(2.8),
+                             #trkPtCut = cms.double(0.6),
+                             #trkEtaCut = cms.double(2.5),
+
+                             # no cuts
+                             #trkPtCut = cms.double(0.), 
+                             #trkEtaCut = cms.double(10.),
+
+                             # very loose preselection
+                             trkPtCut = cms.double(0.47), 
+                             trkEtaCut = cms.double(2.9),
 
                              # clean tracks wrt trigger muons (checked that not relevant for our study)
                              do_trgmu_cleaning = cms.bool(False),
@@ -46,7 +52,7 @@ trackBParkTable = cms.EDProducer(
     singleton = cms.bool(False),
     extension = cms.bool(False), 
     variables = cms.PSet(
-         CandVars,
+        CandVars,
         vx = Var("vx()", float, doc="x coordinate of vertex position, in cm", precision=10),
         vy = Var("vy()", float, doc="y coordinate of vertex position, in cm", precision=10),
         vz = Var("vz()", float, doc="z coordinate of vertex position, in cm", precision=10),
@@ -88,14 +94,17 @@ tracksBParkMCMatchForTable = cms.EDProducer("MCMatcher",   # cut on deltaR, delt
 #tracksBParkMCMatchForTable = cms.EDProducer("MCMatcherByPt",   # cut on deltaR, deltaPt/Pt; pick best by deltaR
     src         = trackBParkTable.src,                     # final reco collection
     matched     = cms.InputTag("finalGenParticlesBPark"),  # final mc-truth particle collection
-    mcPdgId     = cms.vint32(321,211),                     # one or more PDG ID (321 = charged kaon, 211 = charged pion); absolute values (see below)
+    #mcPdgId     = cms.vint32(321,211),                     # one or more PDG ID (321 = charged kaon, 211 = charged pion); absolute values (see below)
+    mcPdgId     = cms.vint32(321),                     # one or more PDG ID (321 = charged kaon, 211 = charged pion); absolute values (see below)
     checkCharge = cms.bool(False),              # True = require RECO and MC objects to have the same charge
     mcStatus    = cms.vint32(1),                # PYTHIA status code (1 = stable, 2 = shower, 3 = hard scattering)
     maxDeltaR   = cms.double(0.15), #0.03       # Minimum deltaR for the match
     maxDPtRel   = cms.double(0.5),              # Minimum deltaPt/Pt for the match
     resolveAmbiguities    = cms.bool(False),     # Forbid two RECO objects to match to the same GEN object
     resolveByMatchQuality = cms.bool(True),     # False = just match input in order; True = pick lowest deltaR pair first
-    motherPdgId = cms.vint32(9900015, 521, 541),
+    #motherPdgId = cms.vint32(9900015, 521, 541),
+    #motherPdgId = cms.vint32(9900015, 521, 541, 333),
+    motherPdgId = cms.vint32(333),
     #minPt = tracksBPark.trkPtCut,
     #maxEta = tracksBPark.trkEtaCut,
 )
