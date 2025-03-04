@@ -285,6 +285,7 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
     pcand.addUserFloat("dzS", trk.dz()/trk.dzError());
     pcand.addUserFloat("DCASig", DCASig);
     pcand.addUserFloat("DCASig_corr", DCASig_corr);
+    pcand.addUserFloat("ptErr", trk.bestTrack()->ptError());
     pcand.addUserFloat("drTrg", drTrg);
     pcand.addUserFloat("dzTrg", dzTrg);
     pcand.addUserFloat("chi2", trk.bestTrack()->chi2()); 
@@ -292,6 +293,7 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
     pcand.addUserFloat("normalisedChi2", trk.bestTrack()->normalizedChi2()); 
     pcand.addUserInt("numberOfValidHits", trk.bestTrack()->numberOfValidHits()); 
     pcand.addUserInt("numberOfLostHits", trk.bestTrack()->numberOfLostHits()); 
+    pcand.addUserInt("numberOfPixelHits", trk.numberOfPixelHits()); 
     pcand.addUserInt("numberOfValidPixelHits", trk.bestTrack()->hitPattern().numberOfValidPixelHits()); 
     pcand.addUserInt("numberOfTrackerLayers", trk.bestTrack()->hitPattern().trackerLayersWithMeasurement()); 
     pcand.addUserInt("numberOfPixelLayers", trk.bestTrack()->hitPattern().pixelLayersWithMeasurement()); 
@@ -306,7 +308,16 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
     //pcand.addUserInt("isMatchedToLowPtEle", matchedToLowPtEle);
     pcand.addUserInt("nValidHits", trk.bestTrack()->found());
     pcand.addUserInt("keyPacked", iTrk);
-    //adding the candidate in the composite stuff for fit (need to test)
+
+    // Covariance matrix elements for helix parameters for decay time uncertainty
+    pcand.addUserFloat("covQopQop", trk.bestTrack()->covariance(0, 0));
+    pcand.addUserFloat("covLamLam", trk.bestTrack()->covariance(1, 1));
+    pcand.addUserFloat("covPhiPhi", trk.bestTrack()->covariance(2, 2));
+    pcand.addUserFloat("covQopLam", trk.bestTrack()->covariance(0, 1));
+    pcand.addUserFloat("covQopPhi", trk.bestTrack()->covariance(0, 2));
+    pcand.addUserFloat("covLamPhi", trk.bestTrack()->covariance(1, 2));
+
+    
     if ( iTrk < nTracks )
       pcand.addUserCand( "cand", edm::Ptr<pat::PackedCandidate> ( tracks, iTrk ));
     else 
