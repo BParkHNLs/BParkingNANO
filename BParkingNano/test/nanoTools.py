@@ -27,15 +27,17 @@ class NanoTools(object):
    chunk = file_[file_.find('Chunk'):file_.find('bparknano')-1]
    if dirlabel == 'mcprivate':
      #logdir = './logs/{}/{}/{}'.format(prodlabel, label[0:label.find('/')], chunk) if tag == None else './logs/{}/{}_{}/{}'.format(prodlabel, label[0:label.find('/')], tag, chunk)
-     logdir = '/work/{}/logs/{}/{}/{}'.format(os.environ["USER"], prodlabel, label[0:label.find('/')], chunk) if tag == None else '/work/{}/logs/{}/{}_{}/{}'.format(os.environ["USER"], prodlabel, label[0:label.find('/')], tag, chunk)
+     #logdir = '/work/{}/logs/{}/{}/{}'.format(os.environ["USER"], prodlabel, label[0:label.find('/')], chunk) if tag == None else '/work/{}/logs/{}/{}_{}/{}'.format(os.environ["USER"], prodlabel, label[0:label.find('/')], tag, chunk)
+     logdir = '/work/{}/CPV/logs/{}/{}/{}'.format(os.environ["USER"], prodlabel, label[0:label.find('/')], chunk) if tag == None else '/work/{}/CPV/logs/{}/{}_{}/{}'.format(os.environ["USER"], prodlabel, label[0:label.find('/')], tag, chunk)
    else:
      #logdir = './logs/{}/{}_{}/{}'.format(label, prodlabel, tag, chunk)
-     logdir = '/work/{}/logs/{}/{}_{}/{}'.format(os.environ["USER"], label, prodlabel, tag, chunk) if tag != None else '/work/{}/logs/{}/{}/{}'.format(os.environ["USER"], label, prodlabel, chunk)
+     logdir = '/work/{}/CPV/logs/{}/{}_{}/{}'.format(os.environ["USER"], label, prodlabel, tag, chunk) if tag != None else '/work/{}/CPV/logs/{}/{}/{}'.format(os.environ["USER"], label, prodlabel, chunk)
    return logdir
 
 
   def getFilesLocation(self, dirtag):  
-    location = '/pnfs/psi.ch/cms/trivcat/store/user/{usr}/BHNLsGen'.format(usr=os.environ["USER"])
+    #location = '/pnfs/psi.ch/cms/trivcat/store/user/{usr}/BHNLsGen'.format(usr=os.environ["USER"])
+    location = '/pnfs/psi.ch/cms/trivcat/store/user/{usr}/CPVGen'.format(usr=os.environ["USER"])
     if dirtag == 'data':
       location += '/data'
     elif dirtag == 'mccentral': 
@@ -51,9 +53,13 @@ class NanoTools(object):
 
   def getLocalMiniAODFiles(self, user, prodlabel, point, iscrab=False):
     if not iscrab:
-      pointdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/{}/'.format(user, prodlabel, point)
+      #pointdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/{}/'.format(user, prodlabel, point)
+      #pointdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/CPV/{}/{}/'.format(user, prodlabel, point)
+      pointdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/CPVGen/{}/{}/'.format(user, prodlabel, point)
     else:
-      pointdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/{}/*/*/*/'.format(user, prodlabel, point)
+      #pointdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/{}/*/*/*/'.format(user, prodlabel, point)
+      #pointdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/CPV/{}/{}/*/*/*/'.format(user, prodlabel, point)
+      pointdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/CPVGen/{}/{}/*/*/*/'.format(user, prodlabel, point)
     return [f for f in glob.glob(pointdir+'/step4_*.root')]
 
 

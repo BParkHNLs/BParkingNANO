@@ -306,12 +306,14 @@ class NanoLauncher(NanoTools):
 
 
   def launchNano(self, nfiles, outputdir, logdir, filelist, label):
-    slurm_options = '-p {part} --account=t3 -o {ld}/nanostep_nj%a.log -e {ld}/nanostep_nj%a.log --job-name=nanostep_nj%a_{pl} --array {ar} --time={hh}:00:00'.format(
+    #slurm_options = '-p {part} --account=t3 -o {ld}/nanostep_nj%a.log -e {ld}/nanostep_nj%a.log --job-name=nanostep_nj%a_{pl} --array {ar} --time={hh}:00:00'.format(
+    slurm_options = '-p {part} --account=t3 -o {ld}/nanostep_nj%a.log -e {ld}/nanostep_nj%a.log --job-name=nanostep_nj%a_{pl} --array {ar}'.format(
       part = 'standard' if not self.doquick else 'short', 
       ld = logdir,
       pl = label,
       ar = '1-{}'.format(nfiles),
-      hh = 2 if not self.doquick else 1,
+      #hh = 2 if not self.doquick else 1,
+      #hh = 23 if not self.doquick else 1,
       )
 
     command = 'sbatch {slurm_opt} submitter.sh {outdir} {usr} {pl} {tag} {isMC} {rmt} {lst} 0 {dosig} {doctrl} {dohnl} {dotep} {gt} 0 {dogen}'.format(
@@ -437,7 +439,7 @@ class NanoLauncher(NanoTools):
         merge_cond = (nfiles_tot == int(self.maxfiles))
         
       print '\n  --> Creating output directory'
-      outputdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/'.format(os.environ["USER"])
+      outputdir = '/pnfs/psi.ch/cms/trivcat/store/user/{}/CPVGen/'.format(os.environ["USER"])
       if self.mcprivate or self.sigcrab:
         outputdir += '{}/{}/nanoFiles/Chunk{}_n{}'.format(self.prodlabel, point, iFile, nfiles)
       else:
@@ -452,8 +454,8 @@ class NanoLauncher(NanoTools):
       tag = NanoTools.getTag(self, self.tagnano, self.tagflat)
       #logdir = './logs/{}/{}/Chunk{}_n{}'.format(label1, label2, iFile, nfiles) if tag == 0 \
       #         else './logs/{}/{}_{}/Chunk{}_n{}'.format(label1, label2, tag, iFile, nfiles)
-      logdir = '/work/{}/logs/{}/{}/Chunk{}_n{}'.format(os.environ["USER"], label1, label2, iFile, nfiles) if tag == 0 \
-               else '/work/{}/logs/{}/{}_{}/Chunk{}_n{}'.format(os.environ["USER"], label1, label2, tag, iFile, nfiles)
+      logdir = '/work/{}/CPV/logs/{}/{}/Chunk{}_n{}'.format(os.environ["USER"], label1, label2, iFile, nfiles) if tag == 0 \
+               else '/work/{}/CPV/logs/{}/{}_{}/Chunk{}_n{}'.format(os.environ["USER"], label1, label2, tag, iFile, nfiles)
       if not path.exists(logdir):
         os.system('mkdir -p {}'.format(logdir))
 
@@ -501,7 +503,8 @@ class NanoLauncher(NanoTools):
     print '------------'
     
     if self.mcprivate or self.sigcrab:
-      locationSE = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/'.format(self.user, self.prodlabel)
+      #locationSE = '/pnfs/psi.ch/cms/trivcat/store/user/{}/CPV/{}/'.format(self.user, self.prodlabel)
+      locationSE = '/pnfs/psi.ch/cms/trivcat/store/user/{}/CPVGen/{}/'.format(self.user, self.prodlabel)
 
       print '\n-> Getting the different mass points'
       pointsdir = NanoTools.getPointDirs(self, locationSE)

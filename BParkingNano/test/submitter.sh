@@ -24,7 +24,7 @@ echo "creating workdir "$workdir
 mkdir -p $workdir
 
 echo "copying driver to workdir"
-cp run_nano_hnl_cfg.py $workdir
+cp run_nano_phi_cfg.py $workdir
 
 echo "copying the file list(-s) to workdir"
 if [ ${8} == 0 ] ; then
@@ -79,13 +79,13 @@ if [ ${5} == 1 ] ; then #isMC
   if [ ${6} == 0 ] ; then  #private MC
     echo "going to run nano step on "$inputFilename 
     DATE_START=`date +%s`
-    cmsRun run_nano_hnl_cfg.py inputFile=$inputFilename outputFile="bparknano.root" isMC=True doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} doGeneral=${15} globalTag=${13}
+    cmsRun run_nano_phi_cfg.py inputFile=$inputFilename outputFile="bparknano.root" isMC=True #doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} doGeneral=${15} globalTag=${13}
     DATE_END=`date +%s`
     echo "finished running nano step"
   else # central MC
     echo "going to run nano step on "$inputFilename
     DATE_START=`date +%s`
-    cmsRun run_nano_hnl_cfg.py inputFiles=$inputFilename outputFile="bparknano.root" isMC=True doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} doGeneral=${15} globalTag=${13}
+    cmsRun run_nano_phi_cfg.py inputFiles=$inputFilename outputFile="bparknano.root" isMC=True #doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} doGeneral=${15} globalTag=${13}
     DATE_END=`date +%s`
     echo "finished running nano step"
   fi
@@ -94,7 +94,7 @@ else #isData
 
   echo "going to run nano step on "$inputFilename
   DATE_START=`date +%s`
-  cmsRun run_nano_hnl_cfg.py inputFiles=$inputFilename outputFile="bparknano.root" isMC=False doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} doGeneral=${15} globalTag=${13}
+  cmsRun run_nano_phi_cfg.py inputFiles=$inputFilename outputFile="bparknano.root" isMC=False #doSignal=${9} doControl=${10} doHNL=${11} doTagAndProbe=${12} doGeneral=${15} globalTag=${13}
   DATE_END=`date +%s`
   echo "finished running nano step"
 

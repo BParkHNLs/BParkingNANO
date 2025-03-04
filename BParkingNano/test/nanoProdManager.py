@@ -354,7 +354,8 @@ class NanoProdManager(NanoTools):
 
           if self.docheckfile:
             branchnames = []
-            if self.dosignal: branchnames.append('nBToMuMuPi')
+            #if self.dosignal: branchnames.append('nBToMuMuPi')
+            if self.dosignal: branchnames.append('nBsToPhiPhiTo4K')
             if self.docontrol: branchnames.append('nBToKMuMu')
             if self.dohnl: branchnames.append('nHNLToMuPi')
             if self.dotageprobe: branchnames.append('nJPsiToMuMu')

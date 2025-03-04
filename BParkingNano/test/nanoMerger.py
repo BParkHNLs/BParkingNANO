@@ -255,7 +255,7 @@ class NanoMerger(NanoTools):
     user      = os.environ["USER"]
 
     if self.mcprivate:
-      locationSE = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/'.format(user, self.prodlabel)
+      locationSE = '/pnfs/psi.ch/cms/trivcat/store/user/{}/CPVGen/{}/'.format(user, self.prodlabel)
       
       if self.point == None:
         pointdirs = NanoTools.getPointDirs(self, locationSE)
@@ -272,7 +272,7 @@ class NanoMerger(NanoTools):
 
     elif self.data or self.mccentral or self.sigcentral:
       dataset_label = NanoTools.getDataLabel(self, self.dataset) if self.data else NanoTools.getMCLabel(self, self.dataset)
-      locationSE = '/pnfs/psi.ch/cms/trivcat/store/user/{}/BHNLsGen/{}/{}/{}'.format(user, 'data' if self.data else ('mc_central' if self.mccentral else 'signal_central'), self.prodlabel, dataset_label)
+      locationSE = '/pnfs/psi.ch/cms/trivcat/store/user/{}/CPVGen/{}/{}/{}'.format(user, 'data' if self.data else ('mc_central' if self.mccentral else 'signal_central'), self.prodlabel, dataset_label)
 
       self.runMergingModule(locationSE)
   
