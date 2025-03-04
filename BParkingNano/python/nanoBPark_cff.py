@@ -20,6 +20,8 @@ from PhysicsTools.BParkingNano.electronsBPark_cff import *
 from PhysicsTools.BParkingNano.tracksBPark_cff import *
 
 ## B collections
+from PhysicsTools.BParkingNano.BsToPhiPhiTo4K_cff import *
+#from PhysicsTools.BParkingNano.PhiToKK_cff import *
 from PhysicsTools.BParkingNano.BToMuLPi_cff import BToMuMuPi, BToMuMuPiMC, BToMuMuPiTable, BToMuMuPiSequence, BToMuMuPiSequenceMC, CountBToMuMuPi
 from PhysicsTools.BParkingNano.BToKLL_cff import *
 from PhysicsTools.BParkingNano.HNLToMuPi_cff import HNLToMuPi, HNLToMuPiMC, HNLToMuPiTable, HNLToMuPiSequence, HNLToMuPiSequenceMC, CountHNLToMuPi
@@ -62,6 +64,25 @@ def nanoAOD_customizeElectronFilteredBPark(process):
 def nanoAOD_customizeTriggerBitsBPark(process):
     process.nanoSequence = cms.Sequence( process.nanoSequence + trgTables)
     return process
+
+def nanoAOD_customizeBsToPhiPhiTo4K(process, isMC=False):
+    if isMC == False:
+      #process.nanoBsToPhiPhiTo4KSequence = cms.Sequence( BsToPhiPhiTo4KSequence + BsToPhiPhiTo4KTable )
+      process.nanoBsToPhiPhiTo4KSequence = cms.Sequence( PhiToKKSequence + BsToPhiPhiTo4KSequence + PhiToKKTable + BsToPhiPhiTo4KTable )
+    else:
+      #process.nanoBsToPhiPhiTo4KSequence = cms.Sequence( BsToPhiPhiTo4KSequenceMC + BsToPhiPhiTo4KTable )
+      #process.nanoBsToPhiPhiTo4KSequence = cms.Sequence( PhiToKKSequenceMC + BsToPhiPhiTo4KSequenceMC + PhiToKKTable + BsToPhiPhiTo4KTable )
+      #FIXME
+      #process.nanoBsToPhiPhiTo4KSequence = cms.Sequence( PhiToKKSequence + BsToPhiPhiTo4KSequence + PhiToKKTable + BsToPhiPhiTo4KTable ) # worked so far
+      process.nanoBsToPhiPhiTo4KSequence = cms.Sequence( PhiToKKSequenceMC + BsToPhiPhiTo4KSequenceMC + PhiToKKTable + BsToPhiPhiTo4KTable )
+    return process
+
+#def nanoAOD_customizePhiToKK(process, isMC=False):
+#    if isMC == False:
+#      process.nanoPhiToKKSequence = cms.Sequence( PhiToKKSequence + PhiToKKTable )
+#    else:
+#      process.nanoPhiToKKSequence = cms.Sequence( PhiToKKSequenceMC + PhiToKKTable )
+#    return process
 
 def nanoAOD_customizeBToMuMuPi(process, isMC=False):
     if isMC == False:
@@ -110,13 +131,20 @@ def nanoAOD_customizeBToKstarMuMu(process):
     return process
 
 from FWCore.ParameterSet.MassReplace import massSearchReplaceAnyInputTag
-def nanoAOD_customizeMC(process, ancestor_particles=[511, 521, 531, 541, 9900015], addTriggerMuonCollection=False, addProbeTracksCollection=False):  
+#def nanoAOD_customizeMC(process, ancestor_particles=[511, 521, 531, 541, 9900015], addTriggerMuonCollection=False, addProbeTracksCollection=False):  
+def nanoAOD_customizeMC(process, ancestor_particles=[531, 333], addTriggerMuonCollection=False, addProbeTracksCollection=False):  
     for name, path in process.paths.iteritems():
         # replace all the non-match embedded inputs with the matched ones
         massSearchReplaceAnyInputTag(path, 'muonTrgSelector:SelectedMuons', 'selectedMuonsMCMatchEmbedded')
         massSearchReplaceAnyInputTag(path, 'muonTrgSelector:trgMuons', 'triggerMuonsMCMatchEmbedded')
         massSearchReplaceAnyInputTag(path, 'electronsForAnalysis:SelectedElectrons', 'selectedElectronsMCMatchEmbedded')
         massSearchReplaceAnyInputTag(path, 'tracksBPark:SelectedTracks', 'tracksBParkMCMatchEmbedded')
+
+        # make the PhiToKKTable/count talk to the correct producer
+        massSearchReplaceAnyInputTag(path, 'PhiToKK', 'PhiToKKMC')
+
+        # make the BsToPhiPhiTo4KTable/count talk to the correct producer
+        massSearchReplaceAnyInputTag(path, 'BsToPhiPhiTo4K', 'BsToPhiPhiTo4KMC')
 
         # make the BToMuMuPiTable/count talk to the correct producer
         massSearchReplaceAnyInputTag(path, 'BToMuMuPi', 'BToMuMuPiMC')
